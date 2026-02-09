@@ -181,3 +181,34 @@ def update_client(client_id: int, ai_draft: str = Form(...), status: str = Form(
     conn.commit()
     conn.close()
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+
+# ---------- WEBSITE FORM SUBMIT API ----------
+@app.post("/api/website-submit")
+async def website_submit(
+    name: str = Form(...),
+    dob: str = Form(...),
+    tob: str = Form(...),
+    place: str = Form(...),
+    questions: str = Form(...),
+    plan: str = Form(...),
+    images: List[UploadFile] = File(...)
+):
+    # Save only filenames for now (storage later)
+    image_names = ",".join([img.filename for img in images])
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO clients
+        (name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+    """, (
+        name, dob, tob, place, plan, questions,
+        image_names,
+        "Website", "Pending", "AI draft pending",
+        datetime.datetime.now().isoformat()
+    ))
+    conn.commit()
+    conn.close()
+
+    return {"success": True}
