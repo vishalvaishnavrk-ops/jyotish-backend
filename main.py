@@ -1,17 +1,47 @@
 from fastapi import FastAPI, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import List
+import sqlite3, os, datetime
 
 app = FastAPI()
 
-# In-memory store (TESTING)
-CLIENTS = []
+DB_PATH = "clients.db"
 
+# ---------- DATABASE SETUP ----------
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS clients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        dob TEXT,
+        tob TEXT,
+        place TEXT,
+        plan TEXT,
+        questions TEXT,
+        images TEXT,
+        source TEXT,
+        status TEXT,
+        ai_draft TEXT,
+        created_at TEXT
+    )
+    """)
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# ---------- HELPERS ----------
+def get_db():
+    return sqlite3.connect(DB_PATH)
+
+# ---------- ROOT ----------
 @app.get("/")
 def root():
-    return {"status": "Backend v3 running successfully"}
+    return {"status": "Backend with Database running"}
 
-# -------- ADMIN LOGIN --------
+# ---------- ADMIN LOGIN ----------
 @app.get("/admin", response_class=HTMLResponse)
 def admin_login():
     return """
@@ -29,35 +59,48 @@ def admin_login_post(username: str = Form(...), password: str = Form(...)):
         return RedirectResponse("/admin/dashboard", status_code=302)
     return HTMLResponse("<h3>Invalid Login</h3>")
 
-# -------- DASHBOARD --------
+# ---------- DASHBOARD ----------
 @app.get("/admin/dashboard", response_class=HTMLResponse)
 def dashboard():
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT id,name,plan,source,status FROM clients ORDER BY id DESC")
+    rows_db = c.fetchall()
+    conn.close()
+
     rows = ""
-    for idx, c in enumerate(CLIENTS):
+    for r in rows_db:
         rows += f"""
         <tr>
-            <td>{c['name']}</td>
-            <td>{c['plan']}</td>
-            <td>{c['source']}</td>
-            <td><a href="/admin/client/{idx}">View</a></td>
+            <td>{r[1]}</td>
+            <td>{r[2]}</td>
+            <td>{r[3]}</td>
+            <td>{r[4]}</td>
+            <td><a href="/admin/client/{r[0]}">View</a></td>
         </tr>
         """
+
     return f"""
     <h2>Admin Dashboard</h2>
     <a href="/admin/add-client">➕ Add New Client (Manual)</a><br><br>
     <table border="1" cellpadding="6">
-        <tr><th>Name</th><th>Plan</th><th>Source</th><th>Action</th></tr>
+        <tr><th>Name</th><th>Plan</th><th>Source</th><th>Status</th><th>Action</th></tr>
         {rows}
     </table>
     """
 
-# -------- MANUAL CLIENT ENTRY --------
+# ---------- MANUAL CLIENT ENTRY ----------
 @app.get("/admin/add-client", response_class=HTMLResponse)
 def add_client_form():
     return """
     <h2>Add New Client (Manual)</h2>
     <form method="post" action="/admin/add-client" enctype="multipart/form-data">
         Name: <input name="name"><br><br>
+        DOB: <input name="dob"><br><br>
+        TOB: <input name="tob"><br><br>
+        Place: <input name="place"><br><br>
+        Questions:<br>
+        <textarea name="questions"></textarea><br><br>
         Plan:
         <select name="plan">
             <option>₹51</option>
@@ -65,7 +108,7 @@ def add_client_form():
             <option>₹251</option>
             <option>₹501</option>
         </select><br><br>
-        Palm Images (4):
+        Palm Images:
         <input type="file" name="images" multiple><br><br>
         <button type="submit">Save Client</button>
     </form>
@@ -74,46 +117,67 @@ def add_client_form():
 @app.post("/admin/add-client")
 async def add_client(
     name: str = Form(...),
+    dob: str = Form(...),
+    tob: str = Form(...),
+    place: str = Form(...),
+    questions: str = Form(...),
     plan: str = Form(...),
     images: List[UploadFile] = File(...)
 ):
-    CLIENTS.append({
-        "name": name,
-        "plan": plan,
-        "source": "Manual",
-        "status": "Pending",
-        "ai_draft": "DUMMY AI OUTPUT – Palm + Jyotish analysis will appear here."
-    })
+    image_names = ",".join([img.filename for img in images])
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO clients
+        (name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+    """, (
+        name,dob,tob,place,plan,questions,image_names,
+        "Manual","Pending","DUMMY AI OUTPUT",
+        datetime.datetime.now().isoformat()
+    ))
+    conn.commit()
+    conn.close()
     return RedirectResponse("/admin/dashboard", status_code=302)
 
-# -------- CLIENT DETAIL PAGE --------
+# ---------- CLIENT DETAIL ----------
 @app.get("/admin/client/{client_id}", response_class=HTMLResponse)
 def client_detail(client_id: int):
-    c = CLIENTS[client_id]
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT * FROM clients WHERE id=?", (client_id,))
+    cdata = c.fetchone()
+    conn.close()
+
     return f"""
     <h2>Client Detail</h2>
-    <p><b>Name:</b> {c['name']}</p>
-    <p><b>Plan:</b> {c['plan']}</p>
-    <p><b>Source:</b> {c['source']}</p>
-    <p><b>Status:</b> {c['status']}</p>
+    <p><b>Name:</b> {cdata[1]}</p>
+    <p><b>DOB:</b> {cdata[2]}</p>
+    <p><b>TOB:</b> {cdata[3]}</p>
+    <p><b>Place:</b> {cdata[4]}</p>
+    <p><b>Plan:</b> {cdata[5]}</p>
+    <p><b>Questions:</b><br>{cdata[6]}</p>
 
     <h3>AI Draft (Internal)</h3>
     <form method="post" action="/admin/client/{client_id}/update">
-        <textarea name="ai_draft" rows="10" cols="80">{c['ai_draft']}</textarea><br><br>
+        <textarea name="ai_draft" rows="10" cols="80">{cdata[10]}</textarea><br><br>
         Status:
         <select name="status">
-            <option {"selected" if c['status']=="Pending" else ""}>Pending</option>
-            <option {"selected" if c['status']=="Reviewed" else ""}>Reviewed</option>
-            <option {"selected" if c['status']=="Completed" else ""}>Completed</option>
+            <option>Pending</option>
+            <option>Reviewed</option>
+            <option>Completed</option>
         </select><br><br>
         <button type="submit">Save</button>
     </form>
-    <br>
-    <a href="/admin/dashboard">⬅ Back to Dashboard</a>
+    <br><a href="/admin/dashboard">⬅ Back</a>
     """
 
 @app.post("/admin/client/{client_id}/update")
 def update_client(client_id: int, ai_draft: str = Form(...), status: str = Form(...)):
-    CLIENTS[client_id]["ai_draft"] = ai_draft
-    CLIENTS[client_id]["status"] = status
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("UPDATE clients SET ai_draft=?, status=? WHERE id=?",
+              (ai_draft,status,client_id))
+    conn.commit()
+    conn.close()
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
