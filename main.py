@@ -163,9 +163,9 @@ def client_detail(client_id: int):
         <textarea name="ai_draft" rows="10" cols="80">{cdata[10]}</textarea><br><br>
         Status:
         <select name="status">
-            <option>Pending</option>
-            <option>Reviewed</option>
-            <option>Completed</option>
+            <option {"selected" if cdata[9]=="Pending" else ""}>Pending</option>
+            <option {"selected" if cdata[9]=="Reviewed" else ""}>Reviewed</option>
+            <option {"selected" if cdata[9]=="Completed" else ""}>Completed</option>
         </select><br><br>
         <button type="submit">Save</button>
     </form>
