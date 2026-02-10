@@ -63,7 +63,6 @@ def generate_client_code():
     year = datetime.datetime.now().year
     return f"AVV-{year}-{str(count).zfill(4)}"
 
-
 # ---------- HELPERS ----------
 def get_db():
     return sqlite3.connect(DB_PATH)
@@ -395,7 +394,6 @@ body{
 </html>
 """
 
-
 @app.post("/admin/add-client")
 async def add_client(
     name: str = Form(...),
@@ -409,7 +407,8 @@ async def add_client(
     image_names = ",".join([img.filename for img in images])
     conn = get_db()
     c = conn.cursor()
-    client_code = generate_client_code()
+    
+client_code = generate_client_code()
 
 c.execute("""
 INSERT INTO clients
@@ -421,8 +420,8 @@ client_code,name,dob,tob,place,plan,questions,image_names,
 datetime.datetime.now().isoformat()
 ))
 
-    conn.commit()
-    conn.close()
+conn.commit()
+conn.close()
     return RedirectResponse("/admin/dashboard", status_code=302)
 
 # ---------- CLIENT DETAIL ----------
@@ -576,6 +575,9 @@ async def website_submit(
 
     conn = get_db()
     c = conn.cursor()
+    
+    client_code = generate_client_code()
+    
     c.execute("""
         INSERT INTO clients
         (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
