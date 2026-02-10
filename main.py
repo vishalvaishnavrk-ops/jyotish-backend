@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse
-from typing import List
+from typing import List, Optional
 import sqlite3, os, datetime
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -126,8 +126,8 @@ def add_client_form():
 async def add_client(
     name: str = Form(...),
     dob: str = Form(...),
-    tob: str = Form(None),      # optional
-    place: str = Form(None),    # optional
+    tob: Optional[str] = Form(None),      # optional
+    place: Optional[str] = Form(None),    # optional
     questions: str = Form(...),
     plan: str = Form(...),
     images: List[UploadFile] = File(...)
@@ -197,8 +197,8 @@ async def website_submit(
     dob: str = Form(...),
     questions: str = Form(...),
     plan: str = Form(...),
-    tob: str = Form(None),      # ✅ optional
-    place: str = Form(None),    # ✅ optional
+    tob: Optional[str] = Form(None),      # ✅ optional
+    place: Optional[str] = Form(None),    # ✅ optional
     images: List[UploadFile] = File(...)
 ):
     # Save only filenames for now (storage later)
