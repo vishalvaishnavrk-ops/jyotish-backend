@@ -277,25 +277,99 @@ tr:hover {{
 @app.get("/admin/add-client", response_class=HTMLResponse)
 def add_client_form():
     return """
-    <h2>Add New Client (Manual)</h2>
-    <form method="post" action="/admin/add-client" enctype="multipart/form-data">
-        Name: <input name="name"><br><br>
-        DOB: <input name="dob"><br><br>
-        TOB: <input name="tob"><br><br>
-        Place: <input name="place"><br><br>
-        Questions:<br>
-        <textarea name="questions"></textarea><br><br>
-    P<select name="plan">
-        <option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
-        <option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
-        <option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
-        <option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
-    </select><br><br>
-        Palm Images:
-        <input type="file" name="images" multiple><br><br>
-        <button type="submit">Save Client</button>
-    </form>
-    """
+<html>
+<head>
+<title>Add Client</title>
+<style>
+body{
+  font-family: Arial;
+  background:#f6efe9;
+}
+.form-box{
+  width:600px;
+  margin:40px auto;
+  background:#fff;
+  padding:25px;
+  border-radius:10px;
+  box-shadow:0 0 12px rgba(0,0,0,0.15);
+}
+.form-box h2{
+  text-align:center;
+  color:#8b0000;
+}
+.form-box label{
+  font-weight:bold;
+}
+.form-box input,
+.form-box textarea,
+.form-box select{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  margin-bottom:12px;
+}
+.form-box button{
+  background:#8b0000;
+  color:white;
+  padding:10px;
+  border:none;
+  width:100%;
+  border-radius:5px;
+  cursor:pointer;
+}
+.back-link{
+  text-align:center;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="form-box">
+<h2>नया क्लाइंट जोड़ें (Manual)</h2>
+
+<form method="post" action="/admin/add-client" enctype="multipart/form-data">
+
+<label>नाम</label>
+<input name="name" required>
+
+<label>जन्म तिथि</label>
+<input name="dob" required>
+
+<label>जन्म समय (Optional)</label>
+<input name="tob">
+
+<label>जन्म स्थान (Optional)</label>
+<input name="place">
+
+<label>मुख्य प्रश्न</label>
+<textarea name="questions" required></textarea>
+
+<label>प्लान चुनें</label>
+<select name="plan">
+  <option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
+  <option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
+  <option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
+  <option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
+</select>
+
+<label>हथेली की फोटो</label>
+<input type="file" name="images" multiple>
+
+<button type="submit">सेव करें</button>
+</form>
+
+<div class="back-link">
+<a href="/admin/dashboard">⬅ डैशबोर्ड पर जाएँ</a>
+</div>
+
+</div>
+
+</body>
+</html>
+"""
+
 
 @app.post("/admin/add-client")
 async def add_client(
