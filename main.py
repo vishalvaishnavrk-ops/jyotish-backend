@@ -110,13 +110,12 @@ def add_client_form():
         Place: <input name="place"><br><br>
         Questions:<br>
         <textarea name="questions"></textarea><br><br>
-        Plan:
-        <select name="plan">
-            <option>₹51</option>
-            <option>₹151</option>
-            <option>₹251</option>
-            <option>₹501</option>
-        </select><br><br>
+    P<select name="plan">
+        <option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
+        <option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
+        <option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
+        <option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
+    </select><br><br>
         Palm Images:
         <input type="file" name="images" multiple><br><br>
         <button type="submit">Save Client</button>
