@@ -398,8 +398,8 @@ body{
 async def add_client(
     name: str = Form(...),
     dob: str = Form(...),
-    tob: Optional[str] = Form(None),      # optional
-    place: Optional[str] = Form(None),    # optional
+    tob: Optional[str] = Form(None),
+    place: Optional[str] = Form(None),
     questions: str = Form(...),
     plan: str = Form(...),
     images: List[UploadFile] = File(...)
@@ -407,21 +407,22 @@ async def add_client(
     image_names = ",".join([img.filename for img in images])
     conn = get_db()
     c = conn.cursor()
-    
-client_code = generate_client_code()
 
-c.execute("""
-INSERT INTO clients
-(client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
-VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-""", (
-client_code,name,dob,tob,place,plan,questions,image_names,
-"Manual","Pending","DUMMY AI OUTPUT",
-datetime.datetime.now().isoformat()
-))
+    client_code = generate_client_code()
 
-conn.commit()
-conn.close()
+    c.execute("""
+        INSERT INTO clients
+        (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+    """, (
+        client_code, name, dob, tob, place, plan, questions, image_names,
+        "Manual", "Pending", "DUMMY AI OUTPUT",
+        datetime.datetime.now().isoformat()
+    ))
+
+    conn.commit()
+    conn.close()
+
     return RedirectResponse("/admin/dashboard", status_code=302)
 
 # ---------- CLIENT DETAIL ----------
@@ -579,15 +580,16 @@ async def website_submit(
     client_code = generate_client_code()
     
     c.execute("""
-        INSERT INTO clients
-        (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
-    """, (
-        client_code,name, dob, tob, place, plan, questions,
-        image_names,
-        "Website", "Pending", "AI draft pending",
-        datetime.datetime.now().isoformat()
-    ))
+    INSERT INTO clients
+    (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+""", (
+    client_code, name, dob, tob, place, plan, questions,
+    image_names,
+    "Website", "Pending", "AI draft pending",
+    datetime.datetime.now().isoformat()
+))
+
     conn.commit()
     conn.close()
 
