@@ -41,6 +41,29 @@ def init_db():
 
 init_db()
 
+def ensure_client_code_column():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    try:
+        c.execute("ALTER TABLE clients ADD COLUMN client_code TEXT")
+        conn.commit()
+    except:
+        pass
+    conn.close()
+
+ensure_client_code_column()
+
+def generate_client_code():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM clients")
+    count = c.fetchone()[0] + 1
+    conn.close()
+
+    year = datetime.datetime.now().year
+    return f"AVV-{year}-{str(count).zfill(4)}"
+
+
 # ---------- HELPERS ----------
 def get_db():
     return sqlite3.connect(DB_PATH)
@@ -118,7 +141,7 @@ def admin_login_post(username: str = Form(...), password: str = Form(...)):
 def dashboard():
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT id,name,plan,source,status FROM clients ORDER BY id DESC")
+    c.execute("SELECT id,client_code,name,plan,source,status FROM clients ORDER BY id DESC")
     rows_db = c.fetchall()
     conn.close()
 
@@ -130,6 +153,7 @@ def dashboard():
             <td>{r[2]}</td>
             <td>{r[3]}</td>
             <td>{r[4]}</td>
+            <td>{r[5]}</td>
             <td><a href="/admin/client/{r[0]}">View</a></td>
         </tr>
         """
@@ -258,6 +282,7 @@ tr:hover {{
 
   <table>
     <tr>
+      <th>Client Code</th>
       <th>Name</th>
       <th>Plan</th>
       <th>Source</th>
@@ -384,15 +409,18 @@ async def add_client(
     image_names = ",".join([img.filename for img in images])
     conn = get_db()
     c = conn.cursor()
-    c.execute("""
-        INSERT INTO clients
-        (name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
-    """, (
-        name,dob,tob,place,plan,questions,image_names,
-        "Manual","Pending","DUMMY AI OUTPUT",
-        datetime.datetime.now().isoformat()
-    ))
+    client_code = generate_client_code()
+
+c.execute("""
+INSERT INTO clients
+(client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+""", (
+client_code,name,dob,tob,place,plan,questions,image_names,
+"Manual","Pending","DUMMY AI OUTPUT",
+datetime.datetime.now().isoformat()
+))
+
     conn.commit()
     conn.close()
     return RedirectResponse("/admin/dashboard", status_code=302)
@@ -550,10 +578,10 @@ async def website_submit(
     c = conn.cursor()
     c.execute("""
         INSERT INTO clients
-        (name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
+        (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
         VALUES (?,?,?,?,?,?,?,?,?,?,?)
     """, (
-        name, dob, tob, place, plan, questions,
+        client_code,name, dob, tob, place, plan, questions,
         image_names,
         "Website", "Pending", "AI draft pending",
         datetime.datetime.now().isoformat()
