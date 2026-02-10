@@ -220,19 +220,6 @@ tr:hover {{
   font-weight: bold;
 }}
 
-.header-inner{
-  text-align: center;
-}
-.header .title{
-  font-size: 22px;
-  font-weight: bold;
-}
-.header .subtitle{
-  font-size: 14px;
-  margin-top: 4px;
-  opacity: 0.9;
-}
-
 </style>
 </head>
 
