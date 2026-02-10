@@ -225,9 +225,14 @@ tr:hover {{
 <body>
 
 <div class="header">
-  Admin Dashboard
-  <span>Achary Vishal Vaishnav – Hastrekha & Vedic Jyotish</span>
+  <div class="header-inner">
+    <div class="title">ADMIN DASHBOARD</div>
+    <div class="subtitle">
+      आचार्य विशाल वैष्णव – हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ
+    </div>
+  </div>
 </div>
+
 
 <div class="container">
 
