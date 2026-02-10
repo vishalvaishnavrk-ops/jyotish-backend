@@ -54,13 +54,58 @@ def root():
 @app.get("/admin", response_class=HTMLResponse)
 def admin_login():
     return """
-    <h2>Admin Login – Achary Vishal Vaishnav</h2>
-    <form method="post" action="/admin/login">
-        Username: <input name="username"><br><br>
-        Password: <input type="password" name="password"><br><br>
-        <button type="submit">Login</button>
-    </form>
-    """
+<html>
+<head>
+<title>Admin Login</title>
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background: #f6efe9;
+}
+.login-box{
+  width: 360px;
+  margin: 120px auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+}
+.login-box h2{
+  text-align: center;
+  color: #8b0000;
+}
+.login-box input{
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+}
+.login-box button{
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  background: #8b0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+<div class="login-box">
+  <h2>Admin Login</h2>
+  <form method="post" action="/admin/login">
+    Username:
+    <input name="username" required>
+    Password:
+    <input type="password" name="password" required>
+    <button type="submit">Login</button>
+  </form>
+</div>
+</body>
+</html>
+"""
 
 @app.post("/admin/login")
 def admin_login_post(username: str = Form(...), password: str = Form(...)):
