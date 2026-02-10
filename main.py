@@ -511,13 +511,14 @@ button {{
 <div class="container">
 
   <div class="card">
-    <h3>क्लाइंट जानकारी</h3>
-    <p><span class="label">नाम:</span> {cdata[1]}</p>
-    <p><span class="label">जन्म तिथि:</span> {cdata[2]}</p>
-    <p><span class="label">जन्म समय:</span> {cdata[3] or "—"}</p>
-    <p><span class="label">जन्म स्थान:</span> {cdata[4] or "—"}</p>
-    <p><span class="label">प्लान:</span> {cdata[5]}</p>
-  </div>
+  <h3>क्लाइंट जानकारी</h3>
+  <p><span class="label">Client Code:</span> <b>{cdata[12]}</b></p>
+  <p><span class="label">नाम:</span> {cdata[1]}</p>
+  <p><span class="label">जन्म तिथि:</span> {cdata[2]}</p>
+  <p><span class="label">जन्म समय:</span> {cdata[3] or "—"}</p>
+  <p><span class="label">जन्म स्थान:</span> {cdata[4] or "—"}</p>
+  <p><span class="label">प्लान:</span> {cdata[5]}</p>
+</div>
 
   <div class="card">
     <h3>मुख्य प्रश्न</h3>
