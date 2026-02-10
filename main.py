@@ -195,10 +195,10 @@ def update_client(client_id: int, ai_draft: str = Form(...), status: str = Form(
 async def website_submit(
     name: str = Form(...),
     dob: str = Form(...),
-    tob: str = Form(...),
-    place: str = Form(...),
     questions: str = Form(...),
     plan: str = Form(...),
+    tob: str = Form(None),      # ✅ optional
+    place: str = Form(None),    # ✅ optional
     images: List[UploadFile] = File(...)
 ):
     # Save only filenames for now (storage later)
