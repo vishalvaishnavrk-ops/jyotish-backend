@@ -407,27 +407,120 @@ def client_detail(client_id: int):
     conn.close()
 
     return f"""
-    <h2>Client Detail</h2>
-    <p><b>Name:</b> {cdata[1]}</p>
-    <p><b>DOB:</b> {cdata[2]}</p>
-    <p><b>TOB:</b> {cdata[3]}</p>
-    <p><b>Place:</b> {cdata[4]}</p>
-    <p><b>Plan:</b> {cdata[5]}</p>
-    <p><b>Questions:</b><br>{cdata[6]}</p>
+<html>
+<head>
+<title>Client Detail</title>
+<style>
+body {{
+  font-family: Arial, sans-serif;
+  background: #f6efe9;
+  margin: 0;
+  padding: 0;
+}}
 
-    <h3>AI Draft (Internal)</h3>
+.header {{
+  background: #8b0000;
+  color: white;
+  padding: 15px;
+  text-align: center;
+}}
+
+.container {{
+  padding: 25px;
+}}
+
+.card {{
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  margin-bottom: 20px;
+}}
+
+.card h3 {{
+  color: #8b0000;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}}
+
+.label {{
+  font-weight: bold;
+}}
+
+textarea {{
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+}}
+
+select {{
+  padding: 6px;
+  margin-top: 5px;
+}}
+
+button {{
+  background: #8b0000;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}}
+
+.back-link {{
+  text-align: center;
+  margin-top: 15px;
+}}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  क्लाइंट विवरण – आचार्य विशाल वैष्णव
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h3>क्लाइंट जानकारी</h3>
+    <p><span class="label">नाम:</span> {cdata[1]}</p>
+    <p><span class="label">जन्म तिथि:</span> {cdata[2]}</p>
+    <p><span class="label">जन्म समय:</span> {cdata[3] or "—"}</p>
+    <p><span class="label">जन्म स्थान:</span> {cdata[4] or "—"}</p>
+    <p><span class="label">प्लान:</span> {cdata[5]}</p>
+  </div>
+
+  <div class="card">
+    <h3>मुख्य प्रश्न</h3>
+    <p>{cdata[6]}</p>
+  </div>
+
+  <div class="card">
+    <h3>AI ड्राफ्ट (Internal Use)</h3>
     <form method="post" action="/admin/client/{client_id}/update">
-        <textarea name="ai_draft" rows="10" cols="80">{cdata[10]}</textarea><br><br>
-        Status:
-        <select name="status">
-            <option {"selected" if cdata[9]=="Pending" else ""}>Pending</option>
-            <option {"selected" if cdata[9]=="Reviewed" else ""}>Reviewed</option>
-            <option {"selected" if cdata[9]=="Completed" else ""}>Completed</option>
-        </select><br><br>
-        <button type="submit">Save</button>
+      <textarea name="ai_draft" rows="10">{cdata[10]}</textarea><br><br>
+
+      <label class="label">Status:</label><br>
+      <select name="status">
+        <option {"selected" if cdata[9]=="Pending" else ""}>Pending</option>
+        <option {"selected" if cdata[9]=="Reviewed" else ""}>Reviewed</option>
+        <option {"selected" if cdata[9]=="Completed" else ""}>Completed</option>
+      </select><br><br>
+
+      <button type="submit">Save Update</button>
     </form>
-    <br><a href="/admin/dashboard">⬅ Back</a>
-    """
+  </div>
+
+  <div class="back-link">
+    <a href="/admin/dashboard">⬅ डैशबोर्ड पर जाएँ</a>
+  </div>
+
+</div>
+
+</body>
+</html>
+"""
 
 @app.post("/admin/client/{client_id}/update")
 def update_client(client_id: int, ai_draft: str = Form(...), status: str = Form(...)):
