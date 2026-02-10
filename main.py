@@ -153,6 +153,21 @@ body {{
   font-size: 20px;
 }}
 
+.header-inner{{
+  text-align: center;
+}}
+
+.header .title{{
+  font-size: 22px;
+  font-weight: bold;
+}}
+
+.header .subtitle{{
+  font-size: 14px;
+  margin-top: 4px;
+  opacity: 0.9;
+}}
+
 .header span {{
   font-size: 14px;
   display: block;
