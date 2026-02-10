@@ -126,8 +126,8 @@ def add_client_form():
 async def add_client(
     name: str = Form(...),
     dob: str = Form(...),
-    tob: str = Form(...),
-    place: str = Form(...),
+    tob: str = Form(None),      # optional
+    place: str = Form(None),    # optional
     questions: str = Form(...),
     plan: str = Form(...),
     images: List[UploadFile] = File(...)
