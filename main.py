@@ -135,13 +135,122 @@ def dashboard():
         """
 
     return f"""
-    <h2>Admin Dashboard</h2>
-    <a href="/admin/add-client">➕ Add New Client (Manual)</a><br><br>
-    <table border="1" cellpadding="6">
-        <tr><th>Name</th><th>Plan</th><th>Source</th><th>Status</th><th>Action</th></tr>
-        {rows}
-    </table>
-    """
+<html>
+<head>
+<title>Admin Dashboard</title>
+<style>
+body {{
+  font-family: Arial, sans-serif;
+  background: #f6efe9;
+  margin: 0;
+  padding: 0;
+}}
+
+.header {{
+  background: #8b0000;
+  color: white;
+  padding: 15px 25px;
+  font-size: 20px;
+}}
+
+.header span {{
+  font-size: 14px;
+  display: block;
+  opacity: 0.9;
+}}
+
+.container {{
+  padding: 25px;
+}}
+
+.top-actions {{
+  margin-bottom: 15px;
+}}
+
+.top-actions a {{
+  background: #8b0000;
+  color: white;
+  padding: 8px 14px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 14px;
+}}
+
+table {{
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}}
+
+th {{
+  background: #f1e2d3;
+  color: #333;
+  padding: 10px;
+  text-align: left;
+}}
+
+td {{
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}}
+
+tr:hover {{
+  background: #faf3ec;
+}}
+
+.status-pending {{
+  color: #d35400;
+  font-weight: bold;
+}}
+
+.status-completed {{
+  color: green;
+  font-weight: bold;
+}}
+
+.status-reviewed {{
+  color: #2980b9;
+  font-weight: bold;
+}}
+
+.action-link {{
+  color: #8b0000;
+  text-decoration: none;
+  font-weight: bold;
+}}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  Admin Dashboard
+  <span>Achary Vishal Vaishnav – Hastrekha & Vedic Jyotish</span>
+</div>
+
+<div class="container">
+
+  <div class="top-actions">
+    <a href="/admin/add-client">➕ Add New Client (Manual)</a>
+  </div>
+
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Plan</th>
+      <th>Source</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    {rows}
+  </table>
+
+</div>
+
+</body>
+</html>
+"""
 
 # ---------- MANUAL CLIENT ENTRY ----------
 @app.get("/admin/add-client", response_class=HTMLResponse)
