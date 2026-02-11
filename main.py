@@ -147,7 +147,7 @@ def dashboard(
     q: str = Query(None),
     plan: str = Query(None),
     source: str = Query(None),
-    status: str = Query(None)
+    status: str = Query(None),
     start_date: str = Query(None),
     end_date: str = Query(None)
 ):
