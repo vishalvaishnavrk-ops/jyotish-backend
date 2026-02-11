@@ -2,6 +2,7 @@ from fastapi import FastAPI, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import List, Optional
 import sqlite3, os, datetime
+import time
 import uuid   # ✅ ADD THIS LINE HERE
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -65,9 +66,9 @@ ensure_client_code_column()
 
 def generate_client_code():
     year = datetime.datetime.now().year
-    timestamp = int(datetime.datetime.now().timestamp())
-    return f"AVV-{year}-{timestamp}"
-
+    short_unique = int(time.time()) % 100000   # last 5 digits
+    return f"AVV-{year}-{short_unique}"
+    
 # ---------- HELPERS ----------
 def get_db():
     return sqlite3.connect(DB_PATH)
