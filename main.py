@@ -177,11 +177,11 @@ def dashboard(
         params.append(status)
 
     if start_date:
-        sql += " AND date(created_at) >= ?"
+        sql += " AND substr(created_at,1,10) >= ?"
         params.append(start_date)
 
     if end_date:
-        sql += " AND date(created_at) <= ?"
+        sql += " AND substr(created_at,1,10) <= ?"
         params.append(end_date)
 
     sql += " ORDER BY id DESC"
@@ -355,8 +355,8 @@ tr:hover {{
   <option value="Completed" {"selected" if status=="Completed" else ""}>Completed</option>
 </select>
 
-  <input type="date" name="start_date">
-  <input type="date" name="end_date">
+  <input type="date" name="start_date" value="{start_date or ''}">
+  <input type="date" name="end_date" value="{end_date or ''}">
   
   <button type="submit">Filter</button>
 </form>
