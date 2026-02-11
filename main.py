@@ -464,21 +464,15 @@ async def add_client(
     plan: str = Form(...),
     images: List[UploadFile] = File(...)
 ):
+    
     saved_files = []
 
     for img in images:
-        import uuid
-
-saved_files = []
-
-for img in images:
-    unique_name = f"{uuid.uuid4().hex}_{img.filename}"
-    file_path = os.path.join(UPLOAD_DIR, unique_name)
-
-    with open(file_path, "wb") as f:
-        f.write(await img.read())
-
-    saved_files.append(unique_name)
+        unique_name = f"{uuid.uuid4().hex}_{img.filename}"
+        file_path = os.path.join(UPLOAD_DIR, unique_name)
+        with open(file_path, "wb") as f:
+             f.write(await img.read())
+        saved_files.append(unique_name)
 
     image_names = ",".join(saved_files)
 
@@ -662,21 +656,15 @@ async def website_submit(
     place: Optional[str] = Form(None),
     images: List[UploadFile] = File(...)
 ):
+
     saved_files = []
 
     for img in images:
-        import uuid
-
-saved_files = []
-
-for img in images:
-    unique_name = f"{uuid.uuid4().hex}_{img.filename}"
-    file_path = os.path.join(UPLOAD_DIR, unique_name)
-
-    with open(file_path, "wb") as f:
-        f.write(await img.read())
-
-    saved_files.append(unique_name)
+        unique_name = f"{uuid.uuid4().hex}_{img.filename}"
+        file_path = os.path.join(UPLOAD_DIR, unique_name)
+        with open(file_path, "wb") as f:
+             f.write(await img.read())
+        saved_files.append(unique_name)
 
     image_names = ",".join(saved_files)
 
