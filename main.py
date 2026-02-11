@@ -654,7 +654,15 @@ async def website_submit(
     images: List[UploadFile] = File(...)
 ):
     # Save only filenames for now (storage later)
-    image_names = ",".join([img.filename for img in images])
+    saved_files = []
+
+for img in images:
+    file_path = os.path.join(UPLOAD_DIR, img.filename)
+    with open(file_path, "wb") as f:
+        f.write(await img.read())
+    saved_files.append(img.filename)
+
+image_names = ",".join(saved_files)
 
     conn = get_db()
     c = conn.cursor()
