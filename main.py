@@ -7,6 +7,13 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
+DB_PATH = "clients.db"
+UPLOAD_DIR = "uploads"
+
+# ---- CREATE FOLDER FIRST ----
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
+
 # ---- THEN MOUNT ----
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
@@ -17,13 +24,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-DB_PATH = "clients.db"
-UPLOAD_DIR = "uploads"
-
-# ---- CREATE FOLDER FIRST ----
-if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR)
 
 # ---------- DATABASE SETUP ----------
 def init_db():
