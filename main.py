@@ -148,12 +148,14 @@ def dashboard(
     plan: str = Query(None),
     source: str = Query(None),
     status: str = Query(None)
+    start_date: str = Query(None),
+    end_date: str = Query(None)
 ):
 
     conn = get_db()
     c = conn.cursor()
 
-    sql = "SELECT id,client_code,name,plan,source,status FROM clients WHERE 1=1"
+    sql = "SELECT id,client_code,name,plan,source,status,created_at FROM clients WHERE 1=1"
     params = []
 
     if q:
@@ -172,6 +174,14 @@ def dashboard(
         sql += " AND status=?"
         params.append(status)
 
+    if start_date:
+        sql += " AND date(created_at) >= ?"
+        params.append(start_date)
+
+    if end_date:
+        sql += " AND date(created_at) <= ?"
+        params.append(end_date)
+
     sql += " ORDER BY id DESC"
 
     c.execute(sql, params)
@@ -187,6 +197,7 @@ def dashboard(
             <td>{r[3]}</td>
             <td>{r[4]}</td>
             <td>{r[5]}</td>
+            <td>{r[6][:10]}</td>
             <td><a href="/admin/client/{r[0]}">View</a></td>
         </tr>
         """
@@ -337,6 +348,9 @@ tr:hover {{
   <option value="Completed" {"selected" if status=="Completed" else ""}>Completed</option>
 </select>
 
+  <input type="date" name="start_date">
+  <input type="date" name="end_date">
+  
   <button type="submit">Filter</button>
 </form>
 
@@ -347,6 +361,7 @@ tr:hover {{
       <th>Plan</th>
       <th>Source</th>
       <th>Status</th>
+      <th>Date</th>
       <th>Action</th>
     </tr>
     {rows}
