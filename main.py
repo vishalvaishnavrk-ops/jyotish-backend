@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, UploadFile, File
+from fastapi import FastAPI, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import List, Optional
 import sqlite3, os, datetime
@@ -137,12 +137,40 @@ def admin_login_post(username: str = Form(...), password: str = Form(...)):
 
 # ---------- DASHBOARD ----------
 @app.get("/admin/dashboard", response_class=HTMLResponse)
-def dashboard():
+def dashboard(
+    q: str = Query(None),
+    plan: str = Query(None),
+    source: str = Query(None),
+    status: str = Query(None)
+):
+
     conn = get_db()
-    c = conn.cursor()
-    c.execute("SELECT id,client_code,name,plan,source,status FROM clients ORDER BY id DESC")
-    rows_db = c.fetchall()
-    conn.close()
+c = conn.cursor()
+
+sql = "SELECT id,client_code,name,plan,source,status FROM clients WHERE 1=1"
+params = []
+
+if q:
+    sql += " AND (name LIKE ? OR client_code LIKE ?)"
+    params.extend([f"%{q}%", f"%{q}%"])
+
+if plan:
+    sql += " AND plan=?"
+    params.append(plan)
+
+if source:
+    sql += " AND source=?"
+    params.append(source)
+
+if status:
+    sql += " AND status=?"
+    params.append(status)
+
+sql += " ORDER BY id DESC"
+
+c.execute(sql, params)
+rows_db = c.fetchall()
+conn.close()
 
     rows = ""
     for r in rows_db:
@@ -278,6 +306,33 @@ tr:hover {{
   <div class="top-actions">
     <a href="/admin/add-client">➕ Add New Client (Manual)</a>
   </div>
+
+<form method="get" style="margin-bottom:15px;">
+  <input type="text" name="q" placeholder="Client Code / Name">
+
+  <select name="plan">
+    <option value="">All Plans</option>
+    <option>₹51 – बेसिक प्लान</option>
+    <option>₹151 – एडवांस प्लान</option>
+    <option>₹251 – प्रो प्लान</option>
+    <option>₹501 – अल्टीमेट प्लान</option>
+  </select>
+
+  <select name="source">
+    <option value="">All Sources</option>
+    <option>Website</option>
+    <option>Manual</option>
+  </select>
+
+  <select name="status">
+    <option value="">All Status</option>
+    <option>Pending</option>
+    <option>Reviewed</option>
+    <option>Completed</option>
+  </select>
+
+  <button type="submit">Filter</button>
+</form>
 
   <table>
     <tr>
