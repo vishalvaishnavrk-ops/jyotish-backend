@@ -7,7 +7,8 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# ---- THEN MOUNT ----
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,6 +21,7 @@ app.add_middleware(
 DB_PATH = "clients.db"
 UPLOAD_DIR = "uploads"
 
+# ---- CREATE FOLDER FIRST ----
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
@@ -505,8 +507,18 @@ def client_detail(client_id: int):
     cdata = c.fetchone()
     conn.close()
 
+    # ✅ ---- ADD THIS BLOCK HERE ----
+    images_html = ""
+    if cdata[7]:
+        for img in cdata[7].split(","):
+            img = img.strip()
+            if img:
+                images_html += f'<img src="/uploads/{img}" width="150" style="margin:5px;border:1px solid #ccc;">'
+    # ✅ ---- END BLOCK ----
+
     return f"""
-<html>
+    <html>
+
 <head>
 <title>Client Detail</title>
 <style>
@@ -590,14 +602,7 @@ button {{
   <p><span class="label">जन्म स्थान:</span> {cdata[4] or "—"}</p>
   <p><span class="label">प्लान:</span> {cdata[5]}</p>
   <p><span class="label">Palm Images:</span></p>
-"""
-
-+ "".join(
-    f'<img src="/uploads/{img.strip()}" width="150" style="margin:5px;border:1px solid #ccc;">'
-    for img in (cdata[7] or "").split(",") if img.strip()
-)
-
-+ """
+  {images_html}
 
 </div>
 
