@@ -177,12 +177,12 @@ def dashboard(
         params.append(status)
 
     if start_date:
-        sql += " AND datetime(created_at) >= datetime(?)"
-        params.append(start_date + " 00:00:00")
+        sql += " AND created_at >= ?"
+        params.append(start_date + "T00:00:00")
 
     if end_date:
-        sql += " AND datetime(created_at) <= datetime(?)"
-        params.append(end_date + " 23:59:59")
+        sql += " AND created_at <= ?"
+        params.append(end_date + "T23:59:59")
 
     sql += " ORDER BY id DESC"
 
