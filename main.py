@@ -3,8 +3,11 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import List, Optional
 import sqlite3, os, datetime
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,6 +18,10 @@ app.add_middleware(
 )
 
 DB_PATH = "clients.db"
+UPLOAD_DIR = "uploads"
+
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
 
 # ---------- DATABASE SETUP ----------
 def init_db():
@@ -459,7 +466,16 @@ async def add_client(
     plan: str = Form(...),
     images: List[UploadFile] = File(...)
 ):
-    image_names = ",".join([img.filename for img in images])
+    saved_files = []
+
+for img in images:
+    file_path = os.path.join(UPLOAD_DIR, img.filename)
+    with open(file_path, "wb") as f:
+        f.write(await img.read())
+    saved_files.append(img.filename)
+
+image_names = ",".join(saved_files)
+
     conn = get_db()
     c = conn.cursor()
 
@@ -573,6 +589,16 @@ button {{
   <p><span class="label">जन्म समय:</span> {cdata[3] or "—"}</p>
   <p><span class="label">जन्म स्थान:</span> {cdata[4] or "—"}</p>
   <p><span class="label">प्लान:</span> {cdata[5]}</p>
+  <p><span class="label">Palm Images:</span></p>
+"""
+
++ "".join(
+    f'<img src="/uploads/{img.strip()}" width="150" style="margin:5px;border:1px solid #ccc;">'
+    for img in (cdata[7] or "").split(",") if img.strip()
+)
+
++ """
+
 </div>
 
   <div class="card">
