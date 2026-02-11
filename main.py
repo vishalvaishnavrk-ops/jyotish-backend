@@ -145,32 +145,32 @@ def dashboard(
 ):
 
     conn = get_db()
-c = conn.cursor()
+    c = conn.cursor()
 
-sql = "SELECT id,client_code,name,plan,source,status FROM clients WHERE 1=1"
-params = []
+    sql = "SELECT id,client_code,name,plan,source,status FROM clients WHERE 1=1"
+    params = []
 
-if q:
-    sql += " AND (name LIKE ? OR client_code LIKE ?)"
-    params.extend([f"%{q}%", f"%{q}%"])
+    if q:
+        sql += " AND (name LIKE ? OR client_code LIKE ?)"
+        params.extend([f"%{q}%", f"%{q}%"])
 
-if plan:
-    sql += " AND plan=?"
-    params.append(plan)
+    if plan:
+        sql += " AND plan=?"
+        params.append(plan)
 
-if source:
-    sql += " AND source=?"
-    params.append(source)
+    if source:
+        sql += " AND source=?"
+        params.append(source)
 
-if status:
-    sql += " AND status=?"
-    params.append(status)
+    if status:
+        sql += " AND status=?"
+        params.append(status)
 
-sql += " ORDER BY id DESC"
+    sql += " ORDER BY id DESC"
 
-c.execute(sql, params)
-rows_db = c.fetchall()
-conn.close()
+    c.execute(sql, params)
+    rows_db = c.fetchall()
+    conn.close()
 
     rows = ""
     for r in rows_db:
