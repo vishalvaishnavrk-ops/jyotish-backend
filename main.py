@@ -317,28 +317,28 @@ tr:hover {{
   </div>
 
 <form method="get" style="margin-bottom:15px;">
-  <input type="text" name="q" placeholder="Client Code / Name">
+  <input type="text" name="q" placeholder="Client Code / Name" value="{q or ''}">
 
   <select name="plan">
-    <option value="">All Plans</option>
-    <option>₹51 – बेसिक प्लान</option>
-    <option>₹151 – एडवांस प्लान</option>
-    <option>₹251 – प्रो प्लान</option>
-    <option>₹501 – अल्टीमेट प्लान</option>
-  </select>
+  <option value="" {"selected" if not plan else ""}>All Plans</option>
+  <option value="₹51 – बेसिक प्लान" {"selected" if plan=="₹51 – बेसिक प्लान" else ""}>₹51 – बेसिक प्लान</option>
+  <option value="₹151 – एडवांस प्लान" {"selected" if plan=="₹151 – एडवांस प्लान" else ""}>₹151 – एडवांस प्लान</option>
+  <option value="₹251 – प्रो प्लान" {"selected" if plan=="₹251 – प्रो प्लान" else ""}>₹251 – प्रो प्लान</option>
+  <option value="₹501 – अल्टीमेट प्लान" {"selected" if plan=="₹501 – अल्टीमेट प्लान" else ""}>₹501 – अल्टीमेट प्लान</option>
+</select>
 
   <select name="source">
-    <option value="">All Sources</option>
-    <option>Website</option>
-    <option>Manual</option>
-  </select>
+  <option value="" {"selected" if not source else ""}>All Sources</option>
+  <option value="Website" {"selected" if source=="Website" else ""}>Website</option>
+  <option value="Manual" {"selected" if source=="Manual" else ""}>Manual</option>
+</select>
 
   <select name="status">
-    <option value="">All Status</option>
-    <option>Pending</option>
-    <option>Reviewed</option>
-    <option>Completed</option>
-  </select>
+  <option value="" {"selected" if not status else ""}>All Status</option>
+  <option value="Pending" {"selected" if status=="Pending" else ""}>Pending</option>
+  <option value="Reviewed" {"selected" if status=="Reviewed" else ""}>Reviewed</option>
+  <option value="Completed" {"selected" if status=="Completed" else ""}>Completed</option>
+</select>
 
   <button type="submit">Filter</button>
 </form>
