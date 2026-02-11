@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import List, Optional
-import sqlite3, os, datetime
+import sqlite3, os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import time
-import uuid   # ✅ ADD THIS LINE HERE
+import uuid
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -65,7 +67,7 @@ def ensure_client_code_column():
 ensure_client_code_column()
 
 def generate_client_code():
-    year = datetime.datetime.now().year
+    year = datetime.now(ZoneInfo("Asia/Kolkata")).year
     short_unique = int(time.time()) % 100000   # last 5 digits
     return f"AVV-{year}-{short_unique}"
     
@@ -152,8 +154,6 @@ def dashboard(
     end_date: str = Query(None)
 ):
     
-    from datetime import datetime, timedelta
-    
     conn = get_db()
     c = conn.cursor()
 
@@ -193,9 +193,7 @@ def dashboard(
     rows = ""
     for r in rows_db:
         
-        utc_time = datetime.fromisoformat(r[6])
-        ist_time = utc_time + timedelta(hours=5, minutes=30)
-        formatted_date = ist_time.strftime("%Y-%m-%d %I:%M %p")
+        formatted_date = r[6]
         
         rows += f"""
         <tr>
@@ -511,7 +509,7 @@ async def add_client(
     """, (
         client_code, name, dob, tob, place, plan, questions, image_names,
         "Manual", "Pending", "DUMMY AI OUTPUT",
-        datetime.datetime.utcnow().isoformat()
+        datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
     ))
 
     conn.commit()
@@ -704,11 +702,10 @@ async def website_submit(
         client_code, name, dob, tob, place, plan, questions,
         image_names,
         "Website", "Pending", "AI draft pending",
-        datetime.datetime.utcnow().isoformat()
+        datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
     ))
 
     conn.commit()
     conn.close()
 
     return {"success": True}
-
