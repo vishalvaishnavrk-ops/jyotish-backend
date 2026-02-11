@@ -2,6 +2,7 @@ from fastapi import FastAPI, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import List, Optional
 import sqlite3, os, datetime
+import uuid   # ✅ ADD THIS LINE HERE
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -63,14 +64,9 @@ def ensure_client_code_column():
 ensure_client_code_column()
 
 def generate_client_code():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT COUNT(*) FROM clients")
-    count = c.fetchone()[0] + 1
-    conn.close()
-
     year = datetime.datetime.now().year
-    return f"AVV-{year}-{str(count).zfill(4)}"
+    timestamp = int(datetime.datetime.now().timestamp())
+    return f"AVV-{year}-{timestamp}"
 
 # ---------- HELPERS ----------
 def get_db():
@@ -471,10 +467,18 @@ async def add_client(
     saved_files = []
 
     for img in images:
-        file_path = os.path.join(UPLOAD_DIR, img.filename)
-        with open(file_path, "wb") as f:
-            f.write(await img.read())
-        saved_files.append(img.filename)
+        import uuid
+
+saved_files = []
+
+for img in images:
+    unique_name = f"{uuid.uuid4().hex}_{img.filename}"
+    file_path = os.path.join(UPLOAD_DIR, unique_name)
+
+    with open(file_path, "wb") as f:
+        f.write(await img.read())
+
+    saved_files.append(unique_name)
 
     image_names = ",".join(saved_files)
 
@@ -661,10 +665,18 @@ async def website_submit(
     saved_files = []
 
     for img in images:
-        file_path = os.path.join(UPLOAD_DIR, img.filename)
-        with open(file_path, "wb") as f:
-            f.write(await img.read())
-        saved_files.append(img.filename)
+        import uuid
+
+saved_files = []
+
+for img in images:
+    unique_name = f"{uuid.uuid4().hex}_{img.filename}"
+    file_path = os.path.join(UPLOAD_DIR, unique_name)
+
+    with open(file_path, "wb") as f:
+        f.write(await img.read())
+
+    saved_files.append(unique_name)
 
     image_names = ",".join(saved_files)
 
