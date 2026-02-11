@@ -151,7 +151,9 @@ def dashboard(
     start_date: str = Query(None),
     end_date: str = Query(None)
 ):
-
+    
+    from datetime import datetime, timedelta
+    
     conn = get_db()
     c = conn.cursor()
 
@@ -190,6 +192,11 @@ def dashboard(
 
     rows = ""
     for r in rows_db:
+        
+        utc_time = datetime.fromisoformat(r[6])
+        ist_time = utc_time + timedelta(hours=5, minutes=30)
+        formatted_date = ist_time.strftime("%Y-%m-%d %I:%M %p")
+        
         rows += f"""
         <tr>
             <td>{r[1]}</td>
@@ -197,7 +204,7 @@ def dashboard(
             <td>{r[3]}</td>
             <td>{r[4]}</td>
             <td>{r[5]}</td>
-            <td>{r[6][:10]}</td>
+            <td>{formatted_date}</td>
             <td><a href="/admin/client/{r[0]}">View</a></td>
         </tr>
         """
@@ -504,7 +511,7 @@ async def add_client(
     """, (
         client_code, name, dob, tob, place, plan, questions, image_names,
         "Manual", "Pending", "DUMMY AI OUTPUT",
-        datetime.datetime.now().isoformat()
+        datetime.datetime.utcnow().isoformat()
     ))
 
     conn.commit()
@@ -697,7 +704,7 @@ async def website_submit(
         client_code, name, dob, tob, place, plan, questions,
         image_names,
         "Website", "Pending", "AI draft pending",
-        datetime.datetime.now().isoformat()
+        datetime.datetime.utcnow().isoformat()
     ))
 
     conn.commit()
