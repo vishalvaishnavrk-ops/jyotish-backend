@@ -66,6 +66,31 @@ def ensure_client_code_column():
 
 ensure_client_code_column()
 
+# ---------- PAYMENT & PRIORITY COLUMNS ----------
+def ensure_payment_columns():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    columns = [
+        "phone TEXT",
+        "payment_status TEXT DEFAULT 'Pending'",
+        "payment_date TEXT",
+        "payment_ref TEXT",
+        "priority INTEGER DEFAULT 99",
+        "ai_generated INTEGER DEFAULT 0"
+    ]
+
+    for col in columns:
+        try:
+            c.execute(f"ALTER TABLE clients ADD COLUMN {col}")
+        except:
+            pass
+
+    conn.commit()
+    conn.close()
+
+ensure_payment_columns()
+
 def generate_client_code():
     year = datetime.now(ZoneInfo("Asia/Kolkata")).year
     short_unique = int(time.time()) % 100000   # last 5 digits
