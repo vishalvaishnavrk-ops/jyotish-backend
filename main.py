@@ -178,11 +178,11 @@ def dashboard(
 
     if start_date:
         sql += " AND created_at >= ?"
-        params.append(start_date + "T00:00:00")
+        params.append(start_date + " 00:00:00")
 
     if end_date:
         sql += " AND created_at <= ?"
-        params.append(end_date + "T23:59:59")
+        params.append(end_date + " 23:59:59")
 
     sql += " ORDER BY id DESC"
 
@@ -193,7 +193,8 @@ def dashboard(
     rows = ""
     for r in rows_db:
         
-        formatted_date = r[6]
+        dt = datetime.strptime(r[6], "%Y-%m-%d %H:%M:%S")
+        formatted_date = dt.strftime("%d-%m-%Y %I:%M %p")
         
         rows += f"""
         <tr>
