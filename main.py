@@ -182,7 +182,7 @@ def dashboard(
     conn = get_db()
     c = conn.cursor()
 
-    sql = "SELECT id,client_code,name,plan,source,status,created_at FROM clients WHERE 1=1"
+    sql = "SELECT id,client_code,name,plan,source,status,created_at,payment_status,priority FROM clients WHERE 1=1"
     params = []
 
     if q:
@@ -209,7 +209,7 @@ def dashboard(
         sql += " AND created_at <= ?"
         params.append(end_date + " 23:59:59")
 
-    sql += " ORDER BY id DESC"
+    sql += " ORDER BY priority ASC, id DESC"
 
     c.execute(sql, params)
     rows_db = c.fetchall()
@@ -217,6 +217,8 @@ def dashboard(
 
     rows = ""
     for r in rows_db:
+
+        payment_badge = "🟢 Paid" if r[7] == "Paid" else "🔴 Pending"
         
         dt = datetime.strptime(r[6], "%Y-%m-%d %H:%M:%S")
         formatted_date = dt.strftime("%d-%m-%Y %I:%M %p")
@@ -228,6 +230,7 @@ def dashboard(
             <td>{r[3]}</td>
             <td>{r[4]}</td>
             <td>{r[5]}</td>
+            <td>{payment_badge}</td>
             <td>{formatted_date}</td>
             <td><a href="/admin/client/{r[0]}">View</a></td>
         </tr>
@@ -392,6 +395,7 @@ tr:hover {{
       <th>Plan</th>
       <th>Source</th>
       <th>Status</th>
+      <th>Payment</th>
       <th>Date</th>
       <th>Action</th>
     </tr>
@@ -529,14 +533,16 @@ async def add_client(
     client_code = generate_client_code()
 
     c.execute("""
-        INSERT INTO clients
-        (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-    """, (
-        client_code, name, dob, tob, place, plan, questions, image_names,
-        "Manual", "Pending", "DUMMY AI OUTPUT",
-        datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
-    ))
+    INSERT INTO clients
+    (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+""", (
+    client_code, name, dob, tob, place, plan, questions,
+    image_names,
+    "Website", "Pending", "AI draft pending",
+    datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
+    "Pending", 99, 0
+))
 
     conn.commit()
     conn.close()
@@ -651,6 +657,29 @@ button {{
 
 </div>
 
+<div class="card">
+<h3>Payment Details</h3>
+
+<p><b>Status:</b> {cdata[14] or "Pending"}</p>
+<p><b>Payment Date:</b> {cdata[15] or "-"}</p>
+<p><b>Payment Ref:</b> {cdata[16] or "-"}</p>
+
+<form method="post" action="/admin/client/{client_id}/payment">
+
+<label>Update Payment Status:</label><br>
+<select name="payment_status">
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+</select><br><br>
+
+<label>Payment Ref:</label><br>
+<input name="payment_ref"><br><br>
+
+<button type="submit">Save Payment</button>
+
+</form>
+</div>
+
   <div class="card">
     <h3>मुख्य प्रश्न</h3>
     <p>{cdata[6]}</p>
@@ -692,6 +721,46 @@ def update_client(client_id: int, ai_draft: str = Form(...), status: str = Form(
     conn.close()
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
+@app.post("/admin/client/{client_id}/payment")
+def update_payment(
+    client_id: int,
+    payment_status: str = Form(...),
+    payment_ref: str = Form(None)
+):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    payment_date = None
+    priority = 99
+
+    if payment_status == "Paid":
+        payment_date = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
+
+        # get plan
+        c.execute("SELECT plan FROM clients WHERE id=?", (client_id,))
+        plan = c.fetchone()[0]
+
+        if "501" in plan:
+            priority = 1
+        elif "251" in plan:
+            priority = 2
+        elif "151" in plan:
+            priority = 3
+        else:
+            priority = 4
+
+    c.execute("""
+        UPDATE clients
+        SET payment_status=?, payment_date=?, payment_ref=?, priority=?
+        WHERE id=?
+    """, (payment_status, payment_date, payment_ref, priority, client_id))
+
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
 async def website_submit(
@@ -721,15 +790,16 @@ async def website_submit(
     client_code = generate_client_code()
 
     c.execute("""
-        INSERT INTO clients
-        (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-    """, (
-        client_code, name, dob, tob, place, plan, questions,
-        image_names,
-        "Website", "Pending", "AI draft pending",
-        datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
-    ))
+    INSERT INTO clients
+    (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+""", (
+    client_code, name, dob, tob, place, plan, questions,
+    image_names,
+    "Website", "Pending", "AI draft pending",
+    datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
+    "Pending", 99, 0
+))
 
     conn.commit()
     conn.close()
