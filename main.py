@@ -259,7 +259,19 @@ def dashboard(
         # 8=payment_status
         # 9=priority
 
-        payment_badge = "🟢 Paid" if r[8] == "Paid" else "🔴 Pending"
+        payment_status = r[8]
+
+        if payment_status == "Paid":
+            payment_badge = "🟢 Paid"
+        else:
+            payment_badge = f"""
+            🔴 Pending
+            <form method="post" action="/admin/mark-paid/{r[0]}" style="display:inline;">
+                <button style="background:#28a745;color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">
+                    Mark Paid
+                </button>
+            </form>
+            """
 
         dt = datetime.strptime(r[7], "%Y-%m-%d %H:%M:%S")
         formatted_date = dt.strftime("%d-%m-%Y %I:%M %p")
@@ -824,6 +836,38 @@ def update_payment(
 
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
+@app.post("/admin/mark-paid/{client_id}")
+def mark_paid(client_id: int):
+    conn = get_db()
+    c = conn.cursor()
+
+    # plan fetch for priority logic
+    c.execute("SELECT plan FROM clients WHERE id=?", (client_id,))
+    plan = c.fetchone()[0]
+
+    priority = 4
+    if "501" in plan:
+        priority = 1
+    elif "251" in plan:
+        priority = 2
+    elif "151" in plan:
+        priority = 3
+
+    payment_date = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
+
+    c.execute("""
+        UPDATE clients
+        SET payment_status='Paid',
+            payment_date=?,
+            priority=?
+        WHERE id=?
+    """, (payment_date, priority, client_id))
+
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse("/admin/dashboard", status_code=302)
+    
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
 async def website_submit(
