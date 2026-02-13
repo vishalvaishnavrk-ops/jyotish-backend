@@ -47,7 +47,7 @@ def init_db():
         images TEXT,
         source TEXT,
         status TEXT,
-        payment_status TEXT DEFAULT 'Unpaid',  -- ✅ ADD THIS
+        payment_status TEXT DEFAULT 'Pending',  -- ✅ ADD THIS
         payment_date TEXT,
         payment_ref TEXT,
         ai_draft TEXT,
@@ -119,6 +119,15 @@ def ensure_payment_columns():
     conn.close()
 
 ensure_payment_columns()
+
+def fix_old_payment_values():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE clients SET payment_status='Pending' WHERE payment_status='Unpaid'")
+    conn.commit()
+    conn.close()
+
+fix_old_payment_values()
 
 def generate_client_code():
     year = datetime.now(ZoneInfo("Asia/Kolkata")).year
@@ -620,7 +629,7 @@ async def add_client(
         image_names,
         "Manual",
         "Pending",          # status
-        "Unpaid",           # payment_status
+        "Pending",           # payment_status
         None,               # payment_date
         None,               # payment_ref
         "AI draft pending", # ai_draft
@@ -926,7 +935,7 @@ async def website_submit(
         image_names,
         "Website",
         "Pending",
-        "Unpaid",
+        "Pending",
         None,
         None,
         "AI draft pending",
