@@ -36,7 +36,9 @@ def init_db():
     c.execute("""
     CREATE TABLE IF NOT EXISTS clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_code TEXT,
         name TEXT,
+        phone TEXT,              -- ✅ ADD THIS
         dob TEXT,
         tob TEXT,
         place TEXT,
@@ -45,6 +47,9 @@ def init_db():
         images TEXT,
         source TEXT,
         status TEXT,
+        payment_status TEXT DEFAULT 'Unpaid',  -- ✅ ADD THIS
+        payment_date TEXT,
+        payment_ref TEXT,
         ai_draft TEXT,
         created_at TEXT
     )
@@ -65,6 +70,30 @@ def ensure_client_code_column():
     conn.close()
 
 ensure_client_code_column()
+
+def ensure_phone_and_payment_columns():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    try:
+        c.execute("ALTER TABLE clients ADD COLUMN phone TEXT")
+    except:
+        pass
+    try:
+        c.execute("ALTER TABLE clients ADD COLUMN payment_status TEXT DEFAULT 'Unpaid'")
+    except:
+        pass
+    try:
+        c.execute("ALTER TABLE clients ADD COLUMN payment_date TEXT")
+    except:
+        pass
+    try:
+        c.execute("ALTER TABLE clients ADD COLUMN payment_ref TEXT")
+    except:
+        pass
+    conn.commit()
+    conn.close()
+
+ensure_phone_and_payment_columns()
 
 # ---------- PAYMENT & PRIORITY COLUMNS ----------
 def ensure_payment_columns():
@@ -182,7 +211,7 @@ def dashboard(
     conn = get_db()
     c = conn.cursor()
 
-    sql = "SELECT id,client_code,name,plan,source,status,created_at,payment_status,priority FROM clients WHERE 1=1"
+    sql = "SELECT id,client_code,name,phone,plan,source,status,created_at,payment_status,priority FROM clients WHERE 1=1"
     params = []
 
     if q:
@@ -218,20 +247,21 @@ def dashboard(
     rows = ""
     for r in rows_db:
 
-        payment_badge = "🟢 Paid" if r[7] == "Paid" else "🔴 Pending"
-        
-        dt = datetime.strptime(r[6], "%Y-%m-%d %H:%M:%S")
-        formatted_date = dt.strftime("%d-%m-%Y %I:%M %p")
+    payment_badge = "🟢 Paid" if r[6] == "Paid" else "🔴 Pending"
+
+    dt = datetime.strptime(r[7], "%Y-%m-%d %H:%M:%S")
+    formatted_date = dt.strftime("%d-%m-%Y %I:%M %p")
         
         rows += f"""
         <tr>
-            <td>{r[1]}</td>
-            <td>{r[2]}</td>
-            <td>{r[3]}</td>
-            <td>{r[4]}</td>
-            <td>{r[5]}</td>
-            <td>{payment_badge}</td>
-            <td>{formatted_date}</td>
+            <td>{r[1]}</td>        # client code
+            <td>{r[2]}</td>        # name
+            <td>{r[3]}</td>        # phone
+            <td>{r[4]}</td>        # plan
+            <td>{r[5]}</td>        # source
+            <td>{r[6]}</td>        # status
+            <td>{payment_badge}</td>   # payment
+            <td>{formatted_date}</td>  # date
             <td><a href="/admin/client/{r[0]}">View</a></td>
         </tr>
         """
@@ -395,6 +425,7 @@ tr:hover {{
       <th>Plan</th>
       <th>Source</th>
       <th>Status</th>
+      <th>Phone</th>
       <th>Payment</th>
       <th>Date</th>
       <th>Action</th>
@@ -469,6 +500,9 @@ body{
 <label>नाम</label>
 <input name="name" required>
 
+<label>मोबाइल नंबर *</label>
+<input name="phone" required>
+
 <label>जन्म तिथि</label>
 <input name="dob" required>
 
@@ -508,6 +542,7 @@ body{
 @app.post("/admin/add-client")
 async def add_client(
     name: str = Form(...),
+    phone: str = Form(...),      # ✅ ADD
     dob: str = Form(...),
     tob: Optional[str] = Form(None),
     place: Optional[str] = Form(None),
@@ -534,12 +569,12 @@ async def add_client(
 
     c.execute("""
     INSERT INTO clients
-    (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
+    (client_code,name,phone,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 """, (
-    client_code, name, dob, tob, place, plan, questions,
+    client_code, name, phone, dob, tob, place, plan, questions,
     image_names,
-    "Website", "Pending", "AI draft pending",
+    "Manual", "Pending", "Unpaid", "AI draft pending",
     datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
     "Pending", 99, 0
 ))
@@ -765,6 +800,7 @@ def update_payment(
 @app.post("/api/website-submit")
 async def website_submit(
     name: str = Form(...),
+    phone: str = Form(...),   # ✅ ADD
     dob: str = Form(...),
     questions: str = Form(...),
     plan: str = Form(...),
@@ -791,12 +827,12 @@ async def website_submit(
 
     c.execute("""
     INSERT INTO clients
-    (client_code,name,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
+    (client_code,name,phone,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 """, (
-    client_code, name, dob, tob, place, plan, questions,
+    client_code, name, phone, dob, tob, place, plan, questions,
     image_names,
-    "Website", "Pending", "AI draft pending",
+    "Website", "Pending", "Unpaid", "AI draft pending",
     datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
     "Pending", 99, 0
 ))
