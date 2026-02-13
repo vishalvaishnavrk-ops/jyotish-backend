@@ -120,15 +120,6 @@ def ensure_payment_columns():
 
 ensure_payment_columns()
 
-def fix_old_payment_values():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("UPDATE clients SET payment_status='Pending' WHERE payment_status='Unpaid'")
-    conn.commit()
-    conn.close()
-
-fix_old_payment_values()
-
 def generate_client_code():
     year = datetime.now(ZoneInfo("Asia/Kolkata")).year
     short_unique = int(time.time()) % 100000   # last 5 digits
