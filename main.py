@@ -247,21 +247,33 @@ def dashboard(
     rows = ""
     for r in rows_db:
 
-    payment_badge = "🟢 Paid" if r[6] == "Paid" else "🔴 Pending"
+        # r index mapping:
+        # 0=id
+        # 1=client_code
+        # 2=name
+        # 3=phone
+        # 4=plan
+        # 5=source
+        # 6=status
+        # 7=created_at
+        # 8=payment_status
+        # 9=priority
 
-    dt = datetime.strptime(r[7], "%Y-%m-%d %H:%M:%S")
-    formatted_date = dt.strftime("%d-%m-%Y %I:%M %p")
-        
+        payment_badge = "🟢 Paid" if r[8] == "Paid" else "🔴 Pending"
+
+        dt = datetime.strptime(r[7], "%Y-%m-%d %H:%M:%S")
+        formatted_date = dt.strftime("%d-%m-%Y %I:%M %p")
+
         rows += f"""
         <tr>
-            <td>{r[1]}</td>        # client code
-            <td>{r[2]}</td>        # name
-            <td>{r[3]}</td>        # phone
-            <td>{r[4]}</td>        # plan
-            <td>{r[5]}</td>        # source
-            <td>{r[6]}</td>        # status
-            <td>{payment_badge}</td>   # payment
-            <td>{formatted_date}</td>  # date
+            <td>{r[1]}</td>
+            <td>{r[2]}</td>
+            <td>{r[4]}</td>
+            <td>{r[5]}</td>
+            <td>{r[6]}</td>
+            <td>{r[3]}</td>
+            <td>{payment_badge}</td>
+            <td>{formatted_date}</td>
             <td><a href="/admin/client/{r[0]}">View</a></td>
         </tr>
         """
