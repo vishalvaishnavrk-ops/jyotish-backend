@@ -581,15 +581,30 @@ async def add_client(
 
     c.execute("""
     INSERT INTO clients
-    (client_code,name,phone,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-""", (
-    client_code, name, phone, dob, tob, place, plan, questions,
-    image_names,
-    "Manual", "Pending", "Unpaid", "AI draft pending",
-    datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
-    "Pending", 99, 0
-))
+    (client_code,name,phone,dob,tob,place,plan,questions,images,
+     source,status,payment_status,payment_date,payment_ref,
+     ai_draft,created_at,priority,ai_generated)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    """, (
+        client_code,
+        name,
+        phone,
+        dob,
+        tob,
+        place,
+        plan,
+        questions,
+        image_names,
+        "Manual",
+        "Pending",          # status
+        "Unpaid",           # payment_status
+        None,               # payment_date
+        None,               # payment_ref
+        "AI draft pending", # ai_draft
+        datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
+        99,                 # priority
+        0                   # ai_generated
+    ))
 
     conn.commit()
     conn.close()
@@ -839,15 +854,30 @@ async def website_submit(
 
     c.execute("""
     INSERT INTO clients
-    (client_code,name,phone,dob,tob,place,plan,questions,images,source,status,ai_draft,created_at,payment_status,priority,ai_generated)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-""", (
-    client_code, name, phone, dob, tob, place, plan, questions,
-    image_names,
-    "Website", "Pending", "Unpaid", "AI draft pending",
-    datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
-    "Pending", 99, 0
-))
+    (client_code,name,phone,dob,tob,place,plan,questions,images,
+    source,status,payment_status,payment_date,payment_ref,
+    ai_draft,created_at,priority,ai_generated)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    """, (
+        client_code,
+        name,
+        phone,
+        dob,
+        tob,
+        place,
+        plan,
+        questions,
+        image_names,
+        "Website",
+        "Pending",
+        "Unpaid",
+        None,
+        None,
+        "AI draft pending",
+        datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
+        99,
+        0
+    ))
 
     conn.commit()
     conn.close()
