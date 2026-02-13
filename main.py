@@ -204,6 +204,7 @@ def dashboard(
     plan: str = Query(None),
     source: str = Query(None),
     status: str = Query(None),
+    payment: str = Query(None),   # 🔥 ADD THIS
     start_date: str = Query(None),
     end_date: str = Query(None)
 ):
@@ -215,8 +216,8 @@ def dashboard(
     params = []
 
     if q:
-        sql += " AND (name LIKE ? OR client_code LIKE ?)"
-        params.extend([f"%{q}%", f"%{q}%"])
+    sql += " AND (name LIKE ? OR client_code LIKE ? OR phone LIKE ?)"
+    params.extend([f"%{q}%", f"%{q}%", f"%{q}%"])
 
     if plan:
         sql += " AND plan=?"
@@ -229,6 +230,10 @@ def dashboard(
     if status:
         sql += " AND status=?"
         params.append(status)
+
+    if payment:
+    sql += " AND payment_status=?"
+    params.append(payment)
 
     if start_date:
         sql += " AND created_at >= ?"
@@ -434,6 +439,12 @@ tr:hover {{
   <option value="Pending" {"selected" if status=="Pending" else ""}>Pending</option>
   <option value="Reviewed" {"selected" if status=="Reviewed" else ""}>Reviewed</option>
   <option value="Completed" {"selected" if status=="Completed" else ""}>Completed</option>
+</select>
+
+  <select name="payment">
+  <option value="" {"selected" if not payment else ""}>All Payment</option>
+  <option value="Pending" {"selected" if payment=="Pending" else ""}>Pending</option>
+  <option value="Paid" {"selected" if payment=="Paid" else ""}>Paid</option>
 </select>
 
   <input type="date" name="start_date" value="{start_date or ''}">
