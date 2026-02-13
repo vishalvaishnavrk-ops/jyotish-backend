@@ -622,8 +622,8 @@ def client_detail(client_id: int):
 
     # ✅ ---- ADD THIS BLOCK HERE ----
     images_html = ""
-    if cdata[7]:
-        for img in cdata[7].split(","):
+    if cdata[9]:
+        for img in cdata[9].split(","):
             img = img.strip()
             if img:
                 images_html += f'<img src="/uploads/{img}" width="150" style="margin:5px;border:1px solid #ccc;">'
@@ -708,12 +708,13 @@ button {{
 
   <div class="card">
   <h3>क्लाइंट जानकारी</h3>
-  <p><span class="label">Client Code:</span> <b>{cdata[12]}</b></p>
-  <p><span class="label">नाम:</span> {cdata[1]}</p>
-  <p><span class="label">जन्म तिथि:</span> {cdata[2]}</p>
-  <p><span class="label">जन्म समय:</span> {cdata[3] or "—"}</p>
-  <p><span class="label">जन्म स्थान:</span> {cdata[4] or "—"}</p>
-  <p><span class="label">प्लान:</span> {cdata[5]}</p>
+  <p><span class="label">Client Code:</span> <b>{cdata[1]}</b></p>
+  <p><span class="label">नाम:</span> {cdata[2]}</p>
+  <p><span class="label">मोबाइल:</span> {cdata[3]}</p>
+  <p><span class="label">जन्म तिथि:</span> {cdata[4]}</p>
+  <p><span class="label">जन्म समय:</span> {cdata[5] or "—"}</p>
+  <p><span class="label">जन्म स्थान:</span> {cdata[6] or "—"}</p>
+  <p><span class="label">प्लान:</span> {cdata[7]}</p>
   <p><span class="label">Palm Images:</span></p>
   {images_html}
 
@@ -722,9 +723,9 @@ button {{
 <div class="card">
 <h3>Payment Details</h3>
 
-<p><b>Status:</b> {cdata[14] or "Pending"}</p>
-<p><b>Payment Date:</b> {cdata[15] or "-"}</p>
-<p><b>Payment Ref:</b> {cdata[16] or "-"}</p>
+<p><b>Status:</b> {cdata[12] or "Pending"}</p>
+<p><b>Payment Date:</b> {cdata[13] or "-"}</p>
+<p><b>Payment Ref:</b> {cdata[14] or "-"}</p>
 
 <form method="post" action="/admin/client/{client_id}/payment">
 
@@ -744,19 +745,19 @@ button {{
 
   <div class="card">
     <h3>मुख्य प्रश्न</h3>
-    <p>{cdata[6]}</p>
+    <p>{cdata[8]}</p>
   </div>
 
   <div class="card">
     <h3>AI ड्राफ्ट (Internal Use)</h3>
     <form method="post" action="/admin/client/{client_id}/update">
-      <textarea name="ai_draft" rows="10">{cdata[10]}</textarea><br><br>
+      <textarea name="ai_draft" rows="10">{cdata[15]}</textarea><br><br>
 
       <label class="label">Status:</label><br>
       <select name="status">
-        <option {"selected" if cdata[9]=="Pending" else ""}>Pending</option>
-        <option {"selected" if cdata[9]=="Reviewed" else ""}>Reviewed</option>
-        <option {"selected" if cdata[9]=="Completed" else ""}>Completed</option>
+        <option {"selected" if cdata[11]=="Pending" else ""}>Pending</option>
+        <option {"selected" if cdata[11]=="Reviewed" else ""}>Reviewed</option>
+        <option {"selected" if cdata[11]=="Completed" else ""}>Completed</option>
       </select><br><br>
 
       <button type="submit">Save Update</button>
