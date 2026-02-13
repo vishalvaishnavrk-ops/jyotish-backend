@@ -878,15 +878,6 @@ def mark_paid(client_id: int):
     conn.close()
 
     return RedirectResponse("/admin/dashboard", status_code=302)
-
-@app.get("/fix-payment")
-def fix_payment():
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("UPDATE clients SET payment_status='Pending' WHERE payment_status='Unpaid'")
-    conn.commit()
-    conn.close()
-    return {"status": "fixed"}
     
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
