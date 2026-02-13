@@ -232,8 +232,8 @@ def dashboard(
         params.append(status)
 
     if payment:
-    sql += " AND payment_status=?"
-    params.append(payment)
+        sql += " AND payment_status=?"
+        params.append(payment)
 
     if start_date:
         sql += " AND created_at >= ?"
