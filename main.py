@@ -927,4 +927,8 @@ async def website_submit(
     conn.commit()
     conn.close()
 
-    return {"success": True}
+    return {
+    "success": True,
+    "client_code": client_code
+    }
+
