@@ -216,8 +216,8 @@ def dashboard(
     params = []
 
     if q:
-    sql += " AND (name LIKE ? OR client_code LIKE ? OR phone LIKE ?)"
-    params.extend([f"%{q}%", f"%{q}%", f"%{q}%"])
+        sql += " AND (name LIKE ? OR client_code LIKE ? OR phone LIKE ?)"
+        params.extend([f"%{q}%", f"%{q}%", f"%{q}%"])
 
     if plan:
         sql += " AND plan=?"
