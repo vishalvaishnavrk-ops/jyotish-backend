@@ -8,13 +8,17 @@ import time
 import uuid
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import Image
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.enums import TA_CENTER
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 
 app = FastAPI()
 
@@ -947,6 +951,13 @@ button {{
             Generate PDF Report
         </button>
     </form>
+
+    <br><br>
+    <a href="/admin/client/{client_id}/pdf" target="_blank">
+        <button style="background:#8b0000;">
+            Download PDF Report
+        </button>
+    </a>
   </div>
 
   <div class="back-link">
@@ -1058,6 +1069,92 @@ def create_pdf(client_id: int):
 def manual_ai_generate(client_id: int):
      generate_ai_draft(client_id)
      return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+
+@app.get("/admin/client/{client_id}/pdf")
+def generate_pdf(client_id: int):
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT * FROM clients WHERE id=?", (client_id,))
+    cdata = c.fetchone()
+    conn.close()
+
+    file_path = f"uploads/{cdata[1]}.pdf"
+    doc = SimpleDocTemplate(file_path, pagesize=A4)
+
+    elements = []
+
+    # Register Hindi Font
+    pdfmetrics.registerFont(TTFont('HindiFont', 'NotoSansDevanagari-Regular.ttf'))
+
+    styles = getSampleStyleSheet()
+
+    heading_style = ParagraphStyle(
+        'HeadingStyle',
+        parent=styles['Heading1'],
+        fontName='HindiFont',
+        fontSize=16,
+        textColor=colors.HexColor("#8b0000"),
+        alignment=TA_CENTER,
+        spaceAfter=12
+    )
+
+    normal_style = ParagraphStyle(
+        'NormalStyle',
+        parent=styles['Normal'],
+        fontName='HindiFont',
+        fontSize=11,
+        spaceAfter=6
+    )
+
+    # Logo
+    try:
+        logo = Image("ganesha.png", width=1.2*inch, height=1.2*inch)
+        logo.hAlign = "CENTER"
+        elements.append(logo)
+    except:
+        pass
+
+    elements.append(Spacer(1, 10))
+
+    elements.append(Paragraph("आचार्य विशाल वैष्णव", heading_style))
+    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", normal_style))
+    elements.append(Spacer(1, 20))
+
+    data = [
+        ["Client Code", cdata[1]],
+        ["Name", cdata[2]],
+        ["Mobile", cdata[3]],
+        ["Plan", cdata[7]],
+        ["Date", cdata[16]],
+    ]
+
+    table = Table(data, colWidths=[120, 350])
+    table.setStyle(TableStyle([
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+        ('FONTNAME', (0,0), (-1,-1), 'HindiFont'),
+        ('FONTSIZE', (0,0), (-1,-1), 10)
+    ]))
+
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+    elements.append(Paragraph("Palm Reading Detailed Report", heading_style))
+    elements.append(Spacer(1, 10))
+
+    report_text = cdata[15] or "Report not generated yet."
+
+    for line in report_text.split("\n"):
+        elements.append(Paragraph(line, normal_style))
+
+    elements.append(Spacer(1, 20))
+
+    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", normal_style))
+    elements.append(Paragraph("WhatsApp: +91-6000376976", normal_style))
+
+    doc.build(elements)
+
+    return RedirectResponse(f"/{file_path}", status_code=302)
      
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
