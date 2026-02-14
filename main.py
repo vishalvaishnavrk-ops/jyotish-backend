@@ -232,48 +232,90 @@ def generate_pdf_report(client_id):
 
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT client_code,name,plan,ai_draft FROM clients WHERE id=?", (client_id,))
+    c.execute("SELECT client_code,name,phone,plan,ai_draft,created_at FROM clients WHERE id=?", (client_id,))
     data = c.fetchone()
     conn.close()
 
     if not data:
         return None
 
-    client_code, name, plan, ai_draft = data
+    client_code, name, phone, plan, ai_draft, created_at = data
 
     file_name = f"{client_code}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
+
+    # Register Hindi Font
+    pdfmetrics.registerFont(TTFont('HindiFont', 'NotoSansDevanagari-Regular.ttf'))
 
     doc = SimpleDocTemplate(file_path, pagesize=A4)
     elements = []
 
     styles = getSampleStyleSheet()
 
-    title_style = ParagraphStyle(
-        'TitleStyle',
+    heading_style = ParagraphStyle(
+        'HeadingStyle',
         parent=styles['Heading1'],
+        fontName='HindiFont',
         fontSize=18,
         textColor=colors.HexColor("#8b0000"),
-        spaceAfter=20
+        alignment=TA_CENTER,
+        spaceAfter=14
     )
 
-    normal_style = styles["Normal"]
+    normal_style = ParagraphStyle(
+        'NormalStyle',
+        parent=styles['Normal'],
+        fontName='HindiFont',
+        fontSize=11,
+        spaceAfter=6
+    )
 
-    # Header
-    elements.append(Paragraph("आचार्य विशाल वैष्णव", title_style))
+    # Logo
+    try:
+        logo = Image("ganesha.png", width=1.4*inch, height=1.4*inch)
+        logo.hAlign = "CENTER"
+        elements.append(logo)
+    except:
+        pass
+
+    elements.append(Spacer(1, 10))
+
+    elements.append(Paragraph("आचार्य विशाल वैष्णव", heading_style))
     elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", normal_style))
-    elements.append(Spacer(1, 0.3 * inch))
+    elements.append(Spacer(1, 15))
 
-    # Client Info
-    elements.append(Paragraph(f"<b>Client Name:</b> {name}", normal_style))
-    elements.append(Paragraph(f"<b>Client Code:</b> {client_code}", normal_style))
-    elements.append(Paragraph(f"<b>Plan:</b> {plan}", normal_style))
-    elements.append(Spacer(1, 0.3 * inch))
+    # Client Info Table
+    info_data = [
+        ["Client Code", client_code],
+        ["Name", name],
+        ["Mobile", phone],
+        ["Plan", plan],
+        ["Report Date", created_at]
+    ]
 
-    # Report Body
-    for line in ai_draft.split("\n"):
-        elements.append(Paragraph(line, normal_style))
-        elements.append(Spacer(1, 0.15 * inch))
+    table = Table(info_data, colWidths=[120, 350])
+    table.setStyle(TableStyle([
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+        ('FONTNAME', (0,0), (-1,-1), 'HindiFont'),
+        ('FONTSIZE', (0,0), (-1,-1), 10),
+        ('BACKGROUND', (0,0), (-1,0), colors.whitesmoke)
+    ]))
+
+    elements.append(table)
+    elements.append(Spacer(1, 20))
+
+    elements.append(Paragraph("Palm Reading Detailed Report", heading_style))
+    elements.append(Spacer(1, 10))
+
+    report_text = ai_draft or "Report not generated yet."
+
+    for line in report_text.split("\n"):
+        elements.append(Paragraph(line.strip(), normal_style))
+
+    elements.append(Spacer(1, 25))
+
+    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", normal_style))
+    elements.append(Paragraph("WhatsApp: +91-6000376976", normal_style))
 
     doc.build(elements)
 
@@ -1071,90 +1113,24 @@ def manual_ai_generate(client_id: int):
      return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
 @app.get("/admin/client/{client_id}/pdf")
-def generate_pdf(client_id: int):
+def download_pdf(client_id: int):
 
     conn = get_db()
     c = conn.cursor()
-    c.execute("SELECT * FROM clients WHERE id=?", (client_id,))
-    cdata = c.fetchone()
+    c.execute("SELECT client_code FROM clients WHERE id=?", (client_id,))
+    data = c.fetchone()
     conn.close()
 
-    file_path = f"uploads/{cdata[1]}.pdf"
-    doc = SimpleDocTemplate(file_path, pagesize=A4)
+    if not data:
+        return HTMLResponse("Report not found")
 
-    elements = []
+    file_name = f"{data[0]}.pdf"
+    file_path = os.path.join(REPORT_DIR, file_name)
 
-    # Register Hindi Font
-    pdfmetrics.registerFont(TTFont('HindiFont', 'NotoSansDevanagari-Regular.ttf'))
+    if not os.path.exists(file_path):
+        return HTMLResponse("PDF not generated yet.")
 
-    styles = getSampleStyleSheet()
-
-    heading_style = ParagraphStyle(
-        'HeadingStyle',
-        parent=styles['Heading1'],
-        fontName='HindiFont',
-        fontSize=16,
-        textColor=colors.HexColor("#8b0000"),
-        alignment=TA_CENTER,
-        spaceAfter=12
-    )
-
-    normal_style = ParagraphStyle(
-        'NormalStyle',
-        parent=styles['Normal'],
-        fontName='HindiFont',
-        fontSize=11,
-        spaceAfter=6
-    )
-
-    # Logo
-    try:
-        logo = Image("ganesha.png", width=1.2*inch, height=1.2*inch)
-        logo.hAlign = "CENTER"
-        elements.append(logo)
-    except:
-        pass
-
-    elements.append(Spacer(1, 10))
-
-    elements.append(Paragraph("आचार्य विशाल वैष्णव", heading_style))
-    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", normal_style))
-    elements.append(Spacer(1, 20))
-
-    data = [
-        ["Client Code", cdata[1]],
-        ["Name", cdata[2]],
-        ["Mobile", cdata[3]],
-        ["Plan", cdata[7]],
-        ["Date", cdata[16]],
-    ]
-
-    table = Table(data, colWidths=[120, 350])
-    table.setStyle(TableStyle([
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-        ('FONTNAME', (0,0), (-1,-1), 'HindiFont'),
-        ('FONTSIZE', (0,0), (-1,-1), 10)
-    ]))
-
-    elements.append(table)
-    elements.append(Spacer(1, 20))
-
-    elements.append(Paragraph("Palm Reading Detailed Report", heading_style))
-    elements.append(Spacer(1, 10))
-
-    report_text = cdata[15] or "Report not generated yet."
-
-    for line in report_text.split("\n"):
-        elements.append(Paragraph(line, normal_style))
-
-    elements.append(Spacer(1, 20))
-
-    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", normal_style))
-    elements.append(Paragraph("WhatsApp: +91-6000376976", normal_style))
-
-    doc.build(elements)
-
-    return RedirectResponse(f"/{file_path}", status_code=302)
+    return RedirectResponse(f"/reports/{file_name}", status_code=302)
      
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
