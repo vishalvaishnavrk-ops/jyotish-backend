@@ -831,6 +831,10 @@ button {{
       </select><br><br>
 
       <button type="submit">Save Update</button>
+      <form method="post" action="/admin/client/{client_id}/generate-ai" style="margin-top:10px;">
+          <button style="background:#007bff;">
+              Generate AI Draft Now
+          </button>
     </form>
   </div>
 
@@ -899,10 +903,11 @@ def update_payment(
 
 @app.post("/admin/mark-paid/{client_id}")
 def mark_paid(client_id: int):
+
     conn = get_db()
     c = conn.cursor()
 
-    # plan fetch for priority logic
+    # get plan for priority
     c.execute("SELECT plan FROM clients WHERE id=?", (client_id,))
     plan = c.fetchone()[0]
 
@@ -916,6 +921,7 @@ def mark_paid(client_id: int):
 
     payment_date = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
 
+    # update payment
     c.execute("""
         UPDATE clients
         SET payment_status='Paid',
@@ -927,8 +933,18 @@ def mark_paid(client_id: int):
     conn.commit()
     conn.close()
 
+    # 🔥🔥🔥 TRIGGER AI AFTER PAYMENT
+    generate_ai_draft(client_id)
+
     return RedirectResponse("/admin/dashboard", status_code=302)
-    
+
+ @app.post("/admin/client/{client_id}/generate-ai")
+ def manual_ai_generate(client_id: int):
+
+     generate_ai_draft(client_id)
+
+     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+   
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
 async def website_submit(
