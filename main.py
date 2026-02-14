@@ -131,7 +131,7 @@ def generate_ai_draft(client_id):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT name,plan,questions FROM clients WHERE id=?", (client_id,))
+    c.execute("SELECT name, plan, questions FROM clients WHERE id=?", (client_id,))
     data = c.fetchone()
 
     if not data:
@@ -140,27 +140,67 @@ def generate_ai_draft(client_id):
 
     name, plan, questions = data
 
-    # ----- PLAN BASED LOGIC -----
+    # ---------- PLAN LOGIC ----------
     if "501" in plan:
-        depth = "Very Detailed Spiritual + Life Analysis"
+        q_depth = "Deep destiny and karmic explanation"
+        remedy_level = "Advanced spiritual remedies"
+        q_limit = 5
     elif "251" in plan:
-        depth = "Detailed Palm Analysis"
+        q_depth = "Strategic life guidance"
+        remedy_level = "Spiritual + discipline remedies"
+        q_limit = 3
     elif "151" in plan:
-        depth = "Moderate Analysis"
+        q_depth = "Detailed practical explanation"
+        remedy_level = "Weekly + mantra remedies"
+        q_limit = 2
     else:
-        depth = "Basic Overview"
+        q_depth = "Simple direct guidance"
+        remedy_level = "Basic daily remedies"
+        q_limit = 1
 
-    # ----- TEMP AI DRAFT (REAL GPT WILL COME LATER) -----
+    # ---------- MASTER PROMPT ----------
     draft = f"""
-Palm Reading Report for {name}
-
+🌸 *Palm Reading Report*
+Client Name: {name}
 Plan: {plan}
-Analysis Depth: {depth}
 
-Main Question:
+🔱 Section 1 – Haath ki Sanrachna
+Aapke haath ki banavat, ungliyon ki lambai aur angoothe ki sthiti aapki personality, decision power aur will power ko darshati hai.
+
+🔱 Section 2 – Parvat Vishleshan
+Mount of Venus: Emotional energy aur relationships
+Mount of Jupiter: Leadership aur ambition
+Mount of Saturn: Responsibility aur karma
+Mount of Sun: Fame aur creativity
+Mount of Mercury: Communication aur business buddhi
+Upper & Lower Mars: Courage aur struggle capacity
+
+🔱 Section 3 – Mukhya Rekhayein
+Life Line – Jeevan shakti aur health pattern
+Head Line – Soch aur decision making
+Heart Line – Emotions aur relationships
+Fate Line – Career direction
+Sun Line – Recognition
+Marriage Line – Vivaah yog
+
+🔱 Section 4 – Vishesh Chinh
+Til, Cross, Star, Trishul, V-shape, Shankh, Island, Grill jaise chinh jeevan ke khas mod aur karmic signals dete hain.
+
+🔱 Section 5 – Aapke Prashn ka Uttar
+Analysis Type: {q_depth}
+Allowed Questions: {q_limit}
+
 {questions}
 
-(Here AI detailed palm analysis will be generated in next phase.)
+🔱 Section 6 – Upay
+Remedy Level: {remedy_level}
+
+(Here detailed AI spiritual remedies will be generated.)
+
+🌺 Antim Sandesh:
+Dharm, Shraddha aur Sahi Karm se bhagya ko majboot kiya ja sakta hai.
+
+– आचार्य विशाल वैष्णव
 """
 
     c.execute("""
