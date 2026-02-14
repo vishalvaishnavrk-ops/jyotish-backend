@@ -938,13 +938,12 @@ def mark_paid(client_id: int):
 
     return RedirectResponse("/admin/dashboard", status_code=302)
 
- @app.post("/admin/client/{client_id}/generate-ai")
+
+@app.post("/admin/client/{client_id}/generate-ai")
  def manual_ai_generate(client_id: int):
-
      generate_ai_draft(client_id)
-
      return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
-   
+     
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
 async def website_submit(
@@ -1008,4 +1007,3 @@ async def website_submit(
     "success": True,
     "client_code": client_code
     }
-
