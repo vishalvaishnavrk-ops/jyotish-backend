@@ -124,7 +124,54 @@ def generate_client_code():
     year = datetime.now(ZoneInfo("Asia/Kolkata")).year
     short_unique = int(time.time()) % 100000   # last 5 digits
     return f"AVV-{year}-{short_unique}"
-    
+
+# ---------- AI GENERATION ENGINE ----------
+def generate_ai_draft(client_id):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT name,plan,questions FROM clients WHERE id=?", (client_id,))
+    data = c.fetchone()
+
+    if not data:
+        conn.close()
+        return
+
+    name, plan, questions = data
+
+    # ----- PLAN BASED LOGIC -----
+    if "501" in plan:
+        depth = "Very Detailed Spiritual + Life Analysis"
+    elif "251" in plan:
+        depth = "Detailed Palm Analysis"
+    elif "151" in plan:
+        depth = "Moderate Analysis"
+    else:
+        depth = "Basic Overview"
+
+    # ----- TEMP AI DRAFT (REAL GPT WILL COME LATER) -----
+    draft = f"""
+Palm Reading Report for {name}
+
+Plan: {plan}
+Analysis Depth: {depth}
+
+Main Question:
+{questions}
+
+(Here AI detailed palm analysis will be generated in next phase.)
+"""
+
+    c.execute("""
+        UPDATE clients
+        SET ai_draft=?, ai_generated=1
+        WHERE id=?
+    """, (draft, client_id))
+
+    conn.commit()
+    conn.close()
+
 # ---------- HELPERS ----------
 def get_db():
     return sqlite3.connect(DB_PATH)
@@ -835,6 +882,9 @@ def update_payment(
             priority = 3
         else:
             priority = 4
+
+        # 🔥 ADD THIS LINE
+        generate_ai_draft(client_id)
 
     c.execute("""
         UPDATE clients
