@@ -940,7 +940,7 @@ def mark_paid(client_id: int):
 
 
 @app.post("/admin/client/{client_id}/generate-ai")
- def manual_ai_generate(client_id: int):
+def manual_ai_generate(client_id: int):
      generate_ai_draft(client_id)
      return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
      
