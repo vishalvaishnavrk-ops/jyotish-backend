@@ -831,10 +831,12 @@ button {{
       </select><br><br>
 
       <button type="submit">Save Update</button>
-      <form method="post" action="/admin/client/{client_id}/generate-ai" style="margin-top:10px;">
-          <button style="background:#007bff;">
-              Generate AI Draft Now
-          </button>
+    </form>
+
+    <form method="post" action="/admin/client/{client_id}/generate-ai">
+      <button style="background:#007bff;color:white;padding:8px 12px;border:none;border-radius:5px;">
+          Generate AI Draft Now
+      </button>
     </form>
   </div>
 
