@@ -8,18 +8,30 @@ import time
 import uuid
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.platypus import Image
+from reportlab.lib.styles import getSampleStyleSheet
 
 app = FastAPI()
 
 DB_PATH = "clients.db"
 UPLOAD_DIR = "uploads"
+REPORT_DIR = "reports"
 
+if not os.path.exists(REPORT_DIR):
+    os.makedirs(REPORT_DIR)
+    
 # ---- CREATE FOLDER FIRST ----
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
 # ---- THEN MOUNT ----
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+app.mount("/reports", StaticFiles(directory=REPORT_DIR), name="reports")
 
 app.add_middleware(
     CORSMiddleware,
@@ -211,6 +223,57 @@ Dharm, Shraddha aur Sahi Karm se bhagya ko majboot kiya ja sakta hai.
 
     conn.commit()
     conn.close()
+
+def generate_pdf_report(client_id):
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT client_code,name,plan,ai_draft FROM clients WHERE id=?", (client_id,))
+    data = c.fetchone()
+    conn.close()
+
+    if not data:
+        return None
+
+    client_code, name, plan, ai_draft = data
+
+    file_name = f"{client_code}.pdf"
+    file_path = os.path.join(REPORT_DIR, file_name)
+
+    doc = SimpleDocTemplate(file_path, pagesize=A4)
+    elements = []
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontSize=18,
+        textColor=colors.HexColor("#8b0000"),
+        spaceAfter=20
+    )
+
+    normal_style = styles["Normal"]
+
+    # Header
+    elements.append(Paragraph("आचार्य विशाल वैष्णव", title_style))
+    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", normal_style))
+    elements.append(Spacer(1, 0.3 * inch))
+
+    # Client Info
+    elements.append(Paragraph(f"<b>Client Name:</b> {name}", normal_style))
+    elements.append(Paragraph(f"<b>Client Code:</b> {client_code}", normal_style))
+    elements.append(Paragraph(f"<b>Plan:</b> {plan}", normal_style))
+    elements.append(Spacer(1, 0.3 * inch))
+
+    # Report Body
+    for line in ai_draft.split("\n"):
+        elements.append(Paragraph(line, normal_style))
+        elements.append(Spacer(1, 0.15 * inch))
+
+    doc.build(elements)
+
+    return file_name
 
 # ---------- HELPERS ----------
 def get_db():
@@ -874,9 +937,15 @@ button {{
     </form>
 
     <form method="post" action="/admin/client/{client_id}/generate-ai">
-      <button style="background:#007bff;color:white;padding:8px 12px;border:none;border-radius:5px;">
-          Generate AI Draft Now
-      </button>
+        <button style="background:#007bff;color:white;padding:8px 12px;border:none;border-radius:5px;">
+            Generate AI Draft Now
+        </button>
+    </form>
+
+    <form method="post" action="/admin/client/{client_id}/generate-pdf" style="margin-top:10px;">
+        <button style="background:#6f42c1;">
+            Generate PDF Report
+        </button>
     </form>
   </div>
 
@@ -980,6 +1049,10 @@ def mark_paid(client_id: int):
 
     return RedirectResponse("/admin/dashboard", status_code=302)
 
+@app.post("/admin/client/{client_id}/generate-pdf")
+def create_pdf(client_id: int):
+    file_name = generate_pdf_report(client_id)
+    return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
 @app.post("/admin/client/{client_id}/generate-ai")
 def manual_ai_generate(client_id: int):
