@@ -245,7 +245,7 @@ def generate_pdf_report(client_id):
     file_path = os.path.join(REPORT_DIR, file_name)
 
     # Register Hindi Font
-    pdfmetrics.registerFont(TTFont('HindiFont', 'NotoSansDevanagari-Regular.ttf'))
+    pdfmetrics.registerFont(TTFont('HindiFont', 'NotoSansDevanagariUI-Regular'))
 
     doc = SimpleDocTemplate(file_path, pagesize=A4)
     elements = []
