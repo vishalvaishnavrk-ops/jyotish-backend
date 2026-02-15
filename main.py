@@ -362,16 +362,20 @@ def generate_pdf_report(client_id):
         line = line.strip()
 
         if not line:
-            elements.append(Spacer(1, 8))
+            elements.append(Spacer(1, 10))
             continue
 
-        # SECTION HEADINGS
-        if "Section" in line or "Palm Reading Report" in line:
-            elements.append(Paragraph(line, section_style))
+        # Section headings detection
+        if line.startswith("Section") or "Palm Reading Report" in line:
+            elements.append(Paragraph(f"<b>{line}</b>", section_style))
+            elements.append(Spacer(1, 12))
+
+        elif "Client Name:" in line or "Plan:" in line:
+            elements.append(Paragraph(f"<b>{line}</b>", body_style))
 
         else:
             elements.append(Paragraph(line, body_style))
-    
+        
     elements.append(Spacer(1, 30))
     elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", subtitle_style))
     elements.append(Paragraph("WhatsApp: +91-6000376976", subtitle_style))
