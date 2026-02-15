@@ -227,6 +227,21 @@ Dharm, Shraddha aur Sahi Karm se bhagya ko majboot kiya ja sakta hai.
     conn.commit()
     conn.close()
 
+def clean_text_for_pdf(text):
+    replacements = {
+        "🌸": "",
+        "🔱": "",
+        "🌺": "",
+        "*": "",
+        "–": "-",
+        "₹": "Rs.",
+    }
+
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+
+    return text
+
 def generate_pdf_report(client_id):
 
     conn = get_db()
@@ -310,6 +325,9 @@ def generate_pdf_report(client_id):
     elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", subtitle_style))
     elements.append(Spacer(1, 20))
 
+    elements.append(Spacer(1, 6))
+    elements.append(Paragraph("Palm Reading & Destiny Analysis Report", subtitle_style))
+
     # Client Info Table
     info_data = [
         ["Client Code", client_code],
@@ -332,15 +350,28 @@ def generate_pdf_report(client_id):
     elements.append(table)
     elements.append(Spacer(1, 25))
 
+    elements.append(Paragraph("______________________________________________", subtitle_style))
+    elements.append(Spacer(1, 20))
+
     elements.append(Paragraph("Palm Reading Detailed Report", section_style))
 
-    report_text = ai_draft or "Report not generated yet."
+    report_text = clean_text_for_pdf(ai_draft or "Report not generated yet.")
 
     for line in report_text.split("\n"):
-        clean_line = line.replace("🌸","").replace("🔱","").replace("🌺","")
-        if clean_line.strip():
-            elements.append(Paragraph(clean_line.strip(), body_style))
 
+        line = line.strip()
+
+        if not line:
+            elements.append(Spacer(1, 8))
+            continue
+
+        # SECTION HEADINGS
+        if "Section" in line or "Palm Reading Report" in line:
+            elements.append(Paragraph(line, section_style))
+
+        else:
+            elements.append(Paragraph(line, body_style))
+    
     elements.append(Spacer(1, 30))
     elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", subtitle_style))
     elements.append(Paragraph("WhatsApp: +91-6000376976", subtitle_style))
