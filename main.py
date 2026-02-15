@@ -357,24 +357,36 @@ def generate_pdf_report(client_id):
 
     report_text = clean_text_for_pdf(ai_draft or "Report not generated yet.")
 
-    for line in report_text.split("\n"):
+    lines = report_text.split("\n")
+
+    for line in lines:
 
         line = line.strip()
 
         if not line:
+            elements.append(Spacer(1, 8))
+            continue
+
+        # Main Report Title
+        if "Palm Reading Report" in line:
+            elements.append(Paragraph(line, title_style))
+            elements.append(Spacer(1, 14))
+            continue
+
+        # Section Headings
+        if line.startswith("Section"):
+            elements.append(Paragraph(line, section_style))
             elements.append(Spacer(1, 10))
             continue
 
-        # Section headings detection
-        if line.startswith("Section") or "Palm Reading Report" in line:
-            elements.append(Paragraph(f"<b>{line}</b>", section_style))
-            elements.append(Spacer(1, 12))
-
-        elif "Client Name:" in line or "Plan:" in line:
+        # Sub headings like Client Name / Plan
+        if line.startswith("Client Name") or line.startswith("Plan"):
             elements.append(Paragraph(f"<b>{line}</b>", body_style))
+            elements.append(Spacer(1, 6))
+            continue
 
-        else:
-            elements.append(Paragraph(line, body_style))
+        # Normal content
+        elements.append(Paragraph(line, body_style))
         
     elements.append(Spacer(1, 30))
     elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", subtitle_style))
