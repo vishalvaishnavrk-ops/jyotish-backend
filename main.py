@@ -18,7 +18,6 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.enums import TA_CENTER
-from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 
 app = FastAPI()
 
@@ -247,32 +246,59 @@ def generate_pdf_report(client_id):
     # Register Hindi Font
     pdfmetrics.registerFont(TTFont('HindiFont', 'NotoSansDevanagari-Regular.ttf'))
 
-    doc = SimpleDocTemplate(file_path, pagesize=A4)
-    elements = []
+    doc = SimpleDocTemplate(
+        file_path,
+        pagesize=A4,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=60,
+        bottomMargin=40
+    )
 
+    elements = []
     styles = getSampleStyleSheet()
 
-    heading_style = ParagraphStyle(
-        'HeadingStyle',
+    title_style = ParagraphStyle(
+        'TitleStyle',
         parent=styles['Heading1'],
         fontName='HindiFont',
-        fontSize=18,
-        textColor=colors.HexColor("#8b0000"),
+        fontSize=20,
         alignment=TA_CENTER,
+        textColor=colors.HexColor("#8b0000"),
         spaceAfter=14
     )
 
-    normal_style = ParagraphStyle(
-        'NormalStyle',
+    subtitle_style = ParagraphStyle(
+        'SubtitleStyle',
+        parent=styles['Normal'],
+        fontName='HindiFont',
+        fontSize=12,
+        alignment=TA_CENTER,
+        spaceAfter=10
+    )
+
+    body_style = ParagraphStyle(
+        'BodyStyle',
         parent=styles['Normal'],
         fontName='HindiFont',
         fontSize=11,
+        leading=16,
         spaceAfter=6
+    )
+
+    section_style = ParagraphStyle(
+        'SectionStyle',
+        parent=styles['Heading2'],
+        fontName='HindiFont',
+        fontSize=14,
+        textColor=colors.HexColor("#8b0000"),
+        spaceBefore=12,
+        spaceAfter=8
     )
 
     # Logo
     try:
-        logo = Image("ganesha.png", width=1.4*inch, height=1.4*inch)
+        logo = Image("ganesha.png", width=1.3*inch, height=1.3*inch)
         logo.hAlign = "CENTER"
         elements.append(logo)
     except:
@@ -280,9 +306,9 @@ def generate_pdf_report(client_id):
 
     elements.append(Spacer(1, 10))
 
-    elements.append(Paragraph("आचार्य विशाल वैष्णव", heading_style))
-    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", normal_style))
-    elements.append(Spacer(1, 15))
+    elements.append(Paragraph("आचार्य विशाल वैष्णव", title_style))
+    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", subtitle_style))
+    elements.append(Spacer(1, 20))
 
     # Client Info Table
     info_data = [
@@ -293,29 +319,31 @@ def generate_pdf_report(client_id):
         ["Report Date", created_at]
     ]
 
-    table = Table(info_data, colWidths=[120, 350])
+    table = Table(info_data, colWidths=[130, 320])
     table.setStyle(TableStyle([
         ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
         ('FONTNAME', (0,0), (-1,-1), 'HindiFont'),
         ('FONTSIZE', (0,0), (-1,-1), 10),
-        ('BACKGROUND', (0,0), (-1,0), colors.whitesmoke)
+        ('BACKGROUND', (0,0), (-1,0), colors.whitesmoke),
+        ('LEFTPADDING', (0,0), (-1,-1), 6),
+        ('RIGHTPADDING', (0,0), (-1,-1), 6),
     ]))
 
     elements.append(table)
-    elements.append(Spacer(1, 20))
+    elements.append(Spacer(1, 25))
 
-    elements.append(Paragraph("Palm Reading Detailed Report", heading_style))
-    elements.append(Spacer(1, 10))
+    elements.append(Paragraph("Palm Reading Detailed Report", section_style))
 
     report_text = ai_draft or "Report not generated yet."
 
     for line in report_text.split("\n"):
-        elements.append(Paragraph(line.strip(), normal_style))
+        clean_line = line.replace("🌸","").replace("🔱","").replace("🌺","")
+        if clean_line.strip():
+            elements.append(Paragraph(clean_line.strip(), body_style))
 
-    elements.append(Spacer(1, 25))
-
-    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", normal_style))
-    elements.append(Paragraph("WhatsApp: +91-6000376976", normal_style))
+    elements.append(Spacer(1, 30))
+    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", subtitle_style))
+    elements.append(Paragraph("WhatsApp: +91-6000376976", subtitle_style))
 
     doc.build(elements)
 
