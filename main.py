@@ -239,8 +239,13 @@ def generate_pdf_report(client_id):
     <html>
     <head>
         <meta charset="utf-8">
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
         <style>
+
+            @font-face {
+                font-family: 'NotoDev';
+                src: url('NotoSansDevanagari-Regular.ttf') format('truetype');
+            }
+            
             @page {
                 size: A4;
                 margin: 80px 50px 80px 50px;
