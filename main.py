@@ -241,56 +241,104 @@ def generate_pdf_report(client_id):
         <meta charset="utf-8">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
         <style>
-            body {{
-                font-family: 'Noto Sans Devanagari', sans-serif;
-                padding: 40px;
-                color: #333;
-            }}
 
-            .header {{
-                text-align: center;
-                border-bottom: 3px solid #8b0000;
-                padding-bottom: 15px;
-                margin-bottom: 30px;
-            }}
+        @page {
+            size: A4;
+            margin: 80px 50px 80px 50px;
 
-            .title {{
-                font-size: 26px;
-                color: #8b0000;
-                font-weight: bold;
-            }}
-
-            .subtitle {{
-                font-size: 14px;
-            }}
-
-            .client-box {{
-                background: #f9f3ee;
-                padding: 15px;
-                margin-bottom: 25px;
-                border-radius: 8px;
-            }}
-
-            .section-title {{
-                font-size: 18px;
-                color: #8b0000;
-                margin-top: 25px;
-                border-bottom: 1px solid #ddd;
-                padding-bottom: 5px;
-            }}
-
-            .footer {{
-                margin-top: 40px;
-                text-align: center;
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
                 font-size: 12px;
                 color: #777;
-                border-top: 1px solid #ddd;
-                padding-top: 15px;
-            }}
+           }
+        }
+
+        body {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            color: #333;
+        }
+
+        /* GOLD FRAME */
+        .page-frame {
+            border: 8px solid #d4af37;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* WATERMARK */
+        .watermark {
+            position: fixed;
+            top: 40%;
+            left: 20%;
+            font-size: 80px;
+            color: rgba(139,0,0,0.05);
+            transform: rotate(-30deg);
+            z-index: -1;
+        }
+
+        /* PREMIUM HEADER */
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #8b0000, #b22222);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* CLIENT INFO */
+        .client-box {
+            background: #fdf6e3;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 6px solid #d4af37;
+            border-radius: 8px;
+        }
+
+        /* SECTION HEADINGS */
+        .section-title {
+            font-size: 20px;
+            color: #8b0000;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 6px;
+        }
+
+        /* CONTENT */
+        .report-content {
+            line-height: 1.8;
+            font-size: 15px;
+            text-align: justify;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+
         </style>
+
     </head>
 
     <body>
+
+    <div class="watermark">AVV</div>
+
+    <div class="page-frame">
 
         <div class="header">
             <div class="title">आचार्य विशाल वैष्णव</div>
@@ -307,20 +355,23 @@ def generate_pdf_report(client_id):
 
         <div class="section-title">Palm Reading Detailed Report</div>
 
-        <div>
+        <div class="report-content">
             {ai_draft.replace("\n","<br><br>")}
         </div>
 
         <div class="footer">
-            © 2026 आचार्य विशाल वैष्णव<br>
+            © 2026 आचार्य विशाल वैष्णव <br>
             WhatsApp: +91-6000376976
         </div>
 
+    </div>
+
     </body>
+
     </html>
     """
 
-    HTML(string=html_content).write_pdf(file_path)
+    HTML(string=html_content, base_url=os.getcwd()).write_pdf(file_path)
 
     return file_name
 
