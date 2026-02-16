@@ -8,16 +8,8 @@ import time
 import uuid
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
-from reportlab.platypus import Table, TableStyle
-from reportlab.lib import colors
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.enums import TA_CENTER
+from fastapi.responses import FileResponse
+from weasyprint import HTML
 
 app = FastAPI()
 
@@ -258,136 +250,89 @@ def generate_pdf_report(client_id):
     file_name = f"{client_code}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
 
-    # Register Hindi Font
-    pdfmetrics.registerFont(TTFont('HindiFont', 'NotoSansDevanagari-Regular.ttf'))
+    html_content = f"""
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {{
+                font-family: 'Noto Sans Devanagari', sans-serif;
+                margin: 40px;
+                line-height: 1.7;
+            }}
 
-    doc = SimpleDocTemplate(
-        file_path,
-        pagesize=A4,
-        rightMargin=40,
-        leftMargin=40,
-        topMargin=60,
-        bottomMargin=40
-    )
+            .header {{
+                text-align: center;
+                border-bottom: 2px solid #8b0000;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }}
 
-    elements = []
-    styles = getSampleStyleSheet()
+            .brand {{
+                font-size: 26px;
+                color: #8b0000;
+                font-weight: bold;
+            }}
 
-    title_style = ParagraphStyle(
-        'TitleStyle',
-        parent=styles['Heading1'],
-        fontName='HindiFont',
-        fontSize=20,
-        alignment=TA_CENTER,
-        textColor=colors.HexColor("#8b0000"),
-        spaceAfter=14
-    )
+            .subtitle {{
+                font-size: 14px;
+            }}
 
-    subtitle_style = ParagraphStyle(
-        'SubtitleStyle',
-        parent=styles['Normal'],
-        fontName='HindiFont',
-        fontSize=12,
-        alignment=TA_CENTER,
-        spaceAfter=10
-    )
+            .info-box {{
+                background: #f5f5f5;
+                padding: 15px;
+                margin-bottom: 25px;
+                border-radius: 8px;
+            }}
 
-    body_style = ParagraphStyle(
-        'BodyStyle',
-        parent=styles['Normal'],
-        fontName='HindiFont',
-        fontSize=11,
-        leading=16,
-        spaceAfter=6
-    )
+            .section-title {{
+                color: #8b0000;
+                font-size: 18px;
+                margin-top: 20px;
+                font-weight: bold;
+            }}
 
-    section_style = ParagraphStyle(
-        'SectionStyle',
-        parent=styles['Heading2'],
-        fontName='HindiFont',
-        fontSize=14,
-        textColor=colors.HexColor("#8b0000"),
-        spaceBefore=12,
-        spaceAfter=8
-    )
+            .footer {{
+                margin-top: 40px;
+                border-top: 1px solid #ccc;
+                padding-top: 10px;
+                text-align: center;
+                font-size: 12px;
+            }}
+        </style>
+    </head>
 
-    # Logo
-    try:
-        logo = Image("ganesha.png", width=1.3*inch, height=1.3*inch)
-        logo.hAlign = "CENTER"
-        elements.append(logo)
-    except:
-        pass
+    <body>
 
-    elements.append(Spacer(1, 10))
+        <div class="header">
+            <div class="brand">आचार्य विशाल वैष्णव</div>
+            <div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
+        </div>
 
-    elements.append(Paragraph("आचार्य विशाल वैष्णव", title_style))
-    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", subtitle_style))
-    elements.append(Spacer(1, 20))
+        <div class="info-box">
+            <b>Client Code:</b> {client_code}<br>
+            <b>Name:</b> {name}<br>
+            <b>Mobile:</b> {phone}<br>
+            <b>Plan:</b> {plan}<br>
+            <b>Date:</b> {created_at}
+        </div>
 
-    elements.append(Spacer(1, 6))
-    elements.append(Paragraph("Palm Reading & Destiny Analysis Report", subtitle_style))
+        <div class="section-title">Palm Reading Detailed Report</div>
 
-    # Client Info Table
-    info_data = [
-        ["Client Code", client_code],
-        ["Name", name],
-        ["Mobile", phone],
-        ["Plan", plan],
-        ["Report Date", created_at]
-    ]
+        <div>
+            {ai_draft.replace("\n", "<br>")}
+        </div>
 
-    table = Table(info_data, colWidths=[130, 320])
-    table.setStyle(TableStyle([
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-        ('FONTNAME', (0,0), (-1,-1), 'HindiFont'),
-        ('FONTSIZE', (0,0), (-1,-1), 10),
-        ('BACKGROUND', (0,0), (-1,0), colors.whitesmoke),
-        ('LEFTPADDING', (0,0), (-1,-1), 6),
-        ('RIGHTPADDING', (0,0), (-1,-1), 6),
-    ]))
+        <div class="footer">
+            © 2026 आचार्य विशाल वैष्णव<br>
+            WhatsApp: +91-6000376976
+        </div>
 
-    elements.append(table)
-    elements.append(Spacer(1, 25))
+    </body>
+    </html>
+    """
 
-    elements.append(Paragraph("______________________________________________", subtitle_style))
-    elements.append(Spacer(1, 20))
-
-    # -------------------------------
-    # CLEAN STRUCTURED REPORT SECTION
-    # -------------------------------
-
-    report_text = clean_text_for_pdf(ai_draft or "Report not generated yet.")
-
-    elements.append(Paragraph("Palm Reading Detailed Analysis", section_style))
-    elements.append(Spacer(1, 15))
-
-    # Split into paragraphs instead of line-by-line messy loop
-    paragraphs = report_text.split("\n\n")
-
-    for para in paragraphs:
-
-        para = para.strip()
-
-        if not para:
-            continue
-
-        # Section headings
-        if "Section" in para or "Antim Sandesh" in para:
-            elements.append(Paragraph(f"<b>{para}</b>", section_style))
-            elements.append(Spacer(1, 12))
-        else:
-            elements.append(Paragraph(para.replace("\n", "<br/>"), body_style))
-            elements.append(Spacer(1, 8))
-
-
-    elements.append(Spacer(1, 25))
-    elements.append(Paragraph("_______________________________", subtitle_style))
-    elements.append(Spacer(1, 10))
-    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", subtitle_style))
-    elements.append(Paragraph("WhatsApp: +91-6000376976", subtitle_style))
-
-    doc.build(elements)
+    HTML(string=html_content).write_pdf(file_path)
 
     return file_name
 
@@ -1200,7 +1145,7 @@ def download_pdf(client_id: int):
     if not os.path.exists(file_path):
         return HTMLResponse("PDF not generated yet.")
 
-    return RedirectResponse(f"/reports/{file_name}", status_code=302)
+    return FileResponse(file_path, media_type='application/pdf', filename=file_name)
      
 # ---------- WEBSITE FORM SUBMIT API ----------
 @app.post("/api/website-submit")
