@@ -353,43 +353,42 @@ def generate_pdf_report(client_id):
     elements.append(Paragraph("______________________________________________", subtitle_style))
     elements.append(Spacer(1, 20))
 
-    elements.append(Paragraph("Palm Reading Detailed Report", section_style))
-
     report_text = clean_text_for_pdf(ai_draft or "Report not generated yet.")
 
-    lines = report_text.split("\n")
+    elements.append(Spacer(1, 20))
 
-    for line in lines:
+    # Remove header lines already shown in PDF
+    report_text = report_text.replace("Palm Reading Report", "")
+    report_text = report_text.replace("Client Name:", "")
+    report_text = report_text.replace("Plan:", "")
 
-        line = line.strip()
+    sections = report_text.split("Section")
 
-        if not line:
-            elements.append(Spacer(1, 8))
+    for sec in sections:
+        sec = sec.strip()
+
+        if not sec:
             continue
 
-        # Main Report Title
-        if "Palm Reading Report" in line:
-            elements.append(Paragraph(line, title_style))
-            elements.append(Spacer(1, 14))
-            continue
+        if sec[0].isdigit():
+            # Extract section number
+            section_number = sec[0]
 
-        # Section Headings
-        if line.startswith("Section"):
-            elements.append(Paragraph(line, section_style))
+            elements.append(Spacer(1, 15))
+            elements.append(Paragraph(f"<b>Section {section_number}</b>", section_style))
             elements.append(Spacer(1, 10))
-            continue
 
-        # Sub headings like Client Name / Plan
-        if line.startswith("Client Name") or line.startswith("Plan"):
-            elements.append(Paragraph(f"<b>{line}</b>", body_style))
-            elements.append(Spacer(1, 6))
-            continue
+            content = sec[1:].strip()
+            elements.append(Paragraph(content, body_style))
+            elements.append(Spacer(1, 15))
+        else:
+            elements.append(Paragraph(sec, body_style))
 
-        # Normal content
-        elements.append(Paragraph(line, body_style))
-        
-    elements.append(Spacer(1, 30))
-    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", subtitle_style))
+    elements.append(Spacer(1, 40))
+    elements.append(Paragraph("-------------------------------------------------", subtitle_style))
+    elements.append(Spacer(1, 10))
+    elements.append(Paragraph("आचार्य विशाल वैष्णव", subtitle_style))
+    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", subtitle_style))
     elements.append(Paragraph("WhatsApp: +91-6000376976", subtitle_style))
 
     doc.build(elements)
