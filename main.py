@@ -219,21 +219,6 @@ Dharm, Shraddha aur Sahi Karm se bhagya ko majboot kiya ja sakta hai.
     conn.commit()
     conn.close()
 
-def clean_text_for_pdf(text):
-    replacements = {
-        "🌸": "",
-        "🔱": "",
-        "🌺": "",
-        "*": "",
-        "–": "-",
-        "₹": "Rs.",
-    }
-
-    for k, v in replacements.items():
-        text = text.replace(k, v)
-
-    return text
-
 def generate_pdf_report(client_id):
 
     conn = get_db()
@@ -253,22 +238,23 @@ def generate_pdf_report(client_id):
     html_content = f"""
     <html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
         <style>
             body {{
                 font-family: 'Noto Sans Devanagari', sans-serif;
-                margin: 40px;
-                line-height: 1.7;
+                padding: 40px;
+                color: #333;
             }}
 
             .header {{
                 text-align: center;
-                border-bottom: 2px solid #8b0000;
+                border-bottom: 3px solid #8b0000;
                 padding-bottom: 15px;
-                margin-bottom: 25px;
+                margin-bottom: 30px;
             }}
 
-            .brand {{
+            .title {{
                 font-size: 26px;
                 color: #8b0000;
                 font-weight: bold;
@@ -278,26 +264,28 @@ def generate_pdf_report(client_id):
                 font-size: 14px;
             }}
 
-            .info-box {{
-                background: #f5f5f5;
+            .client-box {{
+                background: #f9f3ee;
                 padding: 15px;
                 margin-bottom: 25px;
                 border-radius: 8px;
             }}
 
             .section-title {{
-                color: #8b0000;
                 font-size: 18px;
-                margin-top: 20px;
-                font-weight: bold;
+                color: #8b0000;
+                margin-top: 25px;
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 5px;
             }}
 
             .footer {{
                 margin-top: 40px;
-                border-top: 1px solid #ccc;
-                padding-top: 10px;
                 text-align: center;
                 font-size: 12px;
+                color: #777;
+                border-top: 1px solid #ddd;
+                padding-top: 15px;
             }}
         </style>
     </head>
@@ -305,11 +293,11 @@ def generate_pdf_report(client_id):
     <body>
 
         <div class="header">
-            <div class="brand">आचार्य विशाल वैष्णव</div>
+            <div class="title">आचार्य विशाल वैष्णव</div>
             <div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
         </div>
 
-        <div class="info-box">
+        <div class="client-box">
             <b>Client Code:</b> {client_code}<br>
             <b>Name:</b> {name}<br>
             <b>Mobile:</b> {phone}<br>
@@ -320,7 +308,7 @@ def generate_pdf_report(client_id):
         <div class="section-title">Palm Reading Detailed Report</div>
 
         <div>
-            {ai_draft.replace("\n", "<br>")}
+            {ai_draft.replace("\n","<br><br>")}
         </div>
 
         <div class="footer">
