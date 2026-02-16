@@ -249,7 +249,7 @@ def generate_pdf_report(client_id):
                     content: "Page " counter(page) " of " counter(pages);
                     font-size: 12px;
                     color: #777;
-               }
+                }
             }
 
             body {
