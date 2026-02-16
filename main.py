@@ -175,14 +175,14 @@ def generate_ai_draft(client_id):
 
     # ---------- MASTER PROMPT ----------
     draft = f"""
-🌸 *Palm Reading Report*
+Palm Reading Report
 Client Name: {name}
 Plan: {plan}
 
-🔱 Section 1 – Haath ki Sanrachna
+Section 1 – Haath ki Sanrachna
 Aapke haath ki banavat, ungliyon ki lambai aur angoothe ki sthiti aapki personality, decision power aur will power ko darshati hai.
 
-🔱 Section 2 – Parvat Vishleshan
+Section 2 – Parvat Vishleshan
 Mount of Venus: Emotional energy aur relationships
 Mount of Jupiter: Leadership aur ambition
 Mount of Saturn: Responsibility aur karma
@@ -190,7 +190,7 @@ Mount of Sun: Fame aur creativity
 Mount of Mercury: Communication aur business buddhi
 Upper & Lower Mars: Courage aur struggle capacity
 
-🔱 Section 3 – Mukhya Rekhayein
+Section 3 – Mukhya Rekhayein
 Life Line – Jeevan shakti aur health pattern
 Head Line – Soch aur decision making
 Heart Line – Emotions aur relationships
@@ -198,21 +198,21 @@ Fate Line – Career direction
 Sun Line – Recognition
 Marriage Line – Vivaah yog
 
-🔱 Section 4 – Vishesh Chinh
+Section 4 – Vishesh Chinh
 Til, Cross, Star, Trishul, V-shape, Shankh, Island, Grill jaise chinh jeevan ke khas mod aur karmic signals dete hain.
 
-🔱 Section 5 – Aapke Prashn ka Uttar
+Section 5 – Aapke Prashn ka Uttar
 Analysis Type: {q_depth}
 Allowed Questions: {q_limit}
 
 {questions}
 
-🔱 Section 6 – Upay
+Section 6 – Upay
 Remedy Level: {remedy_level}
 
 (Here detailed AI spiritual remedies will be generated.)
 
-🌺 Antim Sandesh:
+Antim Sandesh:
 Dharm, Shraddha aur Sahi Karm se bhagya ko majboot kiya ja sakta hai.
 
 – आचार्य विशाल वैष्णव
@@ -353,42 +353,38 @@ def generate_pdf_report(client_id):
     elements.append(Paragraph("______________________________________________", subtitle_style))
     elements.append(Spacer(1, 20))
 
+    # -------------------------------
+    # CLEAN STRUCTURED REPORT SECTION
+    # -------------------------------
+
     report_text = clean_text_for_pdf(ai_draft or "Report not generated yet.")
 
-    elements.append(Spacer(1, 20))
+    elements.append(Paragraph("Palm Reading Detailed Analysis", section_style))
+    elements.append(Spacer(1, 15))
 
-    # Remove header lines already shown in PDF
-    report_text = report_text.replace("Palm Reading Report", "")
-    report_text = report_text.replace("Client Name:", "")
-    report_text = report_text.replace("Plan:", "")
+    # Split into paragraphs instead of line-by-line messy loop
+    paragraphs = report_text.split("\n\n")
 
-    sections = report_text.split("Section")
+    for para in paragraphs:
 
-    for sec in sections:
-        sec = sec.strip()
+        para = para.strip()
 
-        if not sec:
+        if not para:
             continue
 
-        if sec[0].isdigit():
-            # Extract section number
-            section_number = sec[0]
-
-            elements.append(Spacer(1, 15))
-            elements.append(Paragraph(f"<b>Section {section_number}</b>", section_style))
-            elements.append(Spacer(1, 10))
-
-            content = sec[1:].strip()
-            elements.append(Paragraph(content, body_style))
-            elements.append(Spacer(1, 15))
+        # Section headings
+        if "Section" in para or "Antim Sandesh" in para:
+            elements.append(Paragraph(f"<b>{para}</b>", section_style))
+            elements.append(Spacer(1, 12))
         else:
-            elements.append(Paragraph(sec, body_style))
+            elements.append(Paragraph(para.replace("\n", "<br/>"), body_style))
+            elements.append(Spacer(1, 8))
 
-    elements.append(Spacer(1, 40))
-    elements.append(Paragraph("-------------------------------------------------", subtitle_style))
+
+    elements.append(Spacer(1, 25))
+    elements.append(Paragraph("_______________________________", subtitle_style))
     elements.append(Spacer(1, 10))
-    elements.append(Paragraph("आचार्य विशाल वैष्णव", subtitle_style))
-    elements.append(Paragraph("हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ", subtitle_style))
+    elements.append(Paragraph("© 2026 आचार्य विशाल वैष्णव", subtitle_style))
     elements.append(Paragraph("WhatsApp: +91-6000376976", subtitle_style))
 
     doc.build(elements)
