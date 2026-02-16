@@ -2,4 +2,5 @@ fastapi
 uvicorn
 python-multipart
 reportlab
-weasyprint==60.1
+weasyprint==59.0
+pydyf==0.6.0
