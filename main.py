@@ -235,42 +235,33 @@ def generate_pdf_report(client_id):
     file_name = f"{client_code}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
 
-    html_content = f"""
+    html_template = """
     <html>
     <head>
         <meta charset="utf-8">
         <style>
-
-            @font-face {
-                font-family: 'NotoDev';
-                src: url('NotoSansDevanagari-Regular.ttf') format('truetype');
-            }
-            
-            @page {
+            @page {{
                 size: A4;
-                margin: 80px 50px 80px 50px;
-
-                @bottom-center {
+                margin: 80px 50px;
+                @bottom-center {{
                     content: "Page " counter(page) " of " counter(pages);
                     font-size: 12px;
                     color: #777;
-                }
-            }
+                }}
+            }}
 
-            body {
-                font-family: 'Noto Sans Devanagari', sans-serif;
+            body {{
+                font-family: Arial, sans-serif;
                 color: #333;
-            }
+            }}
 
-            /* GOLD FRAME */
-            .page-frame {
+            .page-frame {{
                 border: 8px solid #d4af37;
                 padding: 40px;
                 position: relative;
-            }
+            }}
 
-            /* WATERMARK */
-            .watermark {
+            .watermark {{
                 position: fixed;
                 top: 40%;
                 left: 20%;
@@ -278,64 +269,56 @@ def generate_pdf_report(client_id):
                 color: rgba(139,0,0,0.05);
                 transform: rotate(-30deg);
                 z-index: -1;
-            }
+            }}
 
-            /* PREMIUM HEADER */
-            .header {
+            .header {{
                 text-align: center;
-                padding-bottom: 20px;
-                margin-bottom: 30px;
                 background: linear-gradient(to right, #8b0000, #b22222);
                 color: white;
                 padding: 25px;
                 border-radius: 8px;
-            }
+                margin-bottom: 30px;
+            }}
 
-            .title {
+            .title {{
                 font-size: 28px;
                 font-weight: bold;
-            }
+            }}
 
-            .subtitle {
+            .subtitle {{
                 font-size: 14px;
-                margin-top: 5px;
-            }
+            }}
 
-            /* CLIENT INFO */
-            .client-box {
+            .client-box {{
                 background: #fdf6e3;
                 padding: 20px;
                 margin-bottom: 30px;
                 border-left: 6px solid #d4af37;
                 border-radius: 8px;
-            }
+            }}
 
-            /* SECTION HEADINGS */
-            .section-title {
+            .section-title {{
                 font-size: 20px;
                 color: #8b0000;
                 margin-top: 30px;
-                margin-bottom: 10px;
                 border-bottom: 2px solid #d4af37;
                 padding-bottom: 6px;
-            }
+            }}
 
-            /* CONTENT */
-            .report-content {
+            .report-content {{
                 line-height: 1.8;
                 font-size: 15px;
                 text-align: justify;
-            }
+            }}
 
-            .footer {
+            .footer {{
                 margin-top: 40px;
                 text-align: center;
                 font-size: 12px;
                 color: #777;
-            }
+            }}
 
         </style>
-
     </head>
 
     <body>
@@ -360,22 +343,30 @@ def generate_pdf_report(client_id):
         <div class="section-title">Palm Reading Detailed Report</div>
 
         <div class="report-content">
-            {ai_draft.replace("\n","<br><br>")}
+            {report_text}
         </div>
 
         <div class="footer">
-            © 2026 आचार्य विशाल वैष्णव <br>
+            © 2026 आचार्य विशाल वैष्णव<br>
             WhatsApp: +91-6000376976
         </div>
 
     </div>
 
     </body>
-
     </html>
     """
 
-    HTML(string=html_content, base_url=os.getcwd()).write_pdf(file_path)
+    html_content = html_template.format(
+        client_code=client_code,
+        name=name,
+        phone=phone,
+        plan=plan,
+        created_at=created_at,
+        report_text=ai_draft.replace("\n", "<br><br>")
+    )
+
+    HTML(string=html_content).write_pdf(file_path)
 
     return file_name
 
