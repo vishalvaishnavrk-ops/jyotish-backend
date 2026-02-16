@@ -241,94 +241,93 @@ def generate_pdf_report(client_id):
         <meta charset="utf-8">
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
         <style>
+            @page {
+                size: A4;
+                margin: 80px 50px 80px 50px;
 
-        @page {
-            size: A4;
-            margin: 80px 50px 80px 50px;
+                @bottom-center {
+                    content: "Page " counter(page) " of " counter(pages);
+                    font-size: 12px;
+                    color: #777;
+               }
+            }
 
-            @bottom-center {
-                content: "Page " counter(page) " of " counter(pages);
+            body {
+                font-family: 'Noto Sans Devanagari', sans-serif;
+                color: #333;
+            }
+
+            /* GOLD FRAME */
+            .page-frame {
+                border: 8px solid #d4af37;
+                padding: 40px;
+                position: relative;
+            }
+
+            /* WATERMARK */
+            .watermark {
+                position: fixed;
+                top: 40%;
+                left: 20%;
+                font-size: 80px;
+                color: rgba(139,0,0,0.05);
+                transform: rotate(-30deg);
+                z-index: -1;
+            }
+
+            /* PREMIUM HEADER */
+            .header {
+                text-align: center;
+                padding-bottom: 20px;
+                margin-bottom: 30px;
+                background: linear-gradient(to right, #8b0000, #b22222);
+                color: white;
+                padding: 25px;
+                border-radius: 8px;
+            }
+
+            .title {
+                font-size: 28px;
+                font-weight: bold;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                margin-top: 5px;
+            }
+
+            /* CLIENT INFO */
+            .client-box {
+                background: #fdf6e3;
+                padding: 20px;
+                margin-bottom: 30px;
+                border-left: 6px solid #d4af37;
+                border-radius: 8px;
+            }
+
+            /* SECTION HEADINGS */
+            .section-title {
+                font-size: 20px;
+                color: #8b0000;
+                margin-top: 30px;
+                margin-bottom: 10px;
+                border-bottom: 2px solid #d4af37;
+                padding-bottom: 6px;
+            }
+
+            /* CONTENT */
+            .report-content {
+                line-height: 1.8;
+                font-size: 15px;
+                text-align: justify;
+            }
+
+            .footer {
+                margin-top: 40px;
+                text-align: center;
                 font-size: 12px;
                 color: #777;
-           }
-        }
-
-        body {
-            font-family: 'Noto Sans Devanagari', sans-serif;
-            color: #333;
-        }
-
-        /* GOLD FRAME */
-        .page-frame {
-            border: 8px solid #d4af37;
-            padding: 40px;
-            position: relative;
-        }
-
-        /* WATERMARK */
-        .watermark {
-            position: fixed;
-            top: 40%;
-            left: 20%;
-            font-size: 80px;
-            color: rgba(139,0,0,0.05);
-            transform: rotate(-30deg);
-            z-index: -1;
-        }
-
-        /* PREMIUM HEADER */
-        .header {
-            text-align: center;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-            background: linear-gradient(to right, #8b0000, #b22222);
-            color: white;
-            padding: 25px;
-            border-radius: 8px;
-        }
-
-        .title {
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        /* CLIENT INFO */
-        .client-box {
-            background: #fdf6e3;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-left: 6px solid #d4af37;
-            border-radius: 8px;
-        }
-
-        /* SECTION HEADINGS */
-        .section-title {
-            font-size: 20px;
-            color: #8b0000;
-            margin-top: 30px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #d4af37;
-            padding-bottom: 6px;
-        }
-
-        /* CONTENT */
-        .report-content {
-            line-height: 1.8;
-            font-size: 15px;
-            text-align: justify;
-        }
-
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 12px;
-            color: #777;
-        }
+            }
 
         </style>
 
