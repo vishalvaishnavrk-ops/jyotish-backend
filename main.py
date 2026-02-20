@@ -9,7 +9,8 @@ import uuid
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from weasyprint import HTML
+from weasyprint import HTML, CSS
+from weasyprint.text.fonts import FontConfiguration
 
 app = FastAPI()
 
@@ -224,7 +225,8 @@ def generate_pdf_report(client_id):
 
     file_name = f"{client_code}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
-
+    font_config = FontConfiguration()
+    
     html_template = """
     <html>
     <head>
@@ -242,8 +244,13 @@ def generate_pdf_report(client_id):
             }}
         }}
 
+        @font-face {{
+            font-family: 'NotoDev';
+            src: url('NotoSansDevanagari-Regular.ttf');
+        }}
+
         body {{
-            font-family: Arial, sans-serif;
+            font-family: 'NotoDev';
             color: #2c2c2c;
         }}
 
@@ -289,10 +296,11 @@ def generate_pdf_report(client_id):
 
         .section-block {{
             background: #ffffff;
-            padding: 18px;
+            padding: 20px;
+            border-left: 6px solid #d4af37;
             border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            page-break-inside: avoid;
         }}
 
         .report-content {{
@@ -347,8 +355,20 @@ def generate_pdf_report(client_id):
     </html>
     """
 
-    report_text = ai_draft.replace("\n\n", "</div><div class='section-block'>")
-    report_text = "<div class='section-block'>" + report_text + "</div>"
+    sections = ai_draft.split("Section")
+
+    formatted_blocks = ""
+
+    for sec in sections:
+        sec = sec.strip()
+        if not sec:
+            continue
+
+        formatted_blocks += f"""
+        <div class="section-block">
+            {sec.replace("\n", "<br>")}
+        </div>
+        """
 
     html_content = html_template.format(
         client_code=client_code,
@@ -356,10 +376,13 @@ def generate_pdf_report(client_id):
         phone=phone,
         plan=plan,
         created_at=created_at,
-        report_text=report_text
+        report_text = formatted_blocks
     )
 
-    HTML(string=html_content).write_pdf(file_path)
+    HTML(string=html_content, base_url=os.getcwd()).write_pdf(
+        file_path,
+        font_config=font_config
+    )
 
     return file_name
 
