@@ -147,9 +147,8 @@ def generate_ai_draft(client_id):
 
     name, plan, questions = data
 
-    # ---------- PLAN LOGIC ----------
     if "501" in plan:
-        q_depth = "Deep destiny and karmic explanation"
+        q_depth = "Deep karmic and destiny level explanation"
         remedy_level = "Advanced spiritual remedies"
         q_limit = 5
     elif "251" in plan:
@@ -158,54 +157,45 @@ def generate_ai_draft(client_id):
         q_limit = 3
     elif "151" in plan:
         q_depth = "Detailed practical explanation"
-        remedy_level = "Weekly + mantra remedies"
+        remedy_level = "Weekly mantra + routine remedies"
         q_limit = 2
     else:
         q_depth = "Simple direct guidance"
         remedy_level = "Basic daily remedies"
         q_limit = 1
 
-    # ---------- MASTER PROMPT ----------
     draft = f"""
 Palm Reading Report
+
 Client Name: {name}
 Plan: {plan}
 
 Section 1 – Haath ki Sanrachna
-Aapke haath ki banavat, ungliyon ki lambai aur angoothe ki sthiti aapki personality, decision power aur will power ko darshati hai.
+Aapke haath ki banavat aapki personality aur decision making ko darshati hai.
 
 Section 2 – Parvat Vishleshan
-Mount of Venus: Emotional energy aur relationships
-Mount of Jupiter: Leadership aur ambition
-Mount of Saturn: Responsibility aur karma
-Mount of Sun: Fame aur creativity
-Mount of Mercury: Communication aur business buddhi
-Upper & Lower Mars: Courage aur struggle capacity
+Mount of Venus – Emotional energy  
+Mount of Jupiter – Leadership  
+Mount of Saturn – Responsibility  
+Mount of Sun – Fame  
 
 Section 3 – Mukhya Rekhayein
-Life Line – Jeevan shakti aur health pattern
-Head Line – Soch aur decision making
-Heart Line – Emotions aur relationships
-Fate Line – Career direction
-Sun Line – Recognition
-Marriage Line – Vivaah yog
+Life Line – Jeevan shakti  
+Head Line – Soch aur planning  
+Heart Line – Emotions  
+Fate Line – Career  
 
-Section 4 – Vishesh Chinh
-Til, Cross, Star, Trishul, V-shape, Shankh, Island, Grill jaise chinh jeevan ke khas mod aur karmic signals dete hain.
-
-Section 5 – Aapke Prashn ka Uttar
+Section 4 – Aapke Prashn ka Uttar
 Analysis Type: {q_depth}
 Allowed Questions: {q_limit}
 
 {questions}
 
-Section 6 – Upay
+Section 5 – Upay
 Remedy Level: {remedy_level}
 
-(Here detailed AI spiritual remedies will be generated.)
-
 Antim Sandesh:
-Dharm, Shraddha aur Sahi Karm se bhagya ko majboot kiya ja sakta hai.
+Shraddha aur sahi karm se bhagya majboot hota hai.
 
 – आचार्य विशाल वैष्णव
 """
@@ -214,11 +204,11 @@ Dharm, Shraddha aur Sahi Karm se bhagya ko majboot kiya ja sakta hai.
         UPDATE clients
         SET ai_draft=?, ai_generated=1
         WHERE id=?
-    """, (draft, client_id))
+    """, (draft.strip(), client_id))
 
     conn.commit()
     conn.close()
-
+    
 def generate_pdf_report(client_id):
 
     conn = get_db()
@@ -240,83 +230,83 @@ def generate_pdf_report(client_id):
     <head>
         <meta charset="utf-8">
         <style>
-            @page {{
-                size: A4;
-                margin: 80px 50px;
-                @bottom-center {{
-                    content: "Page " counter(page) " of " counter(pages);
-                    font-size: 12px;
-                    color: #777;
-                }}
-            }}
 
-            body {{
-                font-family: Arial, sans-serif;
-                color: #333;
-            }}
+        @page {
+            size: A4;
+            margin: 70px 50px;
 
-            .page-frame {{
-                border: 8px solid #d4af37;
-                padding: 40px;
-                position: relative;
-            }}
-
-            .watermark {{
-                position: fixed;
-                top: 40%;
-                left: 20%;
-                font-size: 80px;
-                color: rgba(139,0,0,0.05);
-                transform: rotate(-30deg);
-                z-index: -1;
-            }}
-
-            .header {{
-                text-align: center;
-                background: linear-gradient(to right, #8b0000, #b22222);
-                color: white;
-                padding: 25px;
-                border-radius: 8px;
-                margin-bottom: 30px;
-            }}
-
-            .title {{
-                font-size: 28px;
-                font-weight: bold;
-            }}
-
-            .subtitle {{
-                font-size: 14px;
-            }}
-
-            .client-box {{
-                background: #fdf6e3;
-                padding: 20px;
-                margin-bottom: 30px;
-                border-left: 6px solid #d4af37;
-                border-radius: 8px;
-            }}
-
-            .section-title {{
-                font-size: 20px;
-                color: #8b0000;
-                margin-top: 30px;
-                border-bottom: 2px solid #d4af37;
-                padding-bottom: 6px;
-            }}
-
-            .report-content {{
-                line-height: 1.8;
-                font-size: 15px;
-                text-align: justify;
-            }}
-
-            .footer {{
-                margin-top: 40px;
-                text-align: center;
-                font-size: 12px;
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 11px;
                 color: #777;
-            }}
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #2c2c2c;
+        }
+
+        .page-frame {
+            border: 6px solid #d4af37;
+            padding: 40px;
+            background: #fffdf9;
+        }
+
+        .header {
+            text-align: center;
+            background: linear-gradient(to right, #7b0000, #b22222);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 35px;
+        }
+
+        .title {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 15px;
+        }
+
+        .client-box {
+            background: #fff3e6;
+            padding: 20px;
+            border-left: 6px solid #d4af37;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #7b0000;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #d4af37;
+        }
+
+        .section-block {
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+
+        .report-content {
+            font-size: 15px;
+            line-height: 1.9;
+            text-align: justify;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
 
         </style>
     </head>
@@ -357,13 +347,16 @@ def generate_pdf_report(client_id):
     </html>
     """
 
+    report_text = ai_draft.replace("\n\n", "</div><div class='section-block'>")
+    report_text = "<div class='section-block'>" + report_text + "</div>"
+
     html_content = html_template.format(
         client_code=client_code,
         name=name,
         phone=phone,
         plan=plan,
         created_at=created_at,
-        report_text=ai_draft.replace("\n", "<br><br>")
+        report_text=report_text
     )
 
     HTML(string=html_content).write_pdf(file_path)
