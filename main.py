@@ -235,7 +235,7 @@ def generate_pdf_report(client_id):
 
         @page {{
             size: A4;
-            margin: 70px 50px;
+            margin: 50px;
 
             @bottom-center {{
                 content: "Page " counter(page) " of " counter(pages);
@@ -260,6 +260,16 @@ def generate_pdf_report(client_id):
             background: linear-gradient(to bottom, #fffdf9, #fff6e8);
         }}
 
+        .watermark {{
+            position: fixed;
+            top: 45%;
+            left: 30%;
+            font-size: 120px;
+            color: rgba(139,0,0,0.05);
+            transform: rotate(-30deg);
+            z-index: -1;
+        }}
+
         .header {{
             text-align: center;
             background: linear-gradient(to right, #7b0000, #b22222);
@@ -270,12 +280,14 @@ def generate_pdf_report(client_id):
         }}
 
         .title {{
-            font-size: 30px;
-            font-weight: bold;
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }}
 
         .subtitle {{
-            font-size: 15px;
+            font-size: 16px;
+            opacity: 0.95;
         }}
 
         .client-box {{
@@ -304,7 +316,7 @@ def generate_pdf_report(client_id):
         }}
 
         .report-content {{
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.9;
             text-align: justify;
         }}
@@ -321,11 +333,12 @@ def generate_pdf_report(client_id):
 
     <body>
 
-    <div class="watermark">AVV</div>
-
     <div class="page-frame">
 
+    <div class="watermark">ॐ</div>
+
         <div class="header">
+            <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:15px;">
             <div class="title">आचार्य विशाल वैष्णव</div>
             <div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
         </div>
@@ -345,7 +358,8 @@ def generate_pdf_report(client_id):
         </div>
 
         <div class="footer">
-            © 2026 आचार्य विशाल वैष्णव<br>
+            <hr style="border:none; border-top:1px solid #ddd; margin-bottom:10px;">
+            © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
             WhatsApp: +91-6000376976
         </div>
 
