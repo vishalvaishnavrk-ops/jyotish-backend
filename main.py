@@ -255,9 +255,9 @@ def generate_pdf_report(client_id):
         }}
 
         .page-frame {{
-            border: 6px solid #d4af37;
-            padding: 40px;
-            background: #fffdf9;
+            border: 3px solid #c6a74d;
+            padding: 45px;
+            background: linear-gradient(to bottom, #fffdf9, #fff6e8);
         }}
 
         .header {{
@@ -296,10 +296,10 @@ def generate_pdf_report(client_id):
 
         .section-block {{
             background: #ffffff;
-            padding: 20px;
-            border-left: 6px solid #d4af37;
-            border-radius: 8px;
-            margin-bottom: 25px;
+            padding: 22px;
+            border-left: 5px solid #8b0000;
+            border-radius: 6px;
+            margin-bottom: 28px;
             page-break-inside: avoid;
         }}
 
