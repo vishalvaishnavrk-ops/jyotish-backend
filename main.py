@@ -231,82 +231,82 @@ def generate_pdf_report(client_id):
         <meta charset="utf-8">
         <style>
 
-        @page {
+        @page {{
             size: A4;
             margin: 70px 50px;
 
-            @bottom-center {
+            @bottom-center {{
                 content: "Page " counter(page) " of " counter(pages);
                 font-size: 11px;
                 color: #777;
-            }
-        }
+            }}
+        }}
 
-        body {
+        body {{
             font-family: Arial, sans-serif;
             color: #2c2c2c;
-        }
+        }}
 
-        .page-frame {
+        .page-frame {{
             border: 6px solid #d4af37;
             padding: 40px;
             background: #fffdf9;
-        }
+        }}
 
-        .header {
+        .header {{
             text-align: center;
             background: linear-gradient(to right, #7b0000, #b22222);
             color: white;
             padding: 30px;
             border-radius: 10px;
             margin-bottom: 35px;
-        }
+        }}
 
-        .title {
+        .title {{
             font-size: 30px;
             font-weight: bold;
-        }
+        }}
 
-        .subtitle {
+        .subtitle {{
             font-size: 15px;
-        }
+        }}
 
-        .client-box {
+        .client-box {{
             background: #fff3e6;
             padding: 20px;
             border-left: 6px solid #d4af37;
             border-radius: 10px;
             margin-bottom: 30px;
-        }
+        }}
 
-        .section-title {
+        .section-title {{
             font-size: 20px;
             color: #7b0000;
             margin-top: 30px;
             margin-bottom: 15px;
             border-bottom: 3px solid #d4af37;
-        }
+        }}
 
-        .section-block {
+        .section-block {{
             background: #ffffff;
             padding: 18px;
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-        }
+        }}
 
-        .report-content {
+        .report-content {{
             font-size: 15px;
             line-height: 1.9;
             text-align: justify;
-        }
+        }}
 
-        .footer {
+        .footer {{
             margin-top: 50px;
             text-align: center;
             font-size: 12px;
             color: #777;
-        }
+        }}
 
         </style>
     </head>
