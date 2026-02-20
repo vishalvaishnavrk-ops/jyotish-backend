@@ -375,15 +375,6 @@ def get_db():
     return sqlite3.connect(DB_PATH)
 
 # ---------- ROOT ----------
-@app.get("/reset-drafts")
-def reset_drafts():
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("UPDATE clients SET ai_draft = NULL")
-    conn.commit()
-    conn.close()
-    return {"status": "All drafts reset"}
-
 @app.get("/")
 def root():
     return {"status": "Backend with Database running"}
