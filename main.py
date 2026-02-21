@@ -348,7 +348,7 @@ def generate_pdf_report(client_id):
         <div class="page-frame">
 
             <div class="header">
-                <img src="header-banner.png" style="width:100%; border-radius:8px; margin-bottom:20px;">
+                <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:20px;">
             </div>
 
             <div class="client-box">
