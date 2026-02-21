@@ -235,12 +235,28 @@ def generate_pdf_report(client_id):
 
         @page {{
             size: A4;
-            margin: 45px;
+            margin: 35px;
        
             @bottom-center {{
                 content: "Page " counter(page) " of " counter(pages);
                 font-size: 11px;
                 color: #777;
+            }}
+
+            @top-left {{
+                content: "";
+                border-top: 2px solid #c6a74d;
+                position: fixed;
+                width: 100%;
+                top: 0;
+            }}
+
+            @bottom-left {{
+                content: "";
+                border-bottom: 2px solid #c6a74d;
+                position: fixed;
+                width: 100%;
+                bottom: 0;
             }}
         }}
 
@@ -253,12 +269,13 @@ def generate_pdf_report(client_id):
             font-family: 'NotoDev';
             color: #2c2c2c;
             background-color: #faf6ef;
+            border-left: 2px solid #c6a74d;
+            border-right: 2px solid #c6a74d;
+            padding: 30px;
         }}
 
         .page-frame {{
             background: linear-gradient(to bottom, #fffdf9, #fff6e8);
-            border: 2px solid #c6a74d;
-            min-height: 100%;
             padding: 35px;
             box-sizing: border-box;
         }}
@@ -334,7 +351,10 @@ def generate_pdf_report(client_id):
         }}
 
         .footer {{
-            margin-top: 50px;
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            right: 0;
             text-align: center;
             font-size: 12px;
             color: #777;
