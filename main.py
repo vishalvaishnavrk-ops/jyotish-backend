@@ -252,24 +252,26 @@ def generate_pdf_report(client_id):
         body {{
             font-family: 'NotoDev';
             color: #2c2c2c;
+            border: 2px solid #c6a74d;
+            padding: 40px;
         }}
 
         .page-frame {{
-            border: 3px solid #c6a74d;
-            padding: 45px;
             background: linear-gradient(to bottom, #fffdf9, #fff6e8);
         }}
 
         .watermark {{
             position: fixed;
-            top: 45%;
-            left: 30%;
-            font-size: 120px;
-            color: rgba(139,0,0,0.05);
-            transform: rotate(-30deg);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            font-size: 160px;
+            color: rgba(139,0,0,0.06);
             z-index: -1;
+            text-align: center;
+            width: 100%;
         }}
-
+        
         .header {{
             text-align: center;
             background: linear-gradient(to right, #7b0000, #b22222);
@@ -298,12 +300,17 @@ def generate_pdf_report(client_id):
             margin-bottom: 30px;
         }}
 
+        .page-break {{
+            page-break-after: always;
+        }} 
+        
         .section-title {{
-            font-size: 20px;
+            font-size: 26px;
+            font-weight: 700;
             color: #7b0000;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            margin-bottom: 30px;
             border-bottom: 3px solid #d4af37;
+            padding-bottom: 10px;
         }}
 
         .section-block {{
@@ -333,38 +340,55 @@ def generate_pdf_report(client_id):
 
     <body>
 
-    <div class="page-frame">
-
     <div class="watermark">ॐ</div>
 
-        <div class="header">
-            <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:15px;">
-            <div class="title">आचार्य विशाल वैष्णव</div>
-            <div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
-        </div>
+    <!-- PAGE 1 -->
+    <div class="cover-page">
 
-        <div class="client-box">
-            <b>Client Code:</b> {client_code}<br>
-            <b>Name:</b> {name}<br>
-            <b>Mobile:</b> {phone}<br>
-            <b>Plan:</b> {plan}<br>
-            <b>Date:</b> {created_at}
-        </div>
+        <div class="page-frame">
 
-        <div class="section-title">Palm Reading Detailed Report</div>
+            <div class="header">
+                <img src="header-banner.png" style="width:100%; border-radius:8px; margin-bottom:20px;">
+            </div>
 
-        <div class="report-content">
-            {report_text}
-        </div>
+            <div class="client-box">
+                <b>Client Code:</b> {client_code}<br>
+                <b>Name:</b> {name}<br>
+                <b>Mobile:</b> {phone}<br>
+                <b>Plan:</b> {plan}<br>
+                <b>Date:</b> {created_at}
+            </div>
 
-        <div class="footer">
-            <hr style="border:none; border-top:1px solid #ddd; margin-bottom:10px;">
-            © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
-            WhatsApp: +91-6000376976
         </div>
 
     </div>
 
+
+    <!-- FORCE PAGE BREAK -->
+    <div class="page-break"></div>
+
+
+    <!-- PAGE 2 AND ONWARDS -->
+    <div class="report-page">
+
+        <div class="page-frame">
+
+            <div class="section-title">Palm Reading Detailed Report</div>
+
+            <div class="report-content">
+                {report_text}
+            </div>
+
+            <div class="footer">
+                <hr style="border:none; border-top:1px solid #ddd; margin-bottom:10px;">
+                © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
+                WhatsApp: +91-6000376976
+            </div>
+
+        </div>
+
+    </div>
+        
     </body>
     </html>
     """
