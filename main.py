@@ -242,22 +242,6 @@ def generate_pdf_report(client_id):
                 font-size: 11px;
                 color: #777;
             }}
-
-            @top-left {{
-                content: "";
-                border-top: 2px solid #c6a74d;
-                position: fixed;
-                width: 100%;
-                top: 0;
-            }}
-
-            @bottom-left {{
-                content: "";
-                border-bottom: 2px solid #c6a74d;
-                position: fixed;
-                width: 100%;
-                bottom: 0;
-            }}
         }}
 
         @font-face {{
@@ -269,15 +253,7 @@ def generate_pdf_report(client_id):
             font-family: 'NotoDev';
             color: #2c2c2c;
             background-color: #faf6ef;
-            border-left: 2px solid #c6a74d;
-            border-right: 2px solid #c6a74d;
-            padding: 30px;
-        }}
-
-        .page-frame {{
-            background: linear-gradient(to bottom, #fffdf9, #fff6e8);
-            padding: 35px;
-            box-sizing: border-box;
+            margin: 0;
         }}
 
         .watermark {{
@@ -350,16 +326,36 @@ def generate_pdf_report(client_id):
             text-align: justify;
         }}
 
+        .page {{
+            position: relative;
+            min-height: 100vh;
+            padding: 40px;
+            box-sizing: border-box;
+            border: 2px solid #c6a74d;
+            background: linear-gradient(to bottom, #fffdf9, #fff6e8);
+            page-break-after: always;
+        }}
+
+        .page-content {{
+            padding-bottom: 80px;
+        }}
+
         .footer {{
-            position: fixed;
-            bottom: 50px;
-            left: 0;
-            right: 0;
+            position: absolute;
+            bottom: 25px;
+            left: 40px;
+            right: 40px;
             text-align: center;
             font-size: 12px;
             color: #777;
         }}
 
+        .footer hr {{
+            border: none;
+            border-top: 1px solid #ddd;
+            margin-bottom: 10px;
+        }} 
+        
         </style>
     </head>
 
@@ -368,9 +364,9 @@ def generate_pdf_report(client_id):
     <div class="watermark">ॐ</div>
 
     <!-- PAGE 1 -->
-    <div class="cover-page">
+    <div class="page">
 
-        <div class="page-frame">
+        <div class="page-content">
 
             <div class="header">
                 <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:25px;">
@@ -389,17 +385,19 @@ def generate_pdf_report(client_id):
 
         </div>
 
+        <div class="footer">
+            <hr>
+            © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
+            WhatsApp: +91-6000376976
+        </div>
+
     </div>
 
 
-    <!-- FORCE PAGE BREAK -->
-    <div class="page-break"></div>
+    <!-- PAGE 2 -->
+    <div class="page">
 
-
-    <!-- PAGE 2 AND ONWARDS -->
-    <div class="report-page">
-
-        <div class="page-frame">
+        <div class="page-content">
 
             <div class="section-title">Palm Reading Detailed Report</div>
 
@@ -407,12 +405,12 @@ def generate_pdf_report(client_id):
                 {report_text}
             </div>
 
-            <div class="footer">
-                <hr style="border:none; border-top:1px solid #ddd; margin-bottom:10px;">
-                © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
-                WhatsApp: +91-6000376976
-            </div>
+        </div>
 
+        <div class="footer">
+            <hr>
+            © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
+            WhatsApp: +91-6000376976
         </div>
 
     </div>
