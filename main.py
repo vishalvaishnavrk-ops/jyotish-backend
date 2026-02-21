@@ -237,6 +237,8 @@ def generate_pdf_report(client_id):
             size: A4;
             margin: 50px;
 
+            border: 2px solid #c6a74d;
+            
             @bottom-center {{
                 content: "Page " counter(page) " of " counter(pages);
                 font-size: 11px;
@@ -252,8 +254,6 @@ def generate_pdf_report(client_id):
         body {{
             font-family: 'NotoDev';
             color: #2c2c2c;
-            border: 2px solid #c6a74d;
-            padding: 40px;
         }}
 
         .page-frame {{
@@ -264,9 +264,9 @@ def generate_pdf_report(client_id):
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(-25deg);
-            font-size: 160px;
-            color: rgba(139,0,0,0.06);
+            transform: translate(-50%, -50%);
+            font-size: 180px;
+            color: rgba(139,0,0,0.05);
             z-index: -1;
             text-align: center;
             width: 100%;
