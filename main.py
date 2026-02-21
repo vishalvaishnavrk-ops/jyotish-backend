@@ -295,10 +295,6 @@ def generate_pdf_report(client_id):
             border-left: 6px solid #d4af37;
             border-radius: 10px;
             margin-bottom: 30px;
-        }}
-
-        .page-break {{
-            page-break-after: always;
         }} 
         
         .section-title {{
@@ -328,7 +324,8 @@ def generate_pdf_report(client_id):
 
         .page {{
             position: relative;
-            min-height: 100vh;
+            width: 100%;
+            height: 1000px;   /* FIXED HEIGHT */
             padding: 40px;
             box-sizing: border-box;
             border: 2px solid #c6a74d;
