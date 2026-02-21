@@ -235,10 +235,8 @@ def generate_pdf_report(client_id):
 
         @page {{
             size: A4;
-            margin: 50px;
-
-            border: 2px solid #c6a74d;
-            
+            margin: 45px;
+       
             @bottom-center {{
                 content: "Page " counter(page) " of " counter(pages);
                 font-size: 11px;
@@ -254,10 +252,15 @@ def generate_pdf_report(client_id):
         body {{
             font-family: 'NotoDev';
             color: #2c2c2c;
+            background-color: #faf6ef;
         }}
 
         .page-frame {{
             background: linear-gradient(to bottom, #fffdf9, #fff6e8);
+            border: 2px solid #c6a74d;
+            min-height: 100%;
+            padding: 35px;
+            box-sizing: border-box;
         }}
 
         .watermark {{
@@ -265,8 +268,8 @@ def generate_pdf_report(client_id):
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 180px;
-            color: rgba(139,0,0,0.05);
+            font-size: 190px;
+            color: rgba(139,0,0,0.04);
             z-index: -1;
             text-align: center;
             width: 100%;
@@ -276,20 +279,21 @@ def generate_pdf_report(client_id):
             text-align: center;
             background: linear-gradient(to right, #7b0000, #b22222);
             color: white;
-            padding: 30px;
-            border-radius: 10px;
+            padding: 35px;
+            border-radius: 12px;
             margin-bottom: 35px;
         }}
 
         .title {{
-            font-size: 34px;
+            font-size: 36px;
             font-weight: 700;
-            letter-spacing: 1px;
+            margin-top: 10px;
         }}
 
         .subtitle {{
-            font-size: 16px;
+            font-size: 17px;
             opacity: 0.95;
+            margin-top: 6px;
         }}
 
         .client-box {{
@@ -314,12 +318,13 @@ def generate_pdf_report(client_id):
         }}
 
         .section-block {{
-            background: #ffffff;
+            background: linear-gradient(to bottom, #fffdf9, #fff4dd);
             padding: 22px;
-            border-left: 5px solid #8b0000;
-            border-radius: 6px;
-            margin-bottom: 28px;
+            border-left: 6px solid #b8860b;
+            border-radius: 8px;
+            margin-bottom: 30px;
             page-break-inside: avoid;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         }}
 
         .report-content {{
@@ -348,7 +353,10 @@ def generate_pdf_report(client_id):
         <div class="page-frame">
 
             <div class="header">
-                <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:20px;">
+                <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:25px;">
+
+                <div class="title">आचार्य विशाल वैष्णव</div>
+                <div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
             </div>
 
             <div class="client-box">
