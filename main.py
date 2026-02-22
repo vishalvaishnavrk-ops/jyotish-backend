@@ -209,7 +209,7 @@ Shraddha aur sahi karm se bhagya majboot hota hai.
 
     conn.commit()
     conn.close()
-    
+
 def generate_pdf_report(client_id):
 
     conn = get_db()
@@ -225,9 +225,35 @@ def generate_pdf_report(client_id):
 
     file_name = f"{client_code}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
+
     font_config = FontConfiguration()
-    
-    html_template = """
+
+    # -------- FORMAT REPORT CONTENT --------
+    blocks = ai_draft.split("\n\n")
+    formatted_blocks = ""
+
+    for block in blocks:
+        block = block.strip()
+        if not block:
+            continue
+
+        formatted_blocks += f"""
+        <div class="section-block">
+            {block.replace("\n", "<br>")}
+        </div>
+        """
+
+    # Footer only at end
+    formatted_blocks += """
+    <div class="final-footer">
+        <hr>
+        © 2026 आचार्य विशाल वैष्णव | All Rights Reserved<br>
+        WhatsApp: +91-6000376976
+    </div>
+    """
+
+    # -------- HTML TEMPLATE --------
+    html_content = f"""
     <html>
     <head>
         <meta charset="utf-8">
@@ -235,8 +261,9 @@ def generate_pdf_report(client_id):
 
         @page {{
             size: A4;
-            margin: 35px;
-       
+            margin: 40px;
+            border: 2px solid #c6a74d;
+
             @bottom-center {{
                 content: "Page " counter(page) " of " counter(pages);
                 font-size: 11px;
@@ -251,9 +278,8 @@ def generate_pdf_report(client_id):
 
         body {{
             font-family: 'NotoDev';
-            color: #2c2c2c;
-            background-color: #faf6ef;
             margin: 0;
+            background: #faf6ef;
         }}
 
         .watermark {{
@@ -261,13 +287,15 @@ def generate_pdf_report(client_id):
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 190px;
+            font-size: 160px;
             color: rgba(139,0,0,0.04);
             z-index: -1;
-            text-align: center;
-            width: 100%;
         }}
-        
+
+        .cover {{
+            padding: 40px;
+        }}
+
         .header {{
             text-align: center;
             background: linear-gradient(to right, #7b0000, #b22222);
@@ -279,13 +307,12 @@ def generate_pdf_report(client_id):
 
         .title {{
             font-size: 36px;
-            font-weight: 700;
-            margin-top: 10px;
+            font-weight: bold;
+            margin-top: 15px;
         }}
 
         .subtitle {{
             font-size: 17px;
-            opacity: 0.95;
             margin-top: 6px;
         }}
 
@@ -295,64 +322,34 @@ def generate_pdf_report(client_id):
             border-left: 6px solid #d4af37;
             border-radius: 10px;
             margin-bottom: 30px;
-        }} 
-        
+        }}
+
         .section-title {{
             font-size: 26px;
-            font-weight: 700;
+            font-weight: bold;
             color: #7b0000;
-            margin-bottom: 30px;
+            margin-top: 20px;
+            margin-bottom: 25px;
             border-bottom: 3px solid #d4af37;
             padding-bottom: 10px;
         }}
 
         .section-block {{
             background: linear-gradient(to bottom, #fffdf9, #fff4dd);
-            padding: 22px;
+            padding: 20px;
             border-left: 6px solid #b8860b;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             page-break-inside: avoid;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         }}
 
-        .report-content {{
-            font-size: 16px;
-            line-height: 1.9;
-            text-align: justify;
-        }}
-
-        .page {{
-            position: relative;
-            width: 100%;
-            height: 1040px;   /* FIXED HEIGHT */
-            padding: 40px;
-            box-sizing: border-box;
-            border: 2px solid #c6a74d;
-            background: linear-gradient(to bottom, #fffdf9, #fff6e8);
-            page-break-after: always;
-        }}
-
-        .page-content {{
-            padding-bottom: 120px;
-        }}
-
-        .footer {{
-            position: absolute;
-            bottom: 35px;
-            left: 40px;
-            right: 40px;
+        .final-footer {{
+            margin-top: 50px;
             text-align: center;
             font-size: 12px;
             color: #777;
         }}
 
-        .footer hr {{
-            border: none;
-            border-top: 1px solid #ddd;
-            margin-bottom: 10px;
-        }} 
-        
         </style>
     </head>
 
@@ -360,98 +357,39 @@ def generate_pdf_report(client_id):
 
     <div class="watermark">ॐ</div>
 
-    <!-- PAGE 1 -->
-    <div class="page">
+    <!-- COVER PAGE -->
+    <div class="cover">
 
-        <div class="page-content">
+        <div class="header">
+            <img src="ganesha.png" style="width:100%; border-radius:8px;">
+            <div class="title">आचार्य विशाल वैष्णव</div>
+            <div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
+        </div>
 
-            <div class="header">
-                <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:25px;">
-
-            <div class="client-box">
-                <b>Client Code:</b> {client_code}<br>
-                <b>Name:</b> {name}<br>
-                <b>Mobile:</b> {phone}<br>
-                <b>Plan:</b> {plan}<br>
-                <b>Date:</b> {created_at}
-            </div>
-
+        <div class="client-box">
+            <b>Client Code:</b> {client_code}<br>
+            <b>Name:</b> {name}<br>
+            <b>Mobile:</b> {phone}<br>
+            <b>Plan:</b> {plan}<br>
+            <b>Date:</b> {created_at}
         </div>
 
     </div>
 
-    {report_pages}
-        
+    <div style="page-break-after: always;"></div>
+
+    <!-- REPORT -->
+    <div class="report">
+
+        <div class="section-title">Palm Reading Detailed Report</div>
+
+        {formatted_blocks}
+
+    </div>
+
     </body>
     </html>
     """
-
-    blocks = ai_draft.split("\n\n")
-
-    pages = []
-    current_content = ""
-    approx_lines = 0
-
-    for block in blocks:
-        html_block = f"""
-        <div class="section-block">
-            {block.replace("\n", "<br>")}
-        </div>
-        """
-
-        current_content += html_block
-        approx_lines += block.count("\n")
-
-        if approx_lines > 25:   # adjust if needed
-            pages.append(current_content)
-            current_content = ""
-            approx_lines = 0
-
-    if current_content:
-        pages.append(current_content)
-
-    report_pages_html = ""
-
-    for i, page_content in enumerate(pages):
-
-        footer_html = ""
-
-        # Footer only on last page
-        if i == len(pages) - 1:
-            footer_html = """
-            <div class="footer">
-                <hr>
-                © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
-                WhatsApp: +91-6000376976
-            </div>
-            """
-        
-        report_pages_html += f"""
-        <div class="page">
-
-            <div class="page-content">
-
-                <div class="section-title">Palm Reading Detailed Report</div>
-
-                <div class="report-content">
-                    {page_content}
-                </div>
-
-            </div>
-
-            {footer_html}
-            
-        </div>
-        """
-
-    html_content = html_template.format(
-        client_code=client_code,
-        name=name,
-        phone=phone,
-        plan=plan,
-        created_at=created_at,
-        report_pages=report_pages_html
-    )
 
     HTML(string=html_content, base_url=os.getcwd()).write_pdf(
         file_path,
