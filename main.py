@@ -325,7 +325,7 @@ def generate_pdf_report(client_id):
         .page {{
             position: relative;
             width: 100%;
-            height: 1000px;   /* FIXED HEIGHT */
+            height: 1040px;   /* FIXED HEIGHT */
             padding: 40px;
             box-sizing: border-box;
             border: 2px solid #c6a74d;
@@ -334,12 +334,12 @@ def generate_pdf_report(client_id):
         }}
 
         .page-content {{
-            padding-bottom: 80px;
+            padding-bottom: 120px;
         }}
 
         .footer {{
             position: absolute;
-            bottom: 25px;
+            bottom: 35px;
             left: 40px;
             right: 40px;
             text-align: center;
@@ -368,10 +368,6 @@ def generate_pdf_report(client_id):
             <div class="header">
                 <img src="ganesha.png" style="width:100%; border-radius:8px; margin-bottom:25px;">
 
-                <div class="title">आचार्य विशाल वैष्णव</div>
-                <div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
-            </div>
-
             <div class="client-box">
                 <b>Client Code:</b> {client_code}<br>
                 <b>Name:</b> {name}<br>
@@ -380,12 +376,6 @@ def generate_pdf_report(client_id):
                 <b>Date:</b> {created_at}
             </div>
 
-        </div>
-
-        <div class="footer">
-            <hr>
-            © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
-            WhatsApp: +91-6000376976
         </div>
 
     </div>
@@ -422,7 +412,20 @@ def generate_pdf_report(client_id):
 
     report_pages_html = ""
 
-    for page_content in pages:
+    for i, page_content in enumerate(pages):
+
+        footer_html = ""
+
+        # Footer only on last page
+        if i == len(pages) - 1:
+            footer_html = """
+            <div class="footer">
+                <hr>
+                © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
+                WhatsApp: +91-6000376976
+            </div>
+            """
+        
         report_pages_html += f"""
         <div class="page">
 
@@ -436,12 +439,8 @@ def generate_pdf_report(client_id):
 
             </div>
 
-            <div class="footer">
-                <hr>
-                © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
-                WhatsApp: +91-6000376976
-            </div>
-
+            {footer_html}
+            
         </div>
         """
 
