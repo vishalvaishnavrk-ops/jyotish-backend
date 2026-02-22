@@ -390,44 +390,58 @@ def generate_pdf_report(client_id):
 
     </div>
 
-
-    <!-- PAGE 2 -->
-    <div class="page">
-
-        <div class="page-content">
-
-            <div class="section-title">Palm Reading Detailed Report</div>
-
-            <div class="report-content">
-                {report_text}
-            </div>
-
-        </div>
-
-        <div class="footer">
-            <hr>
-            © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
-            WhatsApp: +91-6000376976
-        </div>
-
-    </div>
+    {report_pages}
         
     </body>
     </html>
     """
 
-    sections = ai_draft.split("Section")
+    blocks = ai_draft.split("\n\n")
 
-    formatted_blocks = ""
+    pages = []
+    current_content = ""
+    approx_lines = 0
 
-    for sec in sections:
-        sec = sec.strip()
-        if not sec:
-            continue
-
-        formatted_blocks += f"""
+    for block in blocks:
+        html_block = f"""
         <div class="section-block">
-            {sec.replace("\n", "<br>")}
+            {block.replace("\n", "<br>")}
+        </div>
+        """
+
+        current_content += html_block
+        approx_lines += block.count("\n")
+
+        if approx_lines > 25:   # adjust if needed
+            pages.append(current_content)
+            current_content = ""
+            approx_lines = 0
+
+    if current_content:
+        pages.append(current_content)
+
+    report_pages_html = ""
+
+    for page_content in pages:
+        report_pages_html += f"""
+        <div class="page">
+
+            <div class="page-content">
+
+                <div class="section-title">Palm Reading Detailed Report</div>
+
+                <div class="report-content">
+                    {page_content}
+                </div>
+
+            </div>
+
+            <div class="footer">
+                <hr>
+                © 2026 आचार्य विशाल वैष्णव | All Rights Reserved <br>
+                WhatsApp: +91-6000376976
+            </div>
+
         </div>
         """
 
@@ -437,7 +451,7 @@ def generate_pdf_report(client_id):
         phone=phone,
         plan=plan,
         created_at=created_at,
-        report_text = formatted_blocks
+        report_pages=report_pages_html
     )
 
     HTML(string=html_content, base_url=os.getcwd()).write_pdf(
