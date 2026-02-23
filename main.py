@@ -317,17 +317,19 @@ def generate_pdf_report(client_id):
         }}
 
         .client-box {{
-            background: #fff3e6;
-            padding: 20px;
+            background: linear-gradient(to right, #fff8e7, #ffe9c2);
+            padding: 22px 26px;
+            margin: 0 15px 35px 15px;   /* LEFT-RIGHT GAP */
             border-left: 6px solid #d4af37;
-            border-radius: 10px;
-            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
         }}
 
         .section-title {{
             font-size: 26px;
             font-weight: bold;
-            color: #7b0000;
+            letter-spacing: 1px;
+            color: #8b0000;
             margin-top: 20px;
             margin-bottom: 25px;
             border-bottom: 3px solid #d4af37;
@@ -335,12 +337,17 @@ def generate_pdf_report(client_id):
         }}
 
         .section-block {{
-            background: linear-gradient(to bottom, #fffdf9, #fff4dd);
-            padding: 20px;
+            background: linear-gradient(to bottom, #fffdf9, #ffecc7);
+            padding: 22px 26px;
+            margin: 0 15px 30px 15px;   /* LEFT-RIGHT GAP ADDED */
             border-left: 6px solid #b8860b;
-            border-radius: 8px;
-            margin-bottom: 25px;
+            border-radius: 10px;
             page-break-inside: avoid;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }}
+
+        .page-content {{
+            padding: 0 10px 120px 10px;   /* side breathing space */
         }}
 
         .final-footer {{
