@@ -229,20 +229,24 @@ def generate_pdf_report(client_id):
     font_config = FontConfiguration()
 
     # -------- FORMAT REPORT CONTENT --------
-    blocks = ai_draft.split("\n\n")
+    import re
+
+    sections = re.split(r'(Section\s+\d+\s*–.*?)\n', ai_draft)
+
     formatted_blocks = ""
 
-    for block in blocks:
-        block = block.strip()
-        if not block:
-            continue
+    for i in range(1, len(sections), 2):
+        title = sections[i].strip()
+        content = sections[i+1].strip()
 
         formatted_blocks += f"""
         <div class="section-block">
-            {block.replace("\n", "<br>")}
+            <div style="font-weight:bold; font-size:18px; margin-bottom:8px; color:#7b0000;">
+                {title}
+            </div>
+            {content.replace("\n", "<br>")}
         </div>
         """
-
     # Footer only at end
     formatted_blocks += """
     <div class="final-footer">
@@ -328,8 +332,8 @@ def generate_pdf_report(client_id):
         .section-title {{
             font-size: 26px;
             font-weight: bold;
-            letter-spacing: 1px;
             color: #8b0000;
+            letter-spacing: 1px;
             margin-top: 20px;
             margin-bottom: 25px;
             border-bottom: 3px solid #d4af37;
@@ -351,10 +355,16 @@ def generate_pdf_report(client_id):
         }}
 
         .final-footer {{
-            margin-top: 50px;
+            margin: 60px 20px 30px 20px;   /* LEFT RIGHT GAP ADDED */
             text-align: center;
             font-size: 12px;
             color: #777;
+        }}
+
+        .final-footer hr {{
+        border: none;
+        border-top: 1px solid #ddd;
+        margin: 0 40px 15px 40px;  /* IMPORTANT */
         }}
 
         </style>
