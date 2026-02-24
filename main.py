@@ -1000,6 +1000,24 @@ def client_detail(client_id: int):
     cdata = c.fetchone()
     conn.close()
 
+    # -------- PDF BUTTON CONTROL BASED ON STATUS --------
+    pdf_button = ""
+
+    if cdata[11] == "Reviewed":
+        pdf_button = f"""
+        <form method="post" action="/admin/client/{client_id}/generate-pdf" style="margin-top:10px;">
+            <button style="background:#6f42c1;color:white;padding:8px 12px;border:none;border-radius:5px;">
+                Generate PDF Report
+            </button>
+        </form>
+        """
+    else:
+        pdf_button = """
+        <button style="background:gray;color:white;padding:8px 12px;border:none;border-radius:5px;cursor:not-allowed;margin-top:10px;" disabled>
+            Generate PDF Report (Review Required)
+        </button>
+        """
+
     # ✅ ---- ADD THIS BLOCK HERE ----
     images_html = ""
     if cdata[9]:
@@ -1149,11 +1167,7 @@ button {{
         </button>
     </form>
 
-    <form method="post" action="/admin/client/{client_id}/generate-pdf" style="margin-top:10px;">
-        <button style="background:#6f42c1;">
-            Generate PDF Report
-        </button>
-    </form>
+    {pdf_button}
 
     <br><br>
     <a href="/admin/client/{client_id}/pdf" target="_blank">
@@ -1265,7 +1279,36 @@ def mark_paid(client_id: int):
 
 @app.post("/admin/client/{client_id}/generate-pdf")
 def create_pdf(client_id: int):
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT status FROM clients WHERE id=?", (client_id,))
+    data = c.fetchone()
+    conn.close()
+
+    if not data:
+        return HTMLResponse("<h3>Client not found</h3>")
+
+    current_status = data[0]
+
+    # 🚫 BLOCK PDF IF NOT REVIEWED
+    if current_status != "Reviewed":
+        return HTMLResponse("""
+        <div style="text-align:center;margin-top:80px;font-family:Arial;">
+            <h2 style="color:red;">❌ PDF Generate Blocked</h2>
+            <p>AI Draft ko pehle <b>Reviewed</b> mark kare bina PDF generate nahi ho sakta.</p>
+            <br>
+            <a href="javascript:history.back()">
+                <button style="padding:10px 20px;background:#8b0000;color:white;border:none;border-radius:5px;">
+                    ⬅ Back
+                </button>
+            </a>
+        </div>
+        """)
+
+    # ✅ IF REVIEWED → GENERATE PDF
     file_name = generate_pdf_report(client_id)
+
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
 @app.post("/admin/client/{client_id}/generate-ai")
