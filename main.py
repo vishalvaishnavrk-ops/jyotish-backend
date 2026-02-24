@@ -1000,6 +1000,56 @@ def client_detail(client_id: int):
     cdata = c.fetchone()
     conn.close()
 
+    # -------- WHATSAPP LINK GENERATION --------
+    import urllib.parse
+    import os
+
+    phone_number = cdata[3]
+    client_code = cdata[1]
+
+    base_url = "https://jyotish-backend-gbr9.onrender.com"
+
+    pdf_path = os.path.join(REPORT_DIR, f"{client_code}.pdf")
+
+    whatsapp_button = ""
+
+    if os.path.exists(pdf_path):
+
+        public_pdf_url = f"{base_url}/reports/{client_code}.pdf"
+
+        message = f"""नमस्ते {cdata[2]},
+
+    आपकी हस्तरेखा रिपोर्ट तैयार है।
+
+    नीचे दिए गए लिंक से अपनी PDF डाउनलोड करें:
+    {public_pdf_url}
+
+    ईश्वर आपकी उन्नति करें 🙏
+    – आचार्य विशाल वैष्णव
+    """
+
+        encoded_message = urllib.parse.quote(message)
+
+        whatsapp_link = f"https://wa.me/91{phone_number}?text={encoded_message}"
+
+        whatsapp_button = f"""
+        <br>
+        <a href="{whatsapp_link}" target="_blank">
+            <button style="background:#25D366;color:white;padding:10px 15px;border:none;border-radius:5px;">
+                📲 Send via WhatsApp
+            </button>
+        </a>
+        """
+
+    else:
+
+        whatsapp_button = """
+        <br>
+        <button style="background:gray;color:white;padding:10px 15px;border:none;border-radius:5px;cursor:not-allowed;" disabled>
+            📲 Generate PDF First
+        </button>
+        """
+
     # -------- PDF BUTTON CONTROL BASED ON STATUS --------
     pdf_button = ""
 
@@ -1168,6 +1218,8 @@ button {{
     </form>
 
     {pdf_button}
+
+    {whatsapp_button}
 
     <br><br>
     <a href="/admin/client/{client_id}/pdf" target="_blank">
