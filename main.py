@@ -1034,7 +1034,7 @@ def client_detail(client_id: int):
 
         whatsapp_button = f"""
         <br>
-        <a href="{whatsapp_link}" target="_blank">
+        <a href="/admin/client/{client_id}/send-whatsapp">
             <button style="background:#25D366;color:white;padding:10px 15px;border:none;border-radius:5px;">
                 📲 Send via WhatsApp
             </button>
@@ -1371,6 +1371,48 @@ def create_pdf(client_id: int):
 def manual_ai_generate(client_id: int):
      generate_ai_draft(client_id)
      return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+
+@app.get("/admin/client/{client_id}/send-whatsapp")
+def send_whatsapp(client_id: int):
+
+    import urllib.parse
+    import os
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT name, phone, client_code FROM clients WHERE id=?", (client_id,))
+    data = c.fetchone()
+
+    if not data:
+        conn.close()
+        return HTMLResponse("Client not found")
+
+    name, phone_number, client_code = data
+
+    # Update status to Completed
+    c.execute("UPDATE clients SET status='Completed' WHERE id=?", (client_id,))
+    conn.commit()
+    conn.close()
+
+    base_url = "https://jyotish-backend-gbr9.onrender.com"
+    public_pdf_url = f"{base_url}/reports/{client_code}.pdf"
+
+    message = f"""नमस्ते {name},
+
+आपकी हस्तरेखा रिपोर्ट तैयार है।
+
+नीचे दिए गए लिंक से अपनी PDF डाउनलोड करें:
+{public_pdf_url}
+
+ईश्वर आपकी उन्नति करें 🙏
+– आचार्य विशाल वैष्णव
+"""
+
+    encoded_message = urllib.parse.quote(message)
+
+    whatsapp_link = f"https://wa.me/91{phone_number}?text={encoded_message}"
+
+    return RedirectResponse(whatsapp_link)
 
 @app.get("/admin/client/{client_id}/pdf")
 def download_pdf(client_id: int):
