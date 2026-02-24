@@ -224,6 +224,10 @@ def generate_pdf_report(client_id):
 
     font_config = FontConfiguration()
 
+    # -------- ABSOLUTE FONT PATH --------
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    font_path = os.path.join(base_path, "NotoSansDevanagari-Regular.ttf")
+
     # -------- FORMAT REPORT CONTENT --------
     import re
 
@@ -310,8 +314,8 @@ def generate_pdf_report(client_id):
         }}
 
         @font-face {{
-            font-family: 'NotoDev';
-            src: url('NotoSansDevanagari-Regular.ttf') format("truetype");
+        font-family: 'NotoDev';
+        src: url('file://{font_path}') format('truetype');
         }}
 
         body {{
@@ -471,7 +475,7 @@ def generate_pdf_report(client_id):
     </html>
     """
 
-    HTML(string=html_content, base_url=os.getcwd()).write_pdf(
+    HTML(string=html_content, base_url=base_path).write_pdf(
         file_path,
         font_config=font_config
     )
