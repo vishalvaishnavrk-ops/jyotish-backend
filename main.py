@@ -231,7 +231,17 @@ def generate_pdf_report(client_id):
     # -------- FORMAT REPORT CONTENT --------
     import re
 
-    sections = re.split(r'(Section\s+\d+\s*–.*?)\n', ai_draft)
+    # -------- SPLIT ANTIM SANDESH --------
+    antim_message = ""
+
+    if "Antim Sandesh:" in ai_draft:
+        parts = ai_draft.split("Antim Sandesh:")
+        main_content = parts[0]
+        antim_message = parts[1].strip()
+    else:
+        main_content = ai_draft
+        
+    sections = re.split(r'(Section\s+\d+\s*–.*?)\n', main_content)
 
     formatted_blocks = ""
 
@@ -247,6 +257,22 @@ def generate_pdf_report(client_id):
             {content.replace("\n", "<br>")}
         </div>
         """
+
+    # -------- ADD SEPARATE ANTIM SECTION --------
+    if antim_message:
+        formatted_blocks += f"""
+        <div style="page-break-before: always;"></div>
+        <div class="antim-section">
+            <div class="antim-title">अंतिम संदेश</div>
+            <div class="antim-content">
+                {antim_message.replace("\n", "<br>")}
+            </div>
+            <div class="antim-sign">
+                – आचार्य विशाल वैष्णव
+            </div>
+        </div>
+        """
+    
     # Footer only at end
     formatted_blocks += """
     <div class="final-footer">
@@ -277,7 +303,7 @@ def generate_pdf_report(client_id):
 
         @font-face {{
             font-family: 'NotoDev';
-            src: url('NotoSansDevanagari-Regular.ttf');
+            src: url('NotoSansDevanagari-Regular.ttf'); format("truetype");
         }}
 
         body {{
@@ -362,11 +388,40 @@ def generate_pdf_report(client_id):
         }}
 
         .final-footer hr {{
-        border: none;
-        border-top: 1px solid #ddd;
-        margin: 0 40px 15px 40px;  /* IMPORTANT */
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 0 40px 15px 40px;  /* IMPORTANT */
         }}
 
+        .antim-section {{
+            background: linear-gradient(to bottom, #fff8e7, #fbe7c6);
+            margin: 60px 40px;
+            padding: 40px;
+            border-radius: 18px;
+            text-align: center;
+            border: 2px solid #d4af37;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }}
+
+        .antim-title {{
+            font-size: 28px;
+            font-weight: bold;
+            color: #8b0000;
+            margin-bottom: 20px;
+        }}
+
+        .antim-content {{
+            font-size: 18px;
+            line-height: 1.8;
+        }}
+
+        .antim-sign {{
+            margin-top: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #7b0000;
+        }}
+        
         </style>
     </head>
 
