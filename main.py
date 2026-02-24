@@ -166,11 +166,6 @@ def generate_ai_draft(client_id):
         q_limit = 1
 
     draft = f"""
-Palm Reading Report
-
-Client Name: {name}
-Plan: {plan}
-
 Section 1 – Haath ki Sanrachna
 Aapke haath ki banavat aapki personality aur decision making ko darshati hai.
 
@@ -195,8 +190,9 @@ Allowed Questions: {q_limit}
 Section 5 – Upay
 Remedy Level: {remedy_level}
 
-Antim Sandesh:
-Shraddha aur sahi karm se bhagya majboot hota hai.
+अंतिम संदेश:
+श्रद्धा, सद्कर्म और सकारात्मक सोच से भाग्य सुदृढ़ होता है।
+ईश्वर में विश्वास रखें और नियमित साधना करें।
 
 – आचार्य विशाल वैष्णव
 """
@@ -260,18 +256,24 @@ def generate_pdf_report(client_id):
 
     # -------- ADD SEPARATE ANTIM SECTION --------
     if antim_message:
-        formatted_blocks += f"""
-        <div style="page-break-before: always;"></div>
-        <div class="antim-section">
-            <div class="antim-title">अंतिम संदेश</div>
-            <div class="antim-content">
-                {antim_message.replace("\n", "<br>")}
-            </div>
-            <div class="antim-sign">
-                – आचार्य विशाल वैष्णव
-            </div>
+
+    # -------- REMOVE SIGNATURE FROM AI TEXT --------
+    clean_antim = antim_message.replace("– आचार्य विशाल वैष्णव", "")
+    clean_antim = clean_antim.replace("– आचायर्य विशाल वैष्णव", "")
+    clean_antim = clean_antim.strip()
+
+    formatted_blocks += f"""
+    <div style="page-break-before: always;"></div>
+    <div class="antim-section">
+        <div class="antim-title">अंतिम संदेश</div>
+        <div class="antim-content">
+            {clean_antim.replace("\n", "<br>")}
         </div>
-        """
+        <div class="antim-sign">
+            – आचार्य विशाल वैष्णव
+        </div>
+    </div>
+    """
     
     # Footer only at end
     formatted_blocks += """
@@ -303,7 +305,7 @@ def generate_pdf_report(client_id):
 
         @font-face {{
             font-family: 'NotoDev';
-            src: url('NotoSansDevanagari-Regular.ttf'); format("truetype");
+            src: url('NotoSansDevanagari-Regular.ttf') format("truetype");
         }}
 
         body {{
