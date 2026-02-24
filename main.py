@@ -227,13 +227,19 @@ def generate_pdf_report(client_id):
     # -------- FORMAT REPORT CONTENT --------
     import re
 
-    # -------- SPLIT ANTIM SANDESH --------
+    # -------- SPLIT ANTIM SANDESH (Hindi + English Support) --------
     antim_message = ""
 
-    if "Antim Sandesh:" in ai_draft:
+    if "अंतिम संदेश:" in ai_draft:
+        parts = ai_draft.split("अंतिम संदेश:")
+        main_content = parts[0]
+        antim_message = parts[1].strip()
+
+    elif "Antim Sandesh:" in ai_draft:
         parts = ai_draft.split("Antim Sandesh:")
         main_content = parts[0]
         antim_message = parts[1].strip()
+
     else:
         main_content = ai_draft
         
