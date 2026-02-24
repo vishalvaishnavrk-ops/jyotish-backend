@@ -257,23 +257,23 @@ def generate_pdf_report(client_id):
     # -------- ADD SEPARATE ANTIM SECTION --------
     if antim_message:
 
-    # -------- REMOVE SIGNATURE FROM AI TEXT --------
-    clean_antim = antim_message.replace("– आचार्य विशाल वैष्णव", "")
-    clean_antim = clean_antim.replace("– आचायर्य विशाल वैष्णव", "")
-    clean_antim = clean_antim.strip()
+        # -------- REMOVE SIGNATURE FROM AI TEXT --------
+        clean_antim = antim_message.replace("– आचार्य विशाल वैष्णव", "")
+        clean_antim = clean_antim.replace("– आचायर्य विशाल वैष्णव", "")
+        clean_antim = clean_antim.strip()
 
-    formatted_blocks += f"""
-    <div style="page-break-before: always;"></div>
-    <div class="antim-section">
-        <div class="antim-title">अंतिम संदेश</div>
-        <div class="antim-content">
-            {clean_antim.replace("\n", "<br>")}
+        formatted_blocks += f"""
+        <div style="page-break-before: always;"></div>
+        <div class="antim-section">
+            <div class="antim-title">अंतिम संदेश</div>
+            <div class="antim-content">
+                {clean_antim.replace("\n", "<br>")}
+            </div>
+            <div class="antim-sign">
+                – आचार्य विशाल वैष्णव
+            </div>
         </div>
-        <div class="antim-sign">
-            – आचार्य विशाल वैष्णव
-        </div>
-    </div>
-    """
+        """
     
     # Footer only at end
     formatted_blocks += """
