@@ -1045,9 +1045,11 @@ def client_detail(client_id: int):
 
         whatsapp_button = """
         <br>
-        <button style="background:gray;color:white;padding:10px 15px;border:none;border-radius:5px;cursor:not-allowed;" disabled>
-            📲 Generate PDF First
-        </button>
+        <div style="margin-top:10px;">
+            <button style="background:gray;color:white;padding:10px 15px;border:none;border-radius:5px;cursor:not-allowed;">
+                📲 Generate PDF First
+            </button>
+        </div>
         """
 
     # -------- PDF BUTTON CONTROL BASED ON STATUS --------
@@ -1063,9 +1065,11 @@ def client_detail(client_id: int):
         """
     else:
         pdf_button = """
-        <button style="background:gray;color:white;padding:8px 12px;border:none;border-radius:5px;cursor:not-allowed;margin-top:10px;" disabled>
-            Generate PDF Report (Review Required)
-        </button>
+        <div style="margin-top:10px;">
+            <button style="background:gray;color:white;padding:8px 12px;border:none;border-radius:5px;cursor:not-allowed;">
+                Generate PDF Report (Review Required)
+            </button>
+        </div>
         """
 
     # ✅ ---- ADD THIS BLOCK HERE ----
