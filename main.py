@@ -139,61 +139,77 @@ def generate_ai_draft(client_id):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT name, plan, questions FROM clients WHERE id=?", (client_id,))
+    c.execute("SELECT name, dob, tob, place, plan, questions FROM clients WHERE id=?", (client_id,))
     data = c.fetchone()
 
     if not data:
         conn.close()
         return
 
-    name, plan, questions = data
+    name, dob, tob, place, plan, questions = data
 
+    # ---------- PLAN DEPTH CONTROL ----------
     if "501" in plan:
-        q_depth = "Deep karmic and destiny level explanation"
-        remedy_level = "Advanced spiritual remedies"
-        q_limit = 5
+        depth_text = "अत्यंत गहन कर्मिक एवं आध्यात्मिक विश्लेषण"
+        year_limit = 7
     elif "251" in plan:
-        q_depth = "Strategic life guidance"
-        remedy_level = "Spiritual + discipline remedies"
-        q_limit = 3
+        depth_text = "गहन जीवन दिशा एवं भाग्य विश्लेषण"
+        year_limit = 4
     elif "151" in plan:
-        q_depth = "Detailed practical explanation"
-        remedy_level = "Weekly mantra + routine remedies"
-        q_limit = 2
+        depth_text = "विस्तृत व्यावहारिक विश्लेषण"
+        year_limit = 2
     else:
-        q_depth = "Simple direct guidance"
-        remedy_level = "Basic daily remedies"
-        q_limit = 1
+        depth_text = "संक्षिप्त एवं स्पष्ट मार्गदर्शन"
+        year_limit = 1
 
+    # ---------- YEARLY PREDICTION BLOCK ----------
+    yearly_prediction = ""
+    for i in range(1, year_limit + 1):
+        yearly_prediction += f"\nवर्ष {i}:\nइस वर्ष जीवन में क्रमिक प्रगति, अनुभव से सीख और आत्मविश्वास में वृद्धि के संकेत मिलते हैं। परिस्थितियाँ संतुलित प्रयास की अपेक्षा करेंगी।\n"
+
+    # ---------- FINAL DRAFT STRUCTURE ----------
     draft = f"""
-Section 1 – Haath ki Sanrachna
-Aapke haath ki banavat aapki personality aur decision making ko darshati hai.
+Section 1 – हस्त संरचना विश्लेषण
+हथेली की संरचना व्यक्ति के स्वभाव, मानसिक स्थिरता और निर्णय क्षमता को दर्शाती है। संरचना संतुलित होने पर व्यक्ति व्यवहारिक एवं व्यावहारिक दृष्टिकोण अपनाता है।
+इस योजना के अंतर्गत {depth_text} प्रस्तुत किया जा रहा है।
 
-Section 2 – Parvat Vishleshan
-Mount of Venus – Emotional energy  
-Mount of Jupiter – Leadership  
-Mount of Saturn – Responsibility  
-Mount of Sun – Fame  
+Section 2 – पर्वत विश्लेषण
+शुक्र पर्वत ऊर्जा और आकर्षण का प्रतीक है।
+बृहस्पति पर्वत नेतृत्व क्षमता का संकेत देता है।
+शनि पर्वत धैर्य और जिम्मेदारी को दर्शाता है।
+सूर्य पर्वत सम्मान और प्रतिष्ठा से जुड़ा होता है।
 
-Section 3 – Mukhya Rekhayein
-Life Line – Jeevan shakti  
-Head Line – Soch aur planning  
-Heart Line – Emotions  
-Fate Line – Career  
+Section 3 – मुख्य रेखाओं का विश्लेषण
+जीवन रेखा जीवन शक्ति और स्थायित्व का संकेत देती है।
+मस्तिष्क रेखा सोच और निर्णय शैली दर्शाती है।
+हृदय रेखा भावनात्मक संतुलन का संकेत है।
+भाग्य रेखा कर्म एवं पेशेवर दिशा से संबंधित होती है।
 
-Section 4 – Aapke Prashn ka Uttar
-Analysis Type: {q_depth}
-Allowed Questions: {q_limit}
+Section 4 – विशेष चिह्न एवं संकेत
+हथेली में यदि तिल, क्रॉस, त्रिकोण, तारा या द्वीप जैसे चिह्न उपस्थित हों तो उनका विशेष महत्व होता है।
+त्रिकोण सामान्यतः बुद्धिमत्ता का संकेत है।
+क्रॉस जीवन में संघर्ष के पश्चात उपलब्धि दर्शाता है।
+तिल का स्थान उसके प्रभाव को निर्धारित करता है।
 
+Section 5 – कर्म, भाग्य एवं जीवन दिशा
+जीवन में उन्नति कर्म और सतत प्रयास से जुड़ी होती है।
+भाग्य रेखा का संतुलन दर्शाता है कि जीवन में अवसर प्रयास के साथ प्रकट होते हैं।
+
+Section 6 – प्रश्नों के उत्तर
+आपके द्वारा पूछे गए प्रश्न:
 {questions}
+इन विषयों में धैर्य, योजना और संतुलित निर्णय से प्रगति संभव है।
 
-Section 5 – Upay
-Remedy Level: {remedy_level}
+Section 7 – उपाय एवं आध्यात्मिक मार्गदर्शन
+नियमित प्रार्थना, मंत्र जप और सकारात्मक सोच जीवन को संतुलित बनाते हैं।
+प्रत्येक दिन आत्मचिंतन और अनुशासन लाभकारी रहेगा।
+
+Section 8 – आगामी वर्षों का पूर्वानुमान
+{yearly_prediction}
 
 अंतिम संदेश:
-श्रद्धा, सद्कर्म और सकारात्मक सोच से भाग्य सुदृढ़ होता है।
-ईश्वर में विश्वास रखें और नियमित साधना करें।
-
+श्रद्धा, सद्कर्म और सकारात्मक दृष्टिकोण से जीवन की दिशा सुदृढ़ होती है।
+ईश्वर में विश्वास रखें और निरंतर प्रयास करते रहें।
 – आचार्य विशाल वैष्णव
 """
 
