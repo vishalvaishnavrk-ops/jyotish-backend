@@ -1017,7 +1017,7 @@ def client_detail(client_id: int):
 
         public_pdf_url = f"{base_url}/reports/{client_code}.pdf"
 
-        message = f"""नमस्ते {cdata[2]},
+        message = f"""  नमस्ते {cdata[2]},
 
     आपकी हस्तरेखा रिपोर्ट तैयार है।
 
