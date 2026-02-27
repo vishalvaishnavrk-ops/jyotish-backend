@@ -4,3 +4,4 @@ python-multipart
 reportlab
 weasyprint==59.0
 pydyf==0.6.0
+psycopg2-binary
