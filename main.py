@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import List, Optional
-import sqlite3, os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import time
@@ -11,10 +10,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from weasyprint import HTML, CSS
 from weasyprint.text.fonts import FontConfiguration
+import os
+import psycopg2
+from urllib.parse import urlparse
 
 app = FastAPI()
 
-DB_PATH = "clients.db"
 UPLOAD_DIR = "uploads"
 REPORT_DIR = "reports"
 
@@ -500,7 +501,19 @@ def generate_pdf_report(client_id):
 
 # ---------- HELPERS ----------
 def get_db():
-    return sqlite3.connect(DB_PATH)
+    database_url = os.environ.get("DATABASE_URL")
+    result = urlparse(database_url)
+
+    conn = psycopg2.connect(
+        database=result.path[1:],
+        user=result.username,
+        password=result.password,
+        host=result.hostname,
+        port=result.port,
+        sslmode="require"
+    )
+
+    return conn
 
 # ---------- ROOT ----------
 @app.get("/")
