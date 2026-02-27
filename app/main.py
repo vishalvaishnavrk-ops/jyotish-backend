@@ -50,3 +50,13 @@ def list_clients():
         html += f"<li>{r}</li>"
     html += "</ul>"
     return html
+
+from .database import get_db
+
+@app.get("/db-test")
+def db_test():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT 1;")
+    conn.close()
+    return {"db": "connected"}
