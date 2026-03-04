@@ -32,13 +32,34 @@ def dashboard():
 
     rows = get_clients()
 
-    html = "<h2>Clients</h2>"
+    html = """
+    <h2>Clients Dashboard</h2>
+    <table border=1>
+    <tr>
+    <th>Client Code</th>
+    <th>Name</th>
+    <th>Plan</th>
+    <th>Status</th>
+    <th>Phone</th>
+    </tr>
+    """
 
     for r in rows:
-        html += f"{r}<br>"
 
-    return html
+        html += f"""
+        <tr>
+        <td>{r[1]}</td>
+        <td>{r[2]}</td>
+        <td>{r[4]}</td>
+        <td>{r[6]}</td>
+        <td>{r[3]}</td>
+        </tr>
+        """
 
+    html += "</table>"
+
+    return HTMLResponse(html)
+    
 @router.get("/admin/client/{client_id}")
 def client_detail(client_id:int):
 
