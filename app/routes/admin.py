@@ -78,6 +78,10 @@ def dashboard():
 
     <h2>Clients Dashboard</h2>
 
+    <a href="/admin/add-client">
+    <button>Add Client</button>
+    </a>
+
     <table>
 
     <tr>
@@ -109,19 +113,49 @@ def dashboard():
 
     return HTMLResponse(html)
     
-@router.get("/admin/client/{client_id}")
+@router.get("/admin/client/{client_id}", response_class=HTMLResponse)
 def client_detail(client_id:int):
 
-    conn = get_db()
-    c = conn.cursor()
+    conn=get_db()
+    c=conn.cursor()
 
-    c.execute("SELECT id,client_code,name,phone,ai_draft,status FROM clients WHERE id=%s",(client_id,))
-    data = c.fetchone()
+    c.execute("SELECT * FROM clients WHERE id=%s",(client_id,))
+    data=c.fetchone()
 
     conn.close()
 
-    return data
+    html=f"""
+    <h2>Client Detail</h2>
 
+    <b>Client Code:</b> {data[1]} <br>
+    <b>Name:</b> {data[2]} <br>
+    <b>Phone:</b> {data[3]} <br>
+    <b>DOB:</b> {data[4]} <br>
+    <b>Plan:</b> {data[7]} <br>
+    <b>Status:</b> {data[11]} <br>
+
+    <br>
+
+    <form method="post" action="/admin/client/{client_id}/generate-ai">
+    <button>Generate AI Draft</button>
+    </form>
+
+    <form method="post" action="/admin/client/{client_id}/generate-pdf">
+    <button>Generate PDF</button>
+    </form>
+
+    <a href="/admin/client/{client_id}/pdf">
+    Download PDF
+    </a>
+
+    <br><br>
+
+    <a href="/admin/dashboard">Back</a>
+
+    """
+
+    return HTMLResponse(html)
+    
 @router.post("/admin/client/{client_id}/generate-ai")
 def ai_generate(client_id:int):
 
@@ -150,3 +184,52 @@ def download_pdf(client_id:int):
     path=f"reports/{code}.pdf"
 
     return FileResponse(path, media_type="application/pdf")
+
+@router.get("/admin/add-client", response_class=HTMLResponse)
+def add_client_form():
+
+    return """
+    <h2>Add Client</h2>
+
+    <form method="post" action="/admin/add-client">
+
+    Name:<input name="name"><br>
+    Phone:<input name="phone"><br>
+    Plan:<input name="plan"><br>
+
+    <button>Save</button>
+
+    </form>
+    """
+
+@router.post("/admin/add-client")
+def add_client(name:str=Form(...),phone:str=Form(...),plan:str=Form(...)):
+
+    from app.utils.helpers import generate_client_code
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    from app.models import create_client
+
+    code=generate_client_code()
+
+    data=(
+        code,
+        name,
+        phone,
+        None,
+        None,
+        None,
+        plan,
+        "",
+        "",
+        "Manual",
+        "Pending",
+        "Pending",
+        datetime.now(ZoneInfo("Asia/Kolkata")),
+        99,
+        0
+    )
+
+    create_client(data)
+
+    return RedirectResponse("/admin/dashboard",status_code=302)
