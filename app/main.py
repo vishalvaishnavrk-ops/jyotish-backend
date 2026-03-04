@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from .models import create_client, get_all_clients
 from datetime import datetime
 import time
+import os
 
 app = FastAPI()
 
@@ -60,3 +61,9 @@ def db_test():
     cur.execute("SELECT 1;")
     conn.close()
     return {"db": "connected"}
+
+@app.get("/env-check")
+def env_check():
+    return {
+        "DATABASE_URL": os.environ.get("DATABASE_URL")
+    }
