@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import os
 
-from app.admin_routes import router as admin_router
-from app.website_routes import router as website_router
+from app.routes.admin import router as admin_router
+from app.routes.website import router as website_router
 
-app = FastAPI()
+app = FastAPI(title="Jyotish SaaS Backend")
 
 UPLOAD_DIR = "uploads"
 REPORT_DIR = "reports"
