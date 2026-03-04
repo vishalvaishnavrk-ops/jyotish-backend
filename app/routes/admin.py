@@ -33,14 +33,60 @@ def dashboard():
     rows = get_clients()
 
     html = """
+    <html>
+    <head>
+    <title>Admin Dashboard</title>
+    <style>
+
+    body{
+      font-family: Arial;
+      background:#f6efe9;
+      padding:20px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th{
+      background:#f1e2d3;
+      padding:10px;
+    }
+
+    td{
+      padding:10px;
+      border-top:1px solid #ddd;
+    }
+
+    tr:hover{
+      background:#faf3ec;
+    }
+
+    a{
+      color:#8b0000;
+      text-decoration:none;
+      font-weight:bold;
+    }
+
+    </style>
+    </head>
+
+    <body>
+
     <h2>Clients Dashboard</h2>
-    <table border=1>
+
+    <table>
+
     <tr>
-    <th>Client Code</th>
-    <th>Name</th>
-    <th>Plan</th>
-    <th>Status</th>
-    <th>Phone</th>
+      <th>Client Code</th>
+      <th>Name</th>
+      <th>Plan</th>
+      <th>Status</th>
+      <th>Phone</th>
+      <th>Action</th>
     </tr>
     """
 
@@ -53,10 +99,13 @@ def dashboard():
         <td>{r[4]}</td>
         <td>{r[6]}</td>
         <td>{r[3]}</td>
+        <td>
+        <a href="/admin/client/{r[0]}">View</a>
+        </td>
         </tr>
         """
 
-    html += "</table>"
+    html += "</table></body></html>"
 
     return HTMLResponse(html)
     
