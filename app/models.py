@@ -1,6 +1,8 @@
 from app.database import get_db
 
 
+# ---------- CREATE TABLE ----------
+
 def init_db():
 
     conn = get_db()
@@ -36,9 +38,51 @@ def init_db():
 
         priority INTEGER DEFAULT 99,
         ai_generated INTEGER DEFAULT 0
-
     )
     """)
+
+    conn.commit()
+    conn.close()
+
+
+# ---------- CREATE CLIENT ----------
+
+def create_client(
+    client_code,
+    name,
+    phone,
+    dob,
+    tob,
+    place,
+    plan,
+    questions,
+    images,
+    source,
+    status,
+    created_at
+):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+    INSERT INTO clients
+    (client_code,name,phone,dob,tob,place,plan,questions,images,source,status,created_at)
+    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    """,(
+        client_code,
+        name,
+        phone,
+        dob,
+        tob,
+        place,
+        plan,
+        questions,
+        images,
+        source,
+        status,
+        created_at
+    ))
 
     conn.commit()
     conn.close()
