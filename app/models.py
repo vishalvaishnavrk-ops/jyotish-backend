@@ -1,5 +1,6 @@
 from app.database import get_db
 
+
 def create_client(data):
 
     conn = get_db()
@@ -8,7 +9,7 @@ def create_client(data):
     c.execute("""
     INSERT INTO clients
     (client_code,name,phone,dob,tob,place,plan,questions,images,
-     source,status,payment_status,created_at,priority,ai_generated)
+    source,status,payment_status,created_at,priority,ai_generated)
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
     """, data)
 
@@ -22,12 +23,13 @@ def get_clients():
     c = conn.cursor()
 
     c.execute("""
-    SELECT id,client_code,name,phone,plan,status
+    SELECT id,client_code,name,phone,plan,source,status,created_at
     FROM clients
-    ORDER BY id DESC
+    ORDER BY priority ASC,id DESC
     """)
 
     rows = c.fetchall()
+
     conn.close()
 
     return rows
