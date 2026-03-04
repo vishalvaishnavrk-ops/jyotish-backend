@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
-from app.database import get_db
+from app.models import get_clients
 
 router = APIRouter()
 
@@ -8,8 +8,8 @@ router = APIRouter()
 def admin_login():
     return """
     <form method="post" action="/admin/login">
-    Username:<input name="username">
-    Password:<input name="password" type="password">
+    Username:<input name="username"><br>
+    Password:<input name="password" type="password"><br>
     <button>Login</button>
     </form>
     """
@@ -22,21 +22,14 @@ def admin_login_post(username: str = Form(...), password: str = Form(...)):
 
     return HTMLResponse("Invalid Login")
 
-
-@router.get("/admin/dashboard")
+@router.get("/admin/dashboard", response_class=HTMLResponse)
 def dashboard():
 
-    conn = get_db()
-    c = conn.cursor()
-
-    c.execute("SELECT id,client_code,name,plan,status FROM clients ORDER BY id DESC")
-    rows = c.fetchall()
-
-    conn.close()
+    rows = get_clients()
 
     html = "<h2>Clients</h2>"
 
     for r in rows:
         html += f"{r}<br>"
 
-    return HTMLResponse(html)
+    return html
