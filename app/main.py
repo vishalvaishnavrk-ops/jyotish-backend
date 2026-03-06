@@ -22,9 +22,8 @@ if not os.path.exists(REPORT_DIR):
 
 
 # ---------- STATIC ----------
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
-app.mount("/reports", StaticFiles(directory=REPORT_DIR), name="reports")
-
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/reports", StaticFiles(directory="reports"), name="reports")
 
 # ---------- CORS ----------
 app.add_middleware(
