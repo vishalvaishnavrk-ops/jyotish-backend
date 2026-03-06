@@ -365,33 +365,28 @@ Generate PDF
 <br>
 
 <a href="/admin/client/{client_id}/pdf">
-
 <button style="padding:10px;background:#8b0000;color:white;border:none">
 Download PDF
 </button>
-
-</a>
-
-</div>
-
-</body>
-</html>
-"""    
-
-<a href="/admin/client/{client_id}/send-whatsapp">
-<button>Send WhatsApp</button>
 </a>
 
 <br><br>
 
-<a href="/admin/dashboard">Back</a>
+<a href="/admin/client/{client_id}/send-whatsapp">
+<button style="padding:10px;background:#25D366;color:white;border:none">
+Send WhatsApp
+</button>
+</a>
+
+<br><br>
+
+<a href="/admin/dashboard">⬅ Back</a>
 
 </div>
 
 </body>
 </html>
 """
-
 
 # ---------- GENERATE AI ----------
 @router.post("/admin/client/{client_id}/generate-ai")
