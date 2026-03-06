@@ -309,3 +309,206 @@ def mark_paid(client_id:int):
     generate_ai_draft(client_id)
 
     return RedirectResponse("/admin/dashboard",status_code=302)
+
+# ---------- CLIENT DETAIL ----------
+@router.get("/admin/client/{client_id}", response_class=HTMLResponse)
+def client_detail(client_id: int):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM clients WHERE id=%s", (client_id,))
+    cdata = c.fetchone()
+
+    conn.close()
+
+    images_html = ""
+
+    if cdata[9]:
+        for img in cdata[9].split(","):
+            img = img.strip()
+            if img:
+                images_html += f'<img src="/uploads/{img}" width="150" style="margin:5px;border:1px solid #ccc;">'
+
+    return f"""
+<html>
+
+<head>
+
+<style>
+
+body {{
+font-family:Arial;
+background:#f6efe9;
+margin:0;
+}}
+
+.header {{
+background:#8b0000;
+color:white;
+padding:15px;
+font-size:20px;
+}}
+
+.container {{
+padding:25px;
+}}
+
+.card {{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}}
+
+button {{
+padding:10px 15px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Client Detail
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<p><b>Client Code:</b> {cdata[1]}</p>
+<p><b>Name:</b> {cdata[2]}</p>
+<p><b>Phone:</b> {cdata[3]}</p>
+<p><b>Plan:</b> {cdata[7]}</p>
+
+<p><b>Palm Images:</b><br>{images_html}</p>
+
+</div>
+
+<div class="card">
+
+<h3>AI Draft</h3>
+
+<form method="post" action="/admin/client/{client_id}/update">
+
+<textarea name="ai_draft" rows="10" style="width:100%">{cdata[15]}</textarea>
+
+<br><br>
+
+<label>Status</label>
+
+<select name="status">
+
+<option {"selected" if cdata[11]=="Pending" else ""}>Pending</option>
+<option {"selected" if cdata[11]=="Reviewed" else ""}>Reviewed</option>
+<option {"selected" if cdata[11]=="Completed" else ""}>Completed</option>
+
+</select>
+
+<br><br>
+
+<button style="background:#8b0000;color:white">
+Save Update
+</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h3>Actions</h3>
+
+<form method="post" action="/admin/client/{client_id}/generate-ai">
+
+<button style="background:#007bff;color:white">
+Generate AI Draft
+</button>
+
+</form>
+
+<br>
+
+<form method="post" action="/admin/client/{client_id}/generate-pdf">
+
+<button style="background:#6f42c1;color:white">
+Generate PDF
+</button>
+
+</form>
+
+<br>
+
+<a href="/admin/client/{client_id}/pdf">
+
+<button style="background:#8b0000;color:white">
+Download PDF
+</button>
+
+</a>
+
+<br><br>
+
+<a href="/admin/client/{client_id}/send-whatsapp">
+
+<button style="background:#25D366;color:white">
+Send WhatsApp
+</button>
+
+</a>
+
+</div>
+
+<a href="/admin/dashboard">⬅ Back to Dashboard</a>
+
+</div>
+
+</body>
+
+</html>
+"""
+
+# ---------- UPDATE CLIENT ----------
+@router.post("/admin/client/{client_id}/update")
+def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
+
+    conn=get_db()
+    c=conn.cursor()
+
+    c.execute(
+        "UPDATE clients SET ai_draft=%s,status=%s WHERE id=%s",
+        (ai_draft,status,client_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
+
+# ---------- GENRATE PDF ----------
+@router.post("/admin/client/{client_id}/generate-pdf")
+def create_pdf(client_id:int):
+
+    conn=get_db()
+    c=conn.cursor()
+
+    c.execute("SELECT status FROM clients WHERE id=%s",(client_id,))
+    data=c.fetchone()
+
+    conn.close()
+
+    if data[0]!="Reviewed":
+        return HTMLResponse(
+        "<h3 style='color:red;text-align:center;margin-top:80px;'>PDF Generate blocked. Mark draft Reviewed first.</h3>"
+        )
+
+    file_name=generate_pdf_report(client_id)
+
+    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
