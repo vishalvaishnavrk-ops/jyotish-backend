@@ -62,7 +62,13 @@ def admin_login_post(username: str = Form(...), password: str = Form(...)):
 
 # ---------- DASHBOARD ----------
 @router.get("/admin/dashboard", response_class=HTMLResponse)
-def dashboard(q: str = Query(None), plan: str = Query(None), payment: str = Query(None)):
+def dashboard(
+q: str = Query(None),
+plan: str = Query(None),
+source: str = Query(None),
+status: str = Query(None),
+payment: str = Query(None)
+):
 
     conn = get_db()
     c = conn.cursor()
@@ -73,44 +79,57 @@ def dashboard(q: str = Query(None), plan: str = Query(None), payment: str = Quer
     WHERE 1=1
     """
 
-    params = []
+    params=[]
 
     if q:
-        sql += " AND (name ILIKE %s OR client_code ILIKE %s OR phone ILIKE %s)"
-        params.extend([f"%{q}%", f"%{q}%", f"%{q}%"])
+        sql+=" AND (name ILIKE %s OR client_code ILIKE %s OR phone ILIKE %s)"
+        params.extend([f"%{q}%",f"%{q}%",f"%{q}%"])
 
     if plan:
-        sql += " AND plan=%s"
+        sql+=" AND plan=%s"
         params.append(plan)
 
+    if source:
+        sql+=" AND source=%s"
+        params.append(source)
+
+    if status:
+        sql+=" AND status=%s"
+        params.append(status)
+
     if payment:
-        sql += " AND payment_status=%s"
+        sql+=" AND payment_status=%s"
         params.append(payment)
 
-    sql += " ORDER BY priority ASC,id DESC"
+    sql+=" ORDER BY priority ASC,id DESC"
 
-    c.execute(sql, params)
-    rows_db = c.fetchall()
+    c.execute(sql,params)
+    rows_db=c.fetchall()
+
     conn.close()
 
-    rows = ""
+    rows=""
 
     for r in rows_db:
 
-        dt = datetime.strptime(str(r[7])[:19], "%Y-%m-%d %H:%M:%S")
-        formatted = dt.strftime("%d-%m-%Y %I:%M %p")
+        dt=datetime.strptime(str(r[7])[:19],"%Y-%m-%d %H:%M:%S")
+        formatted_date=dt.strftime("%d-%m-%Y %I:%M %p")
 
-        if r[8] == "Paid":
-            payment_badge = "🟢 Paid"
+        payment_status=r[8]
+
+        if payment_status=="Paid":
+            payment_badge="🟢 Paid"
         else:
-            payment_badge = f"""
+            payment_badge=f"""
 🔴 Pending
 <form method="post" action="/admin/mark-paid/{r[0]}" style="display:inline;">
-<button style="background:#28a745;color:white;border:none;padding:4px 8px;border-radius:4px;">Mark Paid</button>
+<button style="background:#28a745;color:white;border:none;padding:4px 8px;border-radius:4px;">
+Mark Paid
+</button>
 </form>
 """
 
-        rows += f"""
+        rows+=f"""
 <tr>
 <td>{r[1]}</td>
 <td>{r[2]}</td>
@@ -119,7 +138,7 @@ def dashboard(q: str = Query(None), plan: str = Query(None), payment: str = Quer
 <td>{r[6]}</td>
 <td>{r[3]}</td>
 <td>{payment_badge}</td>
-<td>{formatted}</td>
+<td>{formatted_date}</td>
 <td><a href="/admin/client/{r[0]}">View</a></td>
 </tr>
 """
@@ -127,19 +146,55 @@ def dashboard(q: str = Query(None), plan: str = Query(None), payment: str = Quer
     return f"""
 <html>
 <head>
+
 <style>
-body {{font-family:Arial;background:#f6efe9;margin:0;}}
-.header {{background:#8b0000;color:white;padding:15px;font-size:20px;}}
-.container {{padding:25px;}}
-table {{width:100%;border-collapse:collapse;background:white;}}
-th {{background:#f1e2d3;padding:10px;}}
-td {{padding:10px;border-top:1px solid #ddd;}}
-tr:hover {{background:#faf3ec;}}
+
+body {{
+font-family:Arial;
+background:#f6efe9;
+margin:0;
+}}
+
+.header {{
+background:#8b0000;
+color:white;
+padding:15px;
+font-size:20px;
+}}
+
+.container {{
+padding:25px;
+}}
+
+table {{
+width:100%;
+border-collapse:collapse;
+background:white;
+}}
+
+th {{
+background:#f1e2d3;
+padding:10px;
+}}
+
+td {{
+padding:10px;
+border-top:1px solid #ddd;
+}}
+
+tr:hover {{
+background:#faf3ec;
+}}
+
 </style>
+
 </head>
 
 <body>
-<div class="header">ADMIN DASHBOARD</div>
+
+<div class="header">
+ADMIN DASHBOARD
+</div>
 
 <div class="container">
 
@@ -148,6 +203,7 @@ tr:hover {{background:#faf3ec;}}
 <br><br>
 
 <form method="get">
+
 <input type="text" name="q" placeholder="Client Code / Name">
 
 <select name="plan">
@@ -158,6 +214,19 @@ tr:hover {{background:#faf3ec;}}
 <option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
 </select>
 
+<select name="source">
+<option value="">All Sources</option>
+<option value="Website">Website</option>
+<option value="Manual">Manual</option>
+</select>
+
+<select name="status">
+<option value="">All Status</option>
+<option value="Pending">Pending</option>
+<option value="Reviewed">Reviewed</option>
+<option value="Completed">Completed</option>
+</select>
+
 <select name="payment">
 <option value="">All Payment</option>
 <option value="Pending">Pending</option>
@@ -165,6 +234,7 @@ tr:hover {{background:#faf3ec;}}
 </select>
 
 <button type="submit">Filter</button>
+
 </form>
 
 <br>
@@ -188,10 +258,10 @@ tr:hover {{background:#faf3ec;}}
 </table>
 
 </div>
+
 </body>
 </html>
 """
-
 
 # ---------- MARK PAID ----------
 @router.post("/admin/mark-paid/{client_id}")
@@ -218,26 +288,27 @@ def mark_paid(client_id: int):
 
 # ---------- CLIENT DETAIL ----------
 @router.get("/admin/client/{client_id}", response_class=HTMLResponse)
-def client_detail(client_id:int):
+def client_detail(client_id: int):
 
-    conn=get_db()
-    c=conn.cursor()
+    conn = get_db()
+    c = conn.cursor()
 
-    c.execute("SELECT * FROM clients WHERE id=%s",(client_id,))
-    cdata=c.fetchone()
+    c.execute("SELECT * FROM clients WHERE id=%s", (client_id,))
+    cdata = c.fetchone()
 
     conn.close()
 
-    images_html=""
+    images_html = ""
 
-    if cdata[9]:
-        for img in cdata[9].split(","):
-            img=img.strip()
+    if cdata[8]:
+        for img in cdata[8].split(","):
+            img = img.strip()
             if img:
-                images_html+=f'<img src="/uploads/{img}" width="150" style="margin:5px;border:1px solid #ccc;">'
+                images_html += f'<img src="/uploads/{img}" width="150" style="margin:5px;border:1px solid #ccc;">'
 
     return f"""
 <html>
+
 <body style="font-family:Arial;background:#f6efe9">
 
 <h2 style="background:#8b0000;color:white;padding:15px">
@@ -256,40 +327,49 @@ Client Detail
 <br>
 
 <form method="post" action="/admin/client/{client_id}/generate-ai">
+
 <button style="background:#007bff;color:white;padding:10px;border:none">
 Generate AI Draft
 </button>
+
 </form>
 
 <br>
 
 <form method="post" action="/admin/client/{client_id}/generate-pdf">
+
 <button style="background:#6f42c1;color:white;padding:10px;border:none">
 Generate PDF
 </button>
+
 </form>
 
 <br>
 
 <a href="/admin/client/{client_id}/pdf">
+
 <button style="background:#8b0000;color:white;padding:10px;border:none">
 Download PDF
 </button>
+
 </a>
 
 <br><br>
 
 <a href="/admin/client/{client_id}/send-whatsapp">
+
 <button style="background:#25D366;color:white;padding:10px;border:none">
 Send WhatsApp
 </button>
+
 </a>
 
 </div>
+
 </body>
+
 </html>
 """
-
 
 # ---------- GENERATE PDF ----------
 @router.post("/admin/client/{client_id}/generate-pdf")
@@ -313,50 +393,49 @@ def create_pdf(client_id:int):
 
 # ---------- DOWNLOAD PDF ----------
 @router.get("/admin/client/{client_id}/pdf")
-def download_pdf(client_id:int):
+def download_pdf(client_id: int):
 
-    conn=get_db()
-    c=conn.cursor()
+    conn = get_db()
+    c = conn.cursor()
 
     c.execute("SELECT client_code FROM clients WHERE id=%s",(client_id,))
-    data=c.fetchone()
+    data = c.fetchone()
 
     conn.close()
 
     if not data:
         return HTMLResponse("Report not found")
 
-    file_name=f"{data[0]}.pdf"
-    file_path=os.path.join(REPORT_DIR,file_name)
+    file_name = f"{data[0]}.pdf"
+    file_path = os.path.join(REPORT_DIR, file_name)
 
     if not os.path.exists(file_path):
         return HTMLResponse("PDF not generated yet")
 
     return FileResponse(file_path,media_type="application/pdf",filename=file_name)
-
-
+    
 # ---------- SEND WHATSAPP ----------
 @router.get("/admin/client/{client_id}/send-whatsapp")
-def send_whatsapp(client_id:int):
+def send_whatsapp(client_id: int):
 
-    conn=get_db()
-    c=conn.cursor()
+    conn = get_db()
+    c = conn.cursor()
 
-    c.execute("SELECT name,phone,client_code FROM clients WHERE id=%s",(client_id,))
-    data=c.fetchone()
+    c.execute("SELECT name, phone, client_code FROM clients WHERE id=%s",(client_id,))
+    data = c.fetchone()
 
     if not data:
         conn.close()
         return HTMLResponse("Client not found")
 
-    name,phone,client_code=data
+    name, phone_number, client_code = data
 
     c.execute("UPDATE clients SET status='Completed' WHERE id=%s",(client_id,))
     conn.commit()
     conn.close()
 
-    base_url="https://jyotish-backend-gbr9.onrender.com"
-    pdf_url=f"{base_url}/reports/{client_code}.pdf"
+    base_url = "https://jyotish-backend-gbr9.onrender.com"
+    pdf_url = f"{base_url}/reports/{client_code}.pdf"
 
     message=f"""नमस्ते {name},
 
@@ -370,6 +449,6 @@ PDF डाउनलोड करें:
 
     encoded=urllib.parse.quote(message)
 
-    link=f"https://wa.me/91{phone}?text={encoded}"
+    link=f"https://wa.me/91{phone_number}?text={encoded}"
 
     return RedirectResponse(link)
