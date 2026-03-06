@@ -438,33 +438,36 @@ def download_pdf(client_id: int):
 # ---------- SEND WHATSAPP ----------
 @router.get("/admin/client/{client_id}/send-whatsapp")
 def send_whatsapp(client_id: int):
-
+    
     conn = get_db()
     c = conn.cursor()
 
     c.execute("SELECT name, phone, client_code FROM clients WHERE id=%s", (client_id,))
+    data = c.fetchone()
 
-    name, phone_number, client_code = c.fetchone()
+    if not data:
+        conn.close()
+        return HTMLResponse("Client not found")
 
+    name, phone_number, client_code = data
     conn.close()
 
     base_url = "https://jyotish-backend-gbr9.onrender.com"
-
-    pdf_url = f"{base_url}/reports/{client_code}.pdf"
+    public_pdf_url = f"{base_url}/reports/{client_code}.pdf"
 
     message = f"""नमस्ते {name},
 
 आपकी हस्तरेखा रिपोर्ट तैयार है।
 
 नीचे दिए गए लिंक से अपनी PDF डाउनलोड करें:
-{pdf_url}
+{public_pdf_url}
 
 ईश्वर आपकी उन्नति करें 🙏
 – आचार्य विशाल वैष्णव
 """
 
-    encoded = urllib.parse.quote(message)
+    encoded_message = urllib.parse.quote(message)
 
-    link = f"https://wa.me/91{phone_number}?text={encoded}"
+    whatsapp_link = f"https://wa.me/91{phone_number}?text={encoded_message}"
 
-    return RedirectResponse(link)
+    return RedirectResponse(whatsapp_link)
