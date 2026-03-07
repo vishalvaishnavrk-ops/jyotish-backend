@@ -152,13 +152,17 @@ Mark Paid
     return f"""
 <html>
 
-<body style="font-family:Arial;background:#f6efe9;margin:0">
+<div style="background:#8b0000;color:white;padding:20px;text-align:center">
 
-<h2 style="background:#8b0000;color:white;padding:15px">
+<div style="font-size:22px;font-weight:bold">
 ADMIN DASHBOARD
-</h2>
+</div>
 
-<div style="padding:25px">
+<div style="font-size:14px;margin-top:4px">
+आचार्य विशाल वैष्णव – हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ
+</div>
+
+</div>
 
 <a href="/admin/add-client">➕ Add New Client</a>
 
@@ -281,10 +285,12 @@ def client_detail(client_id: int):
         for img in cdata[8].split(","):
             img = img.strip()
             if img:
-                images_html += f'<img src="/uploads/{img}" width="150" style="margin:5px;border:1px solid #ccc;">'
+                images_html += f'<img src="/uploads/{img}?v=1" width="150" style="margin:5px;border:1px solid #ccc;">'
 
     return f"""
 <html>
+
+<div style="border-bottom:2px solid #d4af37;margin-bottom:20px"></div>
 
 <body style="font-family:Arial;background:#f6efe9">
 
@@ -292,7 +298,7 @@ def client_detail(client_id: int):
 Client Detail
 </h2>
 
-<div style="padding:25px;background:white">
+<div style="padding:30px;border-radius:12px;background:white">
 
 <p><b>Client Code:</b> {cdata[1]}</p>
 <p><b>Name:</b> {cdata[2]}</p>
