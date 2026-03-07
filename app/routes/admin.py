@@ -509,3 +509,118 @@ PDF डाउनलोड करें:
     link=f"https://wa.me/91{phone_number}?text={encoded}"
 
     return RedirectResponse(link)    
+
+# ---------- ADD CLIENT FORM ----------
+@router.get("/admin/add-client", response_class=HTMLResponse)
+def add_client_form():
+
+    return """
+<html>
+<body style="font-family:Arial;background:#f6efe9">
+
+<div style="width:650px;margin:40px auto;background:white;padding:25px;border-radius:10px">
+
+<h2 style="color:#8b0000;text-align:center">नया क्लाइंट जोड़ें</h2>
+
+<form method="post" action="/admin/add-client" enctype="multipart/form-data">
+
+नाम<br>
+<input name="name" required style="width:100%;padding:8px"><br><br>
+
+मोबाइल नंबर<br>
+<input name="phone" required style="width:100%;padding:8px"><br><br>
+
+जन्म तिथि<br>
+<input name="dob" required style="width:100%;padding:8px"><br><br>
+
+मुख्य प्रश्न<br>
+<textarea name="questions" required style="width:100%;padding:8px"></textarea><br><br>
+
+प्लान चुनें<br>
+
+<select name="plan" style="width:100%;padding:8px">
+
+<option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
+<option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
+<option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
+<option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
+
+</select>
+
+<br><br>
+
+हथेली की फोटो<br>
+<input type="file" name="images" multiple>
+
+<br><br>
+
+<button style="padding:10px 20px;background:#8b0000;color:white;border:none">
+Save Client
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>
+"""
+
+@router.post("/admin/add-client")
+async def add_client(
+name:str=Form(...),
+phone:str=Form(...),
+dob:str=Form(...),
+questions:str=Form(...),
+plan:str=Form(...),
+images: List[UploadFile] = File(None)
+):
+
+    saved_files=[]
+
+    if images:
+        for img in images:
+
+            unique_name=f"{uuid.uuid4().hex}_{img.filename}"
+
+            file_path=os.path.join(UPLOAD_DIR,unique_name)
+
+            with open(file_path,"wb") as f:
+                f.write(await img.read())
+
+            saved_files.append(unique_name)
+
+    image_names=",".join(saved_files)
+
+    conn=get_db()
+    c=conn.cursor()
+
+    client_code=generate_client_code()
+
+    c.execute(
+        """
+        INSERT INTO clients
+        (client_code,name,phone,dob,questions,plan,images,source,status,payment_status,created_at,priority,ai_generated)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        """,
+        (
+            client_code,
+            name,
+            phone,
+            dob,
+            questions,
+            plan,
+            image_names,
+            "Manual",
+            "Pending",
+            "Pending",
+            datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
+            99,
+            0
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse("/admin/dashboard",status_code=302)
