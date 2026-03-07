@@ -1,12 +1,11 @@
-import os
-import re
 from weasyprint import HTML
 from weasyprint.text.fonts import FontConfiguration
+import os
+import re
+
 from app.database import get_db
 
-
 REPORT_DIR = "reports"
-
 
 def generate_pdf_report(client_id):
 
@@ -31,21 +30,16 @@ def generate_pdf_report(client_id):
 
     font_config = FontConfiguration()
 
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    font_path = os.path.join(base_path, "..", "assets", "NotoSansDevanagari-Regular.ttf")
+    base_path = os.getcwd()
 
-    # ---------- SPLIT ANTIM MESSAGE ----------
-
+    # -------- SPLIT ANTIM MESSAGE --------
     antim_message = ""
 
     if "अंतिम संदेश:" in ai_draft:
-
         parts = ai_draft.split("अंतिम संदेश:")
         main_content = parts[0]
         antim_message = parts[1].strip()
-
     else:
-
         main_content = ai_draft
 
     sections = re.split(r'(Section\s+\d+\s*–.*?)\n', main_content)
@@ -55,52 +49,43 @@ def generate_pdf_report(client_id):
     for i in range(1, len(sections), 2):
 
         title = sections[i].strip()
-        content = sections[i + 1].strip()
+        content = sections[i+1].strip()
 
         formatted_blocks += f"""
         <div class="section-block">
-            <div style="font-weight:bold;font-size:18px;margin-bottom:8px;color:#7b0000;">
-                {title}
-            </div>
-            {content.replace("\n","<br>")}
+            <div class="section-heading">{title}</div>
+            {content.replace("\\n","<br>")}
         </div>
         """
 
+    # -------- ANTIM SECTION --------
     if antim_message:
 
-        clean_antim = antim_message.replace("– आचार्य विशाल वैष्णव", "").strip()
+        clean_antim = antim_message.replace("– आचार्य विशाल वैष्णव","")
 
         formatted_blocks += f"""
         <div style="page-break-before:always;"></div>
 
         <div class="antim-section">
 
-            <div class="antim-title">
-                अंतिम संदेश
-            </div>
+        <div class="antim-title">अंतिम संदेश</div>
 
-            <div class="antim-content">
-                {clean_antim.replace("\n","<br>")}
-            </div>
+        <div class="antim-content">
+        {clean_antim.replace("\\n","<br>")}
+        </div>
 
-            <div class="antim-sign">
-                – आचार्य विशाल वैष्णव
-            </div>
+        <div class="antim-sign">
+        – आचार्य विशाल वैष्णव
+        </div>
 
         </div>
         """
 
-    formatted_blocks += """
-    <div class="final-footer">
-        <hr>
-        © 2026 आचार्य विशाल वैष्णव | All Rights Reserved<br>
-        WhatsApp: +91-6000376976
-    </div>
-    """
-
     html_content = f"""
 <html>
+
 <head>
+
 <meta charset="utf-8">
 
 <style>
@@ -109,27 +94,19 @@ def generate_pdf_report(client_id):
 size:A4;
 margin:40px;
 border:2px solid #c6a74d;
-
-@bottom-center {{
-content:"Page " counter(page) " of " counter(pages);
-font-size:11px;
-color:#777;
-}}
-
 }}
 
 @font-face {{
 font-family:'NotoDev';
-src:url('file://{font_path}') format('truetype');
+src:url('assets/NotoSansDevanagari-Regular.ttf');
 }}
 
-body{{
+body {{
 font-family:'NotoDev';
-margin:0;
 background:#faf6ef;
 }}
 
-.watermark{{
+.watermark {{
 position:fixed;
 top:50%;
 left:50%;
@@ -139,7 +116,11 @@ color:rgba(139,0,0,0.04);
 z-index:-1;
 }}
 
-.header{{
+.cover {{
+padding:40px;
+}}
+
+.header {{
 text-align:center;
 background:linear-gradient(to right,#7b0000,#b22222);
 color:white;
@@ -148,44 +129,50 @@ border-radius:12px;
 margin-bottom:35px;
 }}
 
-.title{{
+.title {{
 font-size:36px;
 font-weight:bold;
-margin-top:15px;
 }}
 
-.subtitle{{
+.subtitle {{
 font-size:17px;
 margin-top:6px;
 }}
 
-.client-box{{
+.client-box {{
 background:linear-gradient(to right,#fff8e7,#ffe9c2);
-padding:22px 26px;
-margin:0 15px 35px 15px;
+padding:22px;
 border-left:6px solid #d4af37;
 border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.07);
 }}
 
-.section-title{{
+.section-title {{
 font-size:26px;
 font-weight:bold;
 color:#8b0000;
+margin-top:20px;
 margin-bottom:25px;
 border-bottom:3px solid #d4af37;
-padding-bottom:10px;
 }}
 
-.section-block{{
+.section-block {{
 background:linear-gradient(to bottom,#fffdf9,#ffecc7);
-padding:22px 26px;
-margin:0 15px 30px 15px;
+padding:22px;
+margin-bottom:30px;
 border-left:6px solid #b8860b;
 border-radius:10px;
-page-break-inside:avoid;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
 }}
 
-.antim-section{{
+.section-heading {{
+font-weight:bold;
+font-size:18px;
+margin-bottom:8px;
+color:#7b0000;
+}}
+
+.antim-section {{
 background:linear-gradient(to bottom,#fff8e7,#fbe7c6);
 margin:60px 40px;
 padding:40px;
@@ -194,27 +181,27 @@ text-align:center;
 border:2px solid #d4af37;
 }}
 
-.antim-title{{
+.antim-title {{
 font-size:28px;
 font-weight:bold;
 color:#8b0000;
 margin-bottom:20px;
 }}
 
-.antim-content{{
+.antim-content {{
 font-size:18px;
 line-height:1.8;
 }}
 
-.antim-sign{{
+.antim-sign {{
 margin-top:30px;
 font-size:16px;
 font-weight:bold;
 color:#7b0000;
 }}
 
-.final-footer{{
-margin:60px 20px 30px 20px;
+.footer {{
+margin-top:60px;
 text-align:center;
 font-size:12px;
 color:#777;
@@ -228,13 +215,19 @@ color:#777;
 
 <div class="watermark">ॐ</div>
 
+<!-- COVER PAGE -->
+
+<div class="cover">
+
 <div class="header">
 
-<img src="ganesha.png" style="width:100%;border-radius:8px;">
+<img src="assets/ganesha.png" style="width:100%;border-radius:8px;">
 
 <div class="title">आचार्य विशाल वैष्णव</div>
 
-<div class="subtitle">हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ</div>
+<div class="subtitle">
+हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ
+</div>
 
 </div>
 
@@ -248,17 +241,32 @@ color:#777;
 
 </div>
 
+</div>
+
+<div style="page-break-after:always;"></div>
+
 <div class="section-title">
 Palm Reading Detailed Report
 </div>
 
 {formatted_blocks}
 
+<div class="footer">
+
+<hr>
+
+© 2026 आचार्य विशाल वैष्णव | All Rights Reserved<br>
+
+WhatsApp: +91-6000376976
+
+</div>
+
 </body>
+
 </html>
 """
 
-    HTML(string=html_content).write_pdf(
+    HTML(string=html_content,base_url=base_path).write_pdf(
         file_path,
         font_config=font_config
     )
