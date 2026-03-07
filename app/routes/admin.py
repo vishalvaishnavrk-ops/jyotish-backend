@@ -23,31 +23,28 @@ REPORT_DIR = "reports"
 def admin_login():
     return """
 <html>
-<head>
-<title>Admin Login</title>
-<style>
-body{font-family:Arial;background:#f6efe9;}
-.login-box{
-width:360px;margin:120px auto;padding:25px;background:white;
-border-radius:10px;box-shadow:0 0 12px rgba(0,0,0,0.15);}
-.login-box h2{text-align:center;color:#8b0000;}
-.login-box input{width:100%;padding:8px;margin-top:6px;}
-.login-box button{
-width:100%;margin-top:15px;padding:10px;
-background:#8b0000;color:white;border:none;border-radius:5px;}
-</style>
-</head>
-<body>
-<div class="login-box">
-<h2>Admin Login</h2>
+<body style="font-family:Arial;background:#f6efe9">
+
+<div style="width:360px;margin:120px auto;background:white;padding:25px;border-radius:10px">
+
+<h2 style="text-align:center;color:#8b0000">Admin Login</h2>
+
 <form method="post" action="/admin/login">
-Username
-<input name="username" required>
-Password
-<input type="password" name="password" required>
-<button>Login</button>
+
+Username<br>
+<input name="username" required style="width:100%;padding:8px"><br><br>
+
+Password<br>
+<input type="password" name="password" required style="width:100%;padding:8px"><br><br>
+
+<button style="width:100%;padding:10px;background:#8b0000;color:white;border:none">
+Login
+</button>
+
 </form>
+
 </div>
+
 </body>
 </html>
 """
@@ -55,8 +52,10 @@ Password
 
 @router.post("/admin/login")
 def admin_login_post(username: str = Form(...), password: str = Form(...)):
+
     if username == "admin" and password == "admin123":
         return RedirectResponse("/admin/dashboard", status_code=302)
+
     return HTMLResponse("<h3>Invalid Login</h3>")
 
 
@@ -67,7 +66,9 @@ q: str = Query(None),
 plan: str = Query(None),
 source: str = Query(None),
 status: str = Query(None),
-payment: str = Query(None)
+payment: str = Query(None),
+start_date: str = Query(None),
+end_date: str = Query(None)
 ):
 
     conn = get_db()
@@ -101,11 +102,18 @@ payment: str = Query(None)
         sql+=" AND payment_status=%s"
         params.append(payment)
 
+    if start_date:
+        sql+=" AND created_at >= %s"
+        params.append(start_date+" 00:00:00")
+
+    if end_date:
+        sql+=" AND created_at <= %s"
+        params.append(end_date+" 23:59:59")
+
     sql+=" ORDER BY priority ASC,id DESC"
 
     c.execute(sql,params)
     rows_db=c.fetchall()
-
     conn.close()
 
     rows=""
@@ -115,15 +123,13 @@ payment: str = Query(None)
         dt=datetime.strptime(str(r[7])[:19],"%Y-%m-%d %H:%M:%S")
         formatted_date=dt.strftime("%d-%m-%Y %I:%M %p")
 
-        payment_status=r[8]
-
-        if payment_status=="Paid":
+        if r[8]=="Paid":
             payment_badge="🟢 Paid"
         else:
             payment_badge=f"""
 🔴 Pending
 <form method="post" action="/admin/mark-paid/{r[0]}" style="display:inline;">
-<button style="background:#28a745;color:white;border:none;padding:4px 8px;border-radius:4px;">
+<button style="background:#28a745;color:white;border:none;padding:4px 8px;border-radius:4px">
 Mark Paid
 </button>
 </form>
@@ -145,58 +151,14 @@ Mark Paid
 
     return f"""
 <html>
-<head>
 
-<style>
+<body style="font-family:Arial;background:#f6efe9;margin:0">
 
-body {{
-font-family:Arial;
-background:#f6efe9;
-margin:0;
-}}
-
-.header {{
-background:#8b0000;
-color:white;
-padding:15px;
-font-size:20px;
-}}
-
-.container {{
-padding:25px;
-}}
-
-table {{
-width:100%;
-border-collapse:collapse;
-background:white;
-}}
-
-th {{
-background:#f1e2d3;
-padding:10px;
-}}
-
-td {{
-padding:10px;
-border-top:1px solid #ddd;
-}}
-
-tr:hover {{
-background:#faf3ec;
-}}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="header">
+<h2 style="background:#8b0000;color:white;padding:15px">
 ADMIN DASHBOARD
-</div>
+</h2>
 
-<div class="container">
+<div style="padding:25px">
 
 <a href="/admin/add-client">➕ Add New Client</a>
 
@@ -204,7 +166,7 @@ ADMIN DASHBOARD
 
 <form method="get">
 
-<input type="text" name="q" placeholder="Client Code / Name">
+<input type="text" name="q" placeholder="Client Code / Name" value="{q or ''}">
 
 <select name="plan">
 <option value="">All Plans</option>
@@ -233,13 +195,16 @@ ADMIN DASHBOARD
 <option value="Paid">Paid</option>
 </select>
 
-<button type="submit">Filter</button>
+<input type="date" name="start_date">
+<input type="date" name="end_date">
+
+<button>Filter</button>
 
 </form>
 
 <br>
 
-<table>
+<table border="1" cellpadding="10" style="background:white;width:100%">
 
 <tr>
 <th>Client Code</th>
@@ -263,6 +228,7 @@ ADMIN DASHBOARD
 </html>
 """
 
+
 # ---------- MARK PAID ----------
 @router.post("/admin/mark-paid/{client_id}")
 def mark_paid(client_id: int):
@@ -270,13 +236,25 @@ def mark_paid(client_id: int):
     conn = get_db()
     c = conn.cursor()
 
-    payment_date = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
+    c.execute("SELECT plan FROM clients WHERE id=%s",(client_id,))
+    plan=c.fetchone()[0]
+
+    priority=4
+
+    if "501" in plan:
+        priority=1
+    elif "251" in plan:
+        priority=2
+    elif "151" in plan:
+        priority=3
+
+    payment_date=datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
 
     c.execute("""
     UPDATE clients
-    SET payment_status='Paid',payment_date=%s,priority=1
+    SET payment_status='Paid',payment_date=%s,priority=%s
     WHERE id=%s
-    """,(payment_date,client_id))
+    """,(payment_date,priority,client_id))
 
     conn.commit()
     conn.close()
@@ -284,7 +262,6 @@ def mark_paid(client_id: int):
     generate_ai_draft(client_id)
 
     return RedirectResponse("/admin/dashboard",status_code=302)
-
 
 # ---------- CLIENT DETAIL ----------
 @router.get("/admin/client/{client_id}", response_class=HTMLResponse)
@@ -324,7 +301,51 @@ Client Detail
 
 <p><b>Palm Images:</b><br>{images_html}</p>
 
-<br>
+<hr>
+
+<h3>Payment</h3>
+
+<p><b>Status:</b> {cdata[12] or "Pending"}</p>
+<p><b>Payment Date:</b> {cdata[13] or "-"}</p>
+<p><b>Payment Ref:</b> {cdata[14] or "-"}</p>
+
+<form method="post" action="/admin/mark-paid/{client_id}">
+<button style="background:#28a745;color:white;padding:10px;border:none">
+Mark Payment Paid
+</button>
+</form>
+
+<hr>
+
+<h3>AI Draft</h3>
+
+<form method="post" action="/admin/client/{client_id}/update">
+
+<textarea name="ai_draft" rows="12" style="width:100%">
+{cdata[15]}
+</textarea>
+
+<br><br>
+
+<label>Status</label>
+
+<select name="status">
+
+<option {"selected" if cdata[11]=="Pending" else ""}>Pending</option>
+<option {"selected" if cdata[11]=="Reviewed" else ""}>Reviewed</option>
+<option {"selected" if cdata[11]=="Completed" else ""}>Completed</option>
+
+</select>
+
+<br><br>
+
+<button style="background:#8b0000;color:white;padding:10px;border:none">
+Save Update
+</button>
+
+</form>
+
+<hr>
 
 <form method="post" action="/admin/client/{client_id}/generate-ai">
 
@@ -364,12 +385,44 @@ Send WhatsApp
 
 </a>
 
+<br><br>
+
+<a href="/admin/dashboard">⬅ Back to Dashboard</a>
+
 </div>
 
 </body>
 
 </html>
 """
+
+
+# ---------- UPDATE CLIENT ----------
+@router.post("/admin/client/{client_id}/update")
+def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
+
+    conn=get_db()
+    c=conn.cursor()
+
+    c.execute(
+        "UPDATE clients SET ai_draft=%s,status=%s WHERE id=%s",
+        (ai_draft,status,client_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
+
+
+# ---------- GENERATE AI ----------
+@router.post("/admin/client/{client_id}/generate-ai")
+def manual_ai_generate(client_id:int):
+
+    generate_ai_draft(client_id)
+
+    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
+
 
 # ---------- GENERATE PDF ----------
 @router.post("/admin/client/{client_id}/generate-pdf")
@@ -384,7 +437,9 @@ def create_pdf(client_id:int):
     conn.close()
 
     if data[0]!="Reviewed":
-        return HTMLResponse("<h3 style='color:red;text-align:center'>Review draft before generating PDF</h3>")
+        return HTMLResponse(
+        "<h3 style='color:red;text-align:center;margin-top:80px;'>PDF Generate blocked. Mark draft Reviewed first.</h3>"
+        )
 
     generate_pdf_report(client_id)
 
@@ -398,13 +453,13 @@ def download_pdf(client_id: int):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT client_code FROM clients WHERE id=%s",(client_id,))
+    c.execute("SELECT client_code,status FROM clients WHERE id=%s",(client_id,))
     data = c.fetchone()
 
     conn.close()
 
-    if not data:
-        return HTMLResponse("Report not found")
+    if data[1]!="Reviewed":
+        return HTMLResponse("PDF available after review")
 
     file_name = f"{data[0]}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
@@ -413,7 +468,8 @@ def download_pdf(client_id: int):
         return HTMLResponse("PDF not generated yet")
 
     return FileResponse(file_path,media_type="application/pdf",filename=file_name)
-    
+
+
 # ---------- SEND WHATSAPP ----------
 @router.get("/admin/client/{client_id}/send-whatsapp")
 def send_whatsapp(client_id: int):
@@ -435,6 +491,7 @@ def send_whatsapp(client_id: int):
     conn.close()
 
     base_url = "https://jyotish-backend-gbr9.onrender.com"
+
     pdf_url = f"{base_url}/reports/{client_code}.pdf"
 
     message=f"""नमस्ते {name},
@@ -451,4 +508,4 @@ PDF डाउनलोड करें:
 
     link=f"https://wa.me/91{phone_number}?text={encoded}"
 
-    return RedirectResponse(link)
+    return RedirectResponse(link)    
