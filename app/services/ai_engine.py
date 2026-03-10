@@ -1,3 +1,4 @@
+import openai
 from app.database import get_db
 
 
@@ -6,89 +7,109 @@ def generate_ai_draft(client_id):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute(
-        "SELECT name, dob, tob, place, plan, questions FROM clients WHERE id=%s",
-        (client_id,)
-    )
+    c.execute("""
+    SELECT name,questions,plan FROM clients WHERE id=%s
+    """,(client_id,))
 
     data = c.fetchone()
 
-    if not data:
-        conn.close()
-        return
+    name,questions,plan = data
 
-    name, dob, tob, place, plan, questions = data
+    # ---------- PLAN BASED LENGTH ----------
 
-    # PLAN DEPTH
+    if "₹51" in plan:
+        word_limit = 400
 
-    if "501" in plan:
-        depth_text = "अत्यंत गहन कर्मिक एवं आध्यात्मिक विश्लेषण"
-        year_limit = 7
+    elif "₹151" in plan:
+        word_limit = 700
 
-    elif "251" in plan:
-        depth_text = "गहन जीवन दिशा एवं भाग्य विश्लेषण"
-        year_limit = 4
-
-    elif "151" in plan:
-        depth_text = "विस्तृत व्यावहारिक विश्लेषण"
-        year_limit = 2
+    elif "₹251" in plan:
+        word_limit = 1000
 
     else:
-        depth_text = "संक्षिप्त एवं स्पष्ट मार्गदर्शन"
-        year_limit = 1
+        word_limit = 1500
 
-    yearly_prediction = ""
 
-    for i in range(1, year_limit + 1):
+    prompt = f"""
 
-        yearly_prediction += f"""
+आप एक अनुभवी हस्तरेखा विशेषज्ञ और वैदिक ज्योतिषाचार्य हैं।
 
-वर्ष {i}:
-इस वर्ष जीवन में क्रमिक प्रगति, अनुभव से सीख और आत्मविश्वास में वृद्धि के संकेत मिलते हैं।
-परिस्थितियाँ संतुलित प्रयास की अपेक्षा करेंगी।
+क्लाइंट का नाम: {name}
 
-"""
-
-    draft = f"""
-
-Section 1 – हस्त संरचना विश्लेषण
-हथेली की संरचना व्यक्ति के स्वभाव और मानसिक संतुलन को दर्शाती है।
-इस योजना के अंतर्गत {depth_text} प्रस्तुत किया जा रहा है।
-
-Section 2 – पर्वत विश्लेषण
-शुक्र पर्वत ऊर्जा और आकर्षण का प्रतीक है।
-बृहस्पति पर्वत नेतृत्व क्षमता का संकेत देता है।
-
-Section 3 – मुख्य रेखाओं का विश्लेषण
-जीवन रेखा जीवन शक्ति को दर्शाती है।
-मस्तिष्क रेखा सोच और निर्णय शैली को बताती है।
-
-Section 4 – विशेष चिह्न
-त्रिकोण बुद्धिमत्ता का संकेत है।
-क्रॉस संघर्ष के बाद उपलब्धि दर्शाता है।
-
-Section 5 – कर्म और भाग्य
-जीवन में उन्नति कर्म और प्रयास से जुड़ी होती है।
-
-Section 6 – प्रश्नों के उत्तर
+क्लाइंट का प्रश्न:
 {questions}
 
+नीचे दिए गए sections के अनुसार एक विस्तृत हस्तरेखा विश्लेषण रिपोर्ट लिखें।
+
+रिपोर्ट लगभग {word_limit} शब्दों की होनी चाहिए।
+
+Sections structure:
+
+Section 1 – हस्त संरचना विश्लेषण
+हाथ की आकृति, अंगुलियों की बनावट, हथेली की ऊर्जा
+
+Section 2 – पर्वत विश्लेषण
+शुक्र, बृहस्पति, शनि, सूर्य, बुध पर्वत
+
+Section 3 – मुख्य रेखाओं का विश्लेषण
+जीवन रेखा
+मस्तिष्क रेखा
+हृदय रेखा
+भाग्य रेखा
+सूर्य रेखा
+
+Section 4 – विशेष चिह्न
+त्रिकोण, क्रॉस, तारा, वर्ग
+
+Section 5 – कर्म और भाग्य
+जीवन की दिशा और कर्मफल
+
+Section 6 – प्रश्नों के उत्तर
+क्लाइंट के प्रश्न का विश्लेषण
+
 Section 7 – उपाय
-नियमित प्रार्थना और सकारात्मक सोच लाभकारी है।
+सरल और व्यावहारिक उपाय
 
 Section 8 – आगामी वर्षों का पूर्वानुमान
-{yearly_prediction}
+
+वर्ष 1
+वर्ष 2
+वर्ष 3
+वर्ष 4
 
 अंतिम संदेश:
-श्रद्धा, सद्कर्म और सकारात्मक दृष्टिकोण से जीवन की दिशा सुदृढ़ होती है।
+आध्यात्मिक मार्गदर्शन
 
-– आचार्य विशाल वैष्णव
+रिपोर्ट स्पष्ट हिंदी में होनी चाहिए।
+
 """
 
-    c.execute(
-        "UPDATE clients SET ai_draft=%s, ai_generated=1 WHERE id=%s",
-        (draft.strip(), client_id)
+
+    response = openai.ChatCompletion.create(
+
+        model="gpt-4o-mini",
+
+        messages=[
+            {"role":"system","content":"आप एक अनुभवी हस्तरेखा विशेषज्ञ हैं"},
+            {"role":"user","content":prompt}
+        ],
+
+        temperature=0.7
     )
+
+
+    draft = response["choices"][0]["message"]["content"]
+
+
+    c.execute("""
+    UPDATE clients
+    SET ai_draft=%s,
+    ai_generated=1
+    WHERE id=%s
+    """,(draft,client_id))
+
 
     conn.commit()
     conn.close()
+
+    return draft
