@@ -596,8 +596,8 @@ async def add_client(
 name:str=Form(...),
 phone:str=Form(...),
 dob:str=Form(...),
-birth_time: str = Form(None),
-birth_place: str = Form(None),
+birth_time: str = Form(...),
+birth_place: str = Form(...),
 questions:str=Form(...),
 plan:str=Form(...),
 images: List[UploadFile] = File(None)
