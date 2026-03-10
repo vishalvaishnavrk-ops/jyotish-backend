@@ -396,7 +396,7 @@ Send WhatsApp
 
 <br><br>
 
-<a href="/admin/dashboard">⬅ Back to Dashboard</a>
+<a href="/admin/dashboard"> Back to Dashboard</a>
 
 </div>
 
