@@ -575,6 +575,8 @@ Save Client
 
 </form>
 
+</div>
+
 <br>
 
 <a href="/admin/dashboard">
@@ -582,8 +584,6 @@ Save Client
 Back to Dashboard
 </button>
 </a>
-
-</div>
 
 </body>
 </html>
