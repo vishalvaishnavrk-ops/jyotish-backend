@@ -281,11 +281,14 @@ def client_detail(client_id: int):
 
     images_html = ""
 
-    if cdata[8]:
-        for img in cdata[8].split(","):
-            img = img.strip()
-            if img:
-                images_html += f'<img src="/uploads/{img}?v=1" width="150" style="margin:5px;border:1px solid #ccc;">'
+    images=str(cdata[8]) if cdata[8] else ""
+
+    for img in images.split(","):
+        img=img.strip()
+        if img!="":
+            images_html+=f"""
+            <img src="/uploads/{img}?v=1"
+            style="width:170px;border-radius:10px;margin:6px;border:1px solid #ccc;">
 
     return f"""
 <html>
@@ -539,6 +542,12 @@ def add_client_form():
 जन्म तिथि<br>
 <input name="dob" required style="width:100%;padding:8px"><br><br>
 
+जन्म समय
+<input name="birth_time" placeholder="HH:MM">
+
+जन्म स्थान
+<input name="birth_place" placeholder="City">
+
 मुख्य प्रश्न<br>
 <textarea name="questions" required style="width:100%;padding:8px"></textarea><br><br>
 
@@ -566,6 +575,14 @@ Save Client
 
 </form>
 
+<br>
+
+<a href="/admin/dashboard">
+<button style="background:#555;color:white;padding:10px;border:none;border-radius:6px;">
+Back to Dashboard
+</button>
+</a>
+
 </div>
 
 </body>
@@ -577,6 +594,8 @@ async def add_client(
 name:str=Form(...),
 phone:str=Form(...),
 dob:str=Form(...),
+birth_time: str = Form(None),
+birth_place: str = Form(None),
 questions:str=Form(...),
 plan:str=Form(...),
 images: List[UploadFile] = File(None)
@@ -606,14 +625,16 @@ images: List[UploadFile] = File(None)
     c.execute(
         """
         INSERT INTO clients
-        (client_code,name,phone,dob,questions,plan,images,source,status,payment_status,created_at,priority,ai_generated)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        (client_code,name,phone,dob,birth_time,birth_place,questions,plan,images,source,status,payment_status,created_at,priority,ai_generated)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """,
         (
             client_code,
             name,
             phone,
             dob,
+            birth_time,
+            birth_place,
             questions,
             plan,
             image_names,
