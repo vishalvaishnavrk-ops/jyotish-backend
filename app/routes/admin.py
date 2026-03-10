@@ -545,10 +545,10 @@ def add_client_form():
 <input name="dob" required style="width:100%;padding:8px"><br><br>
 
 जन्म समय
-<input name="birth_time" placeholder="HH:MM">
+<input name="birth_time" style="width:100%;padding:8px" placeholder="HH:MM">
 
 जन्म स्थान
-<input name="birth_place" placeholder="City">
+<input name="birth_place" style="width:100%;padding:8px" placeholder="City">
 
 मुख्य प्रश्न<br>
 <textarea name="questions" required style="width:100%;padding:8px"></textarea><br><br>
@@ -577,8 +577,6 @@ Save Client
 
 </form>
 
-</div>
-
 <br>
 
 <a href="/admin/dashboard">
@@ -586,6 +584,8 @@ Save Client
 Back to Dashboard
 </button>
 </a>
+
+</div>
 
 </body>
 </html>
