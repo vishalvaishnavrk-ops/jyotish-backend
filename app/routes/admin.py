@@ -152,6 +152,8 @@ Mark Paid
     return f"""
 <html>
 
+<body style="font-family:Arial;background:#f6efe9">
+
 <div style="background:#8b0000;color:white;padding:20px;text-align:center">
 
 <div style="font-size:22px;font-weight:bold">
@@ -289,7 +291,7 @@ def client_detail(client_id: int):
             images_html+=f"""
             <img src="/uploads/{img}?v=1"
             style="width:170px;border-radius:10px;margin:6px;border:1px solid #ccc;">
-
+            """
     return f"""
 <html>
 
