@@ -110,7 +110,7 @@ end_date: str = Query(None)
         sql+=" AND created_at <= %s"
         params.append(end_date+" 23:59:59")
 
-    sql+=" ORDER BY priority ASC,id DESC"
+    sql+=" ORDER BY payment_status DESC, priority ASC, created_at DESC"
 
     c.execute(sql,params)
     rows_db=c.fetchall()
@@ -176,29 +176,29 @@ ADMIN DASHBOARD
 
 <select name="plan">
 <option value="">All Plans</option>
-<option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
-<option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
-<option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
-<option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
+<option value="₹51 – बेसिक प्लान" {"selected" if plan=="₹51 – बेसिक प्लान" else ""}>₹51 – बेसिक प्लान</option>
+<option value="₹151 – एडवांस प्लान" {"selected" if plan=="₹151 – एडवांस प्लान" else ""}>₹151 – एडवांस प्लान</option>
+<option value="₹251 – प्रो प्लान" {"selected" if plan=="₹251 – प्रो प्लान" else ""}>₹251 – प्रो प्लान</option>
+<option value="₹501 – अल्टीमेट प्लान" {"selected" if plan=="₹501 – अल्टीमेट प्लान" else ""}>₹501 – अल्टीमेट प्लान</option>
 </select>
 
 <select name="source">
 <option value="">All Sources</option>
-<option value="Website">Website</option>
-<option value="Manual">Manual</option>
+<option value="Website" {"selected" if source=="Website" else ""}>Website</option>
+<option value="Manual" {"selected" if source=="Manual" else ""}>Manual</option>
 </select>
 
 <select name="status">
 <option value="">All Status</option>
-<option value="Pending">Pending</option>
-<option value="Reviewed">Reviewed</option>
-<option value="Completed">Completed</option>
+<option value="Pending" {"selected" if status=="Pending" else ""}>Pending</option>
+<option value="Reviewed" {"selected" if status=="Reviewed" else ""}>Reviewed</option>
+<option value="Completed" {"selected" if status=="Completed" else ""}>Completed</option>
 </select>
 
 <select name="payment">
 <option value="">All Payment</option>
-<option value="Pending">Pending</option>
-<option value="Paid">Paid</option>
+<option value="Pending" {"selected" if payment=="Pending" else ""}>Pending</option>
+<option value="Paid" {"selected" if payment=="Paid" else ""}>Paid</option>
 </select>
 
 <input type="date" name="start_date">
@@ -283,7 +283,7 @@ def client_detail(client_id: int):
 
     images_html = ""
 
-    images=str(cdata[8]) if cdata[8] else ""
+    images=str(cdata[9]) if cdata[9] else ""
 
     for img in images.split(","):
         img=img.strip()
@@ -320,10 +320,39 @@ Client Detail
 <p><b>Payment Date:</b> {cdata[13] or "-"}</p>
 <p><b>Payment Ref:</b> {cdata[14] or "-"}</p>
 
-<form method="post" action="/admin/mark-paid/{client_id}">
-<button style="background:#28a745;color:white;padding:10px;border:none">
-Mark Payment Paid
+<h3>Payment Details</h3>
+
+<p><b>Status:</b> {cdata[12] or "Pending"}</p>
+<p><b>Payment Date:</b> {cdata[13] or "-"}</p>
+<p><b>Payment Ref:</b> {cdata[14] or "-"}</p>
+
+<form method="post" action="/admin/client/{client_id}/payment">
+
+<label>Update Payment Status:</label><br>
+
+<select name="payment_status">
+
+<option value="Pending" {"selected" if cdata[12]=="Pending" else ""}>
+Pending
+</option>
+
+<option value="Paid" {"selected" if cdata[12]=="Paid" else ""}>
+Paid
+</option>
+
+</select>
+
+<br><br>
+
+<label>Payment Ref:</label><br>
+<input name="payment_ref" style="width:300px">
+
+<br><br>
+
+<button style="background:#28a745;color:white;padding:10px;border:none;border-radius:5px;">
+Update Status
 </button>
+
 </form>
 
 <hr>
@@ -407,7 +436,54 @@ Send WhatsApp
 </html>
 """
 
+# ---------- UPDATE PAYMENT ----------
+@router.post("/admin/client/{client_id}/payment")
+def update_payment(
+    client_id: int,
+    payment_status: str = Form(...),
+    payment_ref: str = Form(None)
+):
 
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT plan, ai_generated FROM clients WHERE id=%s",(client_id,))
+    plan, ai_generated = c.fetchone()
+
+    payment_date = None
+    priority = 99
+
+    if payment_status == "Paid":
+
+        payment_date = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
+
+        if "501" in plan:
+            priority = 1
+        elif "251" in plan:
+            priority = 2
+        elif "151" in plan:
+            priority = 3
+        else:
+            priority = 4
+
+    c.execute("""
+        UPDATE clients
+        SET payment_status=%s,
+            payment_date=%s,
+            payment_ref=%s,
+            priority=%s
+        WHERE id=%s
+    """,(payment_status,payment_date,payment_ref,priority,client_id))
+
+    conn.commit()
+    conn.close()
+
+    # AI draft only first time
+    if payment_status == "Paid" and ai_generated == 0:
+        generate_ai_draft(client_id)
+
+    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
+    
 # ---------- UPDATE CLIENT ----------
 @router.post("/admin/client/{client_id}/update")
 def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
@@ -430,10 +506,12 @@ def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
 @router.post("/admin/client/{client_id}/generate-ai")
 def manual_ai_generate(client_id:int):
 
-    generate_ai_draft(client_id)
+    try:
+        generate_ai_draft(client_id)
+    except Exception as e:
+        print("AI ERROR:",e)
 
     return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
-
 
 # ---------- GENERATE PDF ----------
 @router.post("/admin/client/{client_id}/generate-pdf")
@@ -469,7 +547,7 @@ def download_pdf(client_id: int):
 
     conn.close()
 
-    if data[1]!="Reviewed":
+    if data[1] not in ["Reviewed","Completed"]:
         return HTMLResponse("PDF available after review")
 
     file_name = f"{data[0]}.pdf"
@@ -627,7 +705,7 @@ images: List[UploadFile] = File(None)
     c.execute(
         """
         INSERT INTO clients
-        (client_code,name,phone,dob,birth_time,birth_place,questions,plan,images,source,status,payment_status,created_at,priority,ai_generated)
+        (client_code,name,phone,dob,tob,place,questions,plan,images,source,status,payment_status,created_at,priority,ai_generated)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """,
         (
@@ -635,8 +713,8 @@ images: List[UploadFile] = File(None)
             name,
             phone,
             dob,
-            birth_time,
-            birth_place,
+            tob,
+            place,
             questions,
             plan,
             image_names,
