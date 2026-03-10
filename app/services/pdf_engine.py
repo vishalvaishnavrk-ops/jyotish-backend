@@ -31,13 +31,13 @@ def generate_pdf_report(client_id):
 
     font_config = FontConfiguration()
 
-    # -------- PATH FIX --------
+    # correct path for assets
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     font_path = os.path.join(base_dir, "assets", "NotoSansDevanagari-Regular.ttf")
     ganesha_path = os.path.join(base_dir, "assets", "ganesha.png")
 
-    # -------- SPLIT ANTIM MESSAGE --------
+    # split antim message
     antim_message = ""
 
     if "अंतिम संदेश:" in ai_draft:
@@ -56,27 +56,34 @@ def generate_pdf_report(client_id):
         title = sections[i].strip()
         content = sections[i + 1].strip()
 
+        content = content.replace("वर्ष", "<br><br>वर्ष")
+
         formatted_blocks += f"""
         <div class="section-block">
+
         <div class="section-heading">{title}</div>
+
+        <div class="section-content">
         {content.replace("\\n","<br>")}
+        </div>
+
         </div>
         """
 
-    # -------- ANTIM SANDESH PAGE --------
+    # antim page
     if antim_message:
-
-        clean_antim = antim_message.replace("– आचार्य विशाल वैष्णव", "")
 
         formatted_blocks += f"""
         <div style="page-break-before:always;"></div>
 
         <div class="antim-section">
 
-        <div class="antim-title">अंतिम संदेश</div>
+        <div class="antim-title">
+        अंतिम संदेश
+        </div>
 
-        <div class="antim-content">
-        {clean_antim.replace("\\n","<br>")}
+        <div class="antim-text">
+        {antim_message.replace("\\n","<br>")}
         </div>
 
         <div class="antim-sign">
@@ -97,7 +104,7 @@ def generate_pdf_report(client_id):
 
 @page {{
 size:A4;
-margin:40px;
+margin:45px;
 border:2px solid #d4af37;
 }}
 
@@ -108,8 +115,9 @@ src:url('file://{font_path}') format('truetype');
 
 body {{
 font-family:'NotoDev';
-margin:0;
 background:#faf6ef;
+margin:0;
+padding-top:10px;
 }}
 
 .watermark {{
@@ -117,28 +125,27 @@ position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-font-size:160px;
+font-size:150px;
 color:rgba(139,0,0,0.05);
 z-index:-1;
 }}
 
 .cover {{
-padding:40px;
+padding:30px;
 }}
 
 .header {{
 text-align:center;
 background:linear-gradient(to right,#7b0000,#b22222);
-color:white;
 padding:35px;
 border-radius:12px;
-margin-bottom:35px;
+color:white;
 }}
 
 .title {{
 font-size:36px;
 font-weight:bold;
-margin-top:15px;
+margin-top:10px;
 }}
 
 .subtitle {{
@@ -146,54 +153,64 @@ font-size:18px;
 }}
 
 .client-box {{
-background:#fff8e7;
-padding:22px;
+background:linear-gradient(to right,#fff8e7,#ffe7b5);
+padding:30px;
+margin-top:25px;
 border-left:6px solid #d4af37;
 border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
+box-shadow:0 6px 16px rgba(0,0,0,0.1);
+font-size:16px;
 }}
 
 .section-title {{
-font-size:26px;
+text-align:center;
+font-size:32px;
 font-weight:bold;
+margin-top:40px;
+margin-bottom:35px;
 color:#8b0000;
-margin-top:20px;
-margin-bottom:25px;
-border-bottom:3px solid #d4af37;
+letter-spacing:1px;
 }}
 
 .section-block {{
-background:#fffdf9;
-padding:22px;
-margin-bottom:25px;
+background:linear-gradient(to bottom,#fffdf9,#ffecc7);
+padding:28px;
+margin:22px 32px;
 border-left:6px solid #b8860b;
-border-radius:10px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+page-break-inside:avoid;
 }}
 
 .section-heading {{
-font-weight:bold;
 font-size:18px;
-margin-bottom:8px;
+font-weight:bold;
 color:#7b0000;
+margin-bottom:10px;
+}}
+
+.section-content {{
+line-height:1.8;
+font-size:15px;
 }}
 
 .antim-section {{
 background:#fff8e7;
-margin:60px 40px;
-padding:40px;
+margin:60px 50px;
+padding:45px;
 border-radius:18px;
-text-align:center;
 border:2px solid #d4af37;
+text-align:center;
 }}
 
 .antim-title {{
 font-size:28px;
 font-weight:bold;
-color:#8b0000;
 margin-bottom:20px;
+color:#8b0000;
 }}
 
-.antim-content {{
+.antim-text {{
 font-size:18px;
 line-height:1.8;
 }}
@@ -202,7 +219,6 @@ line-height:1.8;
 margin-top:30px;
 font-size:16px;
 font-weight:bold;
-color:#7b0000;
 }}
 
 .footer {{
@@ -224,7 +240,7 @@ color:#777;
 
 <div class="header">
 
-<img src="file://{ganesha_path}" style="width:100%;border-radius:8px;">
+<img src="file://{ganesha_path}" style="width:100%;border-radius:10px;">
 
 <div class="title">आचार्य विशाल वैष्णव</div>
 
@@ -249,16 +265,17 @@ color:#777;
 <div style="page-break-after:always;"></div>
 
 <div class="section-title">
-Palm Reading Detailed Report
+PALM READING DETAILED REPORT
 </div>
 
 {formatted_blocks}
 
 <div class="footer">
 
-<hr>
+<hr style="width:85%;margin:30px auto;opacity:0.4;">
 
 © 2026 आचार्य विशाल वैष्णव | All Rights Reserved<br>
+
 WhatsApp: +91-6000376976
 
 </div>
@@ -267,9 +284,6 @@ WhatsApp: +91-6000376976
 </html>
 """
 
-    HTML(string=html, base_url="/").write_pdf(
-        file_path,
-        font_config=font_config
-    )
+    HTML(string=html).write_pdf(file_path, font_config=font_config)
 
     return file_name
