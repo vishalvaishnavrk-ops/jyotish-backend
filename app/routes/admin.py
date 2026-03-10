@@ -505,13 +505,13 @@ def send_whatsapp(client_id: int):
 
     message=f"""नमस्ते {name},
 
-आपकी हस्तरेखा रिपोर्ट तैयार है।
+    आपकी हस्तरेखा रिपोर्ट तैयार है।
 
-PDF डाउनलोड करें:
-{pdf_url}
+    PDF डाउनलोड करें:
+    {pdf_url}
 
-– आचार्य विशाल वैष्णव
-"""
+    – आचार्य विशाल वैष्णव
+    """
 
     encoded=urllib.parse.quote(message)
 
