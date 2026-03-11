@@ -201,8 +201,8 @@ ADMIN DASHBOARD
 <option value="Paid" {"selected" if payment=="Paid" else ""}>Paid</option>
 </select>
 
-<input type="date" name="start_date">
-<input type="date" name="end_date">
+<input type="date" name="start_date" value="{start_date or ''}">
+<input type="date" name="end_date" value="{end_date or ''}">
 
 <button>Filter</button>
 
@@ -289,7 +289,7 @@ def client_detail(client_id: int):
         img=img.strip()
         if img!="":
             images_html+=f"""
-            <img src="/uploads/{img}?v=1"
+            <img src="/uploads/{img}"
             style="width:170px;border-radius:10px;margin:6px;border:1px solid #ccc;">
             """
     return f"""
@@ -313,12 +313,6 @@ Client Detail
 <p><b>Palm Images:</b><br>{images_html}</p>
 
 <hr>
-
-<h3>Payment</h3>
-
-<p><b>Status:</b> {cdata[12] or "Pending"}</p>
-<p><b>Payment Date:</b> {cdata[13] or "-"}</p>
-<p><b>Payment Ref:</b> {cdata[14] or "-"}</p>
 
 <h3>Payment Details</h3>
 
@@ -448,7 +442,9 @@ def update_payment(
     c = conn.cursor()
 
     c.execute("SELECT plan, ai_generated FROM clients WHERE id=%s",(client_id,))
-    plan, ai_generated = c.fetchone()
+    row = c.fetchone()
+    plan = row[0]
+    ai_generated = row[1] if row[1] else 0
 
     payment_date = None
     priority = 99
@@ -623,10 +619,10 @@ def add_client_form():
 <input name="dob" required style="width:100%;padding:8px"><br><br>
 
 जन्म समय
-<input name="birth_time" placeholder="HH:MM" style="width:100%;padding:8px"><br><br>
+<input name="tob" placeholder="HH:MM" style="width:100%;padding:8px"><br><br>
 
 जन्म स्थान
-<input name="birth_place" placeholder="City" style="width:100%;padding:8px"><br><br>
+<input name="place" placeholder="City" style="width:100%;padding:8px"><br><br>
 
 मुख्य प्रश्न<br>
 <textarea name="questions" required style="width:100%;padding:8px"></textarea><br><br>
@@ -674,8 +670,8 @@ async def add_client(
 name:str=Form(...),
 phone:str=Form(...),
 dob:str=Form(...),
-birth_time: str = Form(...),
-birth_place: str = Form(...),
+tob: str = Form(...),
+place: str = Form(...),
 questions:str=Form(...),
 plan:str=Form(...),
 images: List[UploadFile] = File(None)
