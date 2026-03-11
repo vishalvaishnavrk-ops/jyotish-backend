@@ -444,7 +444,7 @@ def update_payment(
     c.execute("SELECT plan, ai_generated FROM clients WHERE id=%s",(client_id,))
     row = c.fetchone()
     plan = row[0]
-    ai_generated = row[1] if row[1] else 0
+    ai_generated = row[1] if row[1] is not None else 0
 
     payment_date = None
     priority = 99
@@ -476,7 +476,10 @@ def update_payment(
 
     # AI draft only first time
     if payment_status == "Paid" and ai_generated == 0:
-        generate_ai_draft(client_id)
+        try:
+            generate_ai_draft(client_id)
+        except Exception as e:
+            print("AI ERROR:", e)
 
     return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
     
