@@ -1,4 +1,5 @@
-import openai
+from openai import OpenAI
+import os
 from app.database import get_db
 
 
@@ -85,20 +86,22 @@ Section 8 – आगामी वर्षों का पूर्वानु
 """
 
 
-    response = openai.ChatCompletion.create(
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    response = client.chat.completions.create(
 
         model="gpt-4o-mini",
 
         messages=[
-            {"role":"system","content":"आप एक अनुभवी हस्तरेखा विशेषज्ञ हैं"},
-            {"role":"user","content":prompt}
+            {"role": "system", "content": "आप एक अनुभवी हस्तरेखा विशेषज्ञ हैं"},
+            {"role": "user", "content": prompt}
         ],
 
         temperature=0.7
     )
 
 
-    draft = response["choices"][0]["message"]["content"]
+    draft = response.choices[0].message.content
 
 
     c.execute("""
