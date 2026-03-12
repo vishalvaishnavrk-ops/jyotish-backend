@@ -265,7 +265,10 @@ def mark_paid(client_id: int):
     conn.commit()
     conn.close()
 
-    generate_ai_draft(client_id)
+    try:
+        generate_ai_draft(client_id)
+    except Exception as e:
+        print("AI ERROR:", e)
 
     return RedirectResponse("/admin/dashboard",status_code=302)
 
