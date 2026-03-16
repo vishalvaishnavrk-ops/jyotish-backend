@@ -94,7 +94,7 @@ width:100%;
 background:white;
 border-radius:10px;
 overflow:hidden;
-box-shadow:0 4px 12px rgba(0,0,0,0.06);
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
 th{
@@ -107,6 +107,7 @@ padding:10px;
 td{
 padding:10px;
 border-bottom:1px solid #eee;
+font-size:14px;
 }
 
 .btn{
