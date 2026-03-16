@@ -286,15 +286,29 @@ def client_detail(client_id: int):
 
     images_html = ""
 
-    images=str(cdata[9]) if cdata[9] else ""
+    images_raw = cdata[9] if cdata[9] else ""
 
-    for img in images.split(","):
-        img=img.strip()
-        if img!="":
-            images_html+=f"""
-            <img src="/uploads/{img}"
-            style="width:170px;border-radius:10px;margin:6px;border:1px solid #ccc;">
-            """
+    images_list = []
+
+    if isinstance(images_raw, str):
+
+        cleaned = images_raw.replace("[","").replace("]","").replace("'","").replace('"',"")
+    
+        for img in cleaned.split(","):
+            img = img.strip()
+
+            if img.startswith("uploads/"):
+                img = img.replace("uploads/","")
+
+            if img != "":
+                images_list.append(img)
+
+    for img in images_list:
+
+        images_html += f"""
+        <img src="/uploads/{img}"
+        style="width:170px;border-radius:10px;margin:6px;border-radius:10px;border:1px solid #ccc;">
+        """
     return f"""
 <html>
 
