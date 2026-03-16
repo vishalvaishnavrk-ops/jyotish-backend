@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
+from fastapi import Request
+from fastapi.templating import Jinja2Templates
 from typing import List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -12,6 +14,8 @@ from app.utils.helpers import generate_client_code
 from app.services.ai_engine import generate_ai_draft
 from app.services.pdf_engine import generate_pdf_report
 from app.services.supabase_storage import upload_palm_image
+
+templates = Jinja2Templates(directory="templates")
 
 router = APIRouter()
 
@@ -61,8 +65,8 @@ def admin_login_post(username: str = Form(...), password: str = Form(...)):
 
 
 # ---------- DASHBOARD ----------
-@router.get("/admin/dashboard", response_class=HTMLResponse)
-def dashboard(
+@router.get("/admin/dashboard")
+def dashboard(request: Request,
 q: str = Query(None),
 plan: str = Query(None),
 source: str = Query(None),
@@ -71,7 +75,6 @@ payment: str = Query(None),
 start_date: str = Query(None),
 end_date: str = Query(None)
 ):
-
     conn = get_db()
     c = conn.cursor()
 
@@ -150,90 +153,16 @@ Mark Paid
 </tr>
 """
 
-    return f"""
-<html>
-
-<body style="font-family:Arial;background:#f6efe9">
-
-<div style="background:#8b0000;color:white;padding:20px;text-align:center">
-
-<div style="font-size:22px;font-weight:bold">
-ADMIN DASHBOARD
-</div>
-
-<div style="font-size:14px;margin-top:4px">
-आचार्य विशाल वैष्णव – हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ
-</div>
-
-</div>
-
-<a href="/admin/add-client">➕ Add New Client</a>
-
-<br><br>
-
-<form method="get">
-
-<input type="text" name="q" placeholder="Client Code / Name" value="{q or ''}">
-
-<select name="plan">
-<option value="">All Plans</option>
-<option value="₹51 – बेसिक प्लान" {"selected" if plan=="₹51 – बेसिक प्लान" else ""}>₹51 – बेसिक प्लान</option>
-<option value="₹151 – एडवांस प्लान" {"selected" if plan=="₹151 – एडवांस प्लान" else ""}>₹151 – एडवांस प्लान</option>
-<option value="₹251 – प्रो प्लान" {"selected" if plan=="₹251 – प्रो प्लान" else ""}>₹251 – प्रो प्लान</option>
-<option value="₹501 – अल्टीमेट प्लान" {"selected" if plan=="₹501 – अल्टीमेट प्लान" else ""}>₹501 – अल्टीमेट प्लान</option>
-</select>
-
-<select name="source">
-<option value="">All Sources</option>
-<option value="Website" {"selected" if source=="Website" else ""}>Website</option>
-<option value="Manual" {"selected" if source=="Manual" else ""}>Manual</option>
-</select>
-
-<select name="status">
-<option value="">All Status</option>
-<option value="Pending" {"selected" if status=="Pending" else ""}>Pending</option>
-<option value="Reviewed" {"selected" if status=="Reviewed" else ""}>Reviewed</option>
-<option value="Completed" {"selected" if status=="Completed" else ""}>Completed</option>
-</select>
-
-<select name="payment">
-<option value="">All Payment</option>
-<option value="Pending" {"selected" if payment=="Pending" else ""}>Pending</option>
-<option value="Paid" {"selected" if payment=="Paid" else ""}>Paid</option>
-</select>
-
-<input type="date" name="start_date" value="{start_date or ''}">
-<input type="date" name="end_date" value="{end_date or ''}">
-
-<button>Filter</button>
-
-</form>
-
-<br>
-
-<table border="1" cellpadding="10" style="background:white;width:100%">
-
-<tr>
-<th>Client Code</th>
-<th>Name</th>
-<th>Plan</th>
-<th>Source</th>
-<th>Status</th>
-<th>Phone</th>
-<th>Payment</th>
-<th>Date</th>
-<th>Action</th>
-</tr>
-
-{rows}
-
-</table>
-
-</div>
-
-</body>
-</html>
-"""
+    return templates.TemplateResponse(
+        "admin/dashboard.html",
+        {
+            "request": request,
+            "clients": rows_db,
+            "total_clients": len(rows_db),
+            "pending_payment": sum(1 for r in rows_db if r[8] != "Paid"),
+            "completed_reports": sum(1 for r in rows_db if r[6] == "Completed"),
+        },
+    )
 
 
 # ---------- MARK PAID ----------
