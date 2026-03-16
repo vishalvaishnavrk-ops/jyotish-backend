@@ -11,6 +11,7 @@ from app.database import get_db
 from app.utils.helpers import generate_client_code
 from app.services.ai_engine import generate_ai_draft
 from app.services.pdf_engine import generate_pdf_report
+from app.services.supabase_storage import upload_palm_image
 
 router = APIRouter()
 
@@ -306,7 +307,7 @@ def client_detail(client_id: int):
     for img in images_list:
 
         images_html += f"""
-        <img src="/uploads/{img}"
+        <img src="{img}"
         style="width:170px;border-radius:10px;margin:6px;border-radius:10px;border:1px solid #ccc;">
         """
     return f"""
@@ -702,14 +703,13 @@ images: List[UploadFile] = File(None)
     if images:
         for img in images:
 
-            unique_name=f"{uuid.uuid4().hex}_{img.filename}"
+            unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
-            file_path=os.path.join(UPLOAD_DIR,unique_name)
+            file_bytes = await img.read()
 
-            with open(file_path,"wb") as f:
-                f.write(await img.read())
+            image_url = upload_palm_image(file_bytes, unique_name)
 
-            saved_files.append(unique_name)
+            saved_files.append(image_url)
 
     image_names=",".join(saved_files)
 
