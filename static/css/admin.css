@@ -1,33 +1,32 @@
 body{
 margin:0;
-font-family:"Segoe UI",Arial;
-background:#f7f4ee;
-color:#333;
+font-family:Arial;
+background:#f6efe5;
 }
 
 /* SIDEBAR */
 
 .sidebar{
-width:150px;
+width:135px;
 height:100vh;
-background:#8b0000;
+background:#9c0000;
 color:white;
 position:fixed;
-padding:20px 10px;
+padding:18px 8px;
 }
 
 .sidebar a{
 display:block;
 color:white;
 text-decoration:none;
-padding:10px;
+padding:8px;
 margin-top:10px;
-font-size:14px;
+font-size:13px;
 }
 
 .sidebar a:hover{
-background:#a30000;
-border-radius:6px;
+background:#b00000;
+border-radius:5px;
 }
 
 /* LOGO */
@@ -38,50 +37,48 @@ margin-bottom:25px;
 }
 
 .logo-img{
-width:75px;
-margin-bottom:8px;
+width:65px;
+margin-bottom:6px;
 }
 
 .brand-main{
-font-size:20px;
-font-weight:700;
-letter-spacing:1px;
+font-size:18px;
+font-weight:bold;
 }
 
 .brand-sub{
-font-size:12px;
-opacity:0.8;
+font-size:11px;
 }
 
-/* MAIN */
+/* MAIN AREA */
 
 .main{
-margin-left:165px;
+margin-left:135px;
 }
 
 /* HEADER */
 
-.topbar{
-background:#8b0000;
+.header{
+background:#e88900;
 color:white;
-padding:14px;
 text-align:center;
+padding:12px;
 font-size:18px;
-font-weight:600;
-border-bottom:4px solid #d4af37;
+font-weight:bold;
+border-bottom:3px solid #b86a00;
 }
 
 /* CONTENT */
 
-.content{
-padding:15px 25px 25px 25px;
+.container{
+padding:15px 25px;
 }
 
 /* DASHBOARD TITLE */
 
 h1{
 margin-top:5px;
-margin-bottom:12px;
+margin-bottom:10px;
 }
 
 /* CARDS */
@@ -89,29 +86,28 @@ margin-bottom:12px;
 .cards{
 display:flex;
 gap:10px;
-margin-bottom:15px;
+margin-bottom:12px;
 }
 
 .card{
-background:linear-gradient(145deg,#ffffff,#f3f0e8);
-padding:12px 14px;
-border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,0.07);
+background:white;
+padding:10px 12px;
+border-radius:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
 flex:1;
-min-width:120px;
-border-left:4px solid #d4af37;
+border-left:4px solid #e88900;
 }
 
 .card h4{
 margin:0;
-font-size:13px;
-color:#555;
+font-size:12px;
+color:#666;
 }
 
 .card p{
-font-size:18px;
-font-weight:700;
-color:#8b0000;
+font-size:17px;
+font-weight:bold;
+color:#9c0000;
 margin-top:4px;
 }
 
@@ -121,15 +117,14 @@ margin-top:4px;
 display:flex;
 gap:8px;
 flex-wrap:wrap;
-margin-bottom:15px;
+margin-bottom:12px;
 }
 
 .filters input,
 .filters select{
-padding:7px 9px;
-border-radius:6px;
+padding:6px 8px;
+border-radius:5px;
 border:1px solid #ccc;
-background:white;
 }
 
 /* TABLE */
@@ -137,53 +132,51 @@ background:white;
 table{
 width:100%;
 background:white;
-border-radius:10px;
+border-radius:8px;
 overflow:hidden;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
 }
 
 th{
-background:#8b0000;
+background:#9c0000;
 color:white;
-padding:10px;
-font-weight:500;
+padding:8px;
+font-size:13px;
 }
 
 td{
-padding:9px;
+padding:8px;
 border-bottom:1px solid #eee;
-font-size:14px;
+font-size:13px;
 }
 
-/* ROW HIGHLIGHT */
-
 tr:nth-child(even){
-background:#faf8f3;
+background:#faf6f0;
 }
 
 /* PAYMENT STATUS */
 
 .paid{
 color:green;
-font-weight:600;
+font-weight:bold;
 }
 
 .pending{
-color:#d20000;
-font-weight:600;
+color:red;
+font-weight:bold;
 }
 
 /* BUTTON */
 
 .btn{
-background:#8b0000;
+background:#9c0000;
 color:white;
-padding:6px 12px;
-border-radius:6px;
-font-size:13px;
+padding:5px 10px;
+border-radius:5px;
+font-size:12px;
 text-decoration:none;
 }
 
 .btn:hover{
-background:#a30000;
+background:#b00000;
 }
