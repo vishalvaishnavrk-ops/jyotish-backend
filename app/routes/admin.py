@@ -161,6 +161,14 @@ Mark Paid
             "total_clients": len(rows_db),
             "pending_payment": sum(1 for r in rows_db if r[8] != "Paid"),
             "completed_reports": sum(1 for r in rows_db if r[6] == "Completed"),
+            "reviewed_reports": sum(1 for r in rows_db if r[6] == "Reviewed"),
+            "total_revenue": sum(
+                501 if "501" in r[4] else
+                251 if "251" in r[4] else
+                151 if "151" in r[4] else
+                51
+                for r in rows_db if r[8] == "Paid"
+            )
         },
     )
 
