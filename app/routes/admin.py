@@ -168,7 +168,16 @@ Mark Paid
                 151 if "151" in r[4] else
                 51
                 for r in rows_db if r[8] == "Paid"
-            )
+            ),
+
+            # FILTER VALUES RETURN
+            "q": q,
+            "plan": plan,
+            "source": source,
+            "status": status,
+            "payment": payment,
+            "start_date": start_date,
+            "end_date": end_date,
         },
     )
 
