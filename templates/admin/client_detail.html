@@ -1,1 +1,58 @@
+{% extends "admin/layout.html" %}
 
+{% block content %}
+
+<h1>Client Detail</h1>
+
+<div class="card">
+
+<p><b>Client Code:</b> {{client.client_code}}</p>
+<p><b>Name:</b> {{client.name}}</p>
+<p><b>Phone:</b> {{client.phone}}</p>
+<p><b>Plan:</b> {{client.plan}}</p>
+
+</div>
+
+<h3>Palm Images</h3>
+
+<div class="images">
+
+{% for img in images %}
+
+<img src="{{img}}">
+
+{% endfor %}
+
+</div>
+
+<h3>AI Draft</h3>
+
+<form method="post" action="/admin/client/{{client.id}}/update">
+
+<textarea name="ai_draft">
+
+{{client.ai_draft}}
+
+</textarea>
+
+<button class="btn-primary">Save Draft</button>
+
+</form>
+
+<div class="actions">
+
+<form method="post" action="/admin/client/{{client.id}}/generate-ai">
+<button class="btn">Generate AI</button>
+</form>
+
+<form method="post" action="/admin/client/{{client.id}}/generate-pdf">
+<button class="btn">Generate PDF</button>
+</form>
+
+<a class="btn" href="/admin/client/{{client.id}}/pdf">
+Download PDF
+</a>
+
+</div>
+
+{% endblock %}
