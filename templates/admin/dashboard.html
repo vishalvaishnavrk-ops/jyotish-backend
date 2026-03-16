@@ -23,14 +23,55 @@
 
 </div>
 
+
+<h2>Filters</h2>
+
+<form method="get" class="filters">
+
+<input type="text" name="q" placeholder="Search Client">
+
+<select name="plan">
+<option value="">All Plans</option>
+<option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
+<option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
+<option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
+<option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
+</select>
+
+<select name="source">
+<option value="">All Sources</option>
+<option value="Website">Website</option>
+<option value="Manual">Manual</option>
+</select>
+
+<select name="status">
+<option value="">All Status</option>
+<option value="Pending">Pending</option>
+<option value="Reviewed">Reviewed</option>
+<option value="Completed">Completed</option>
+</select>
+
+<select name="payment">
+<option value="">All Payment</option>
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+</select>
+
+<button class="btn">Apply</button>
+
+</form>
+
+
 <table>
 
 <tr>
 <th>Client Code</th>
 <th>Name</th>
 <th>Plan</th>
+<th>Source</th>
 <th>Status</th>
 <th>Phone</th>
+<th>Payment</th>
 <th>Action</th>
 </tr>
 
@@ -38,16 +79,23 @@
 
 <tr>
 
-<td>{{ c.client_code }}</td>
-<td>{{ c.name }}</td>
-<td>{{ c.plan }}</td>
-<td>{{ c.status }}</td>
-<td>{{ c.phone }}</td>
+<td>{{ c[1] }}</td>
+<td>{{ c[2] }}</td>
+<td>{{ c[4] }}</td>
+<td>{{ c[5] }}</td>
+<td>{{ c[6] }}</td>
+<td>{{ c[3] }}</td>
 
 <td>
-<a class="btn" href="/admin/client/{{c.id}}">
-View
-</a>
+{% if c[8] == "Paid" %}
+<span style="color:green;">Paid</span>
+{% else %}
+<span style="color:red;">Pending</span>
+{% endif %}
+</td>
+
+<td>
+<a class="btn" href="/admin/client/{{c[0]}}">View</a>
 </td>
 
 </tr>
