@@ -35,37 +35,93 @@
 
 <form method="get" class="filters">
 
-<input type="text" name="q" placeholder="Search Client">
+<input type="text" name="q" placeholder="Search Client" value="{{ q or '' }}">
 
 <select name="plan">
+
 <option value="">All Plans</option>
-<option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
-<option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
-<option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
-<option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
+
+<option value="₹51 – बेसिक प्लान"
+{% if plan == "₹51 – बेसिक प्लान" %}selected{% endif %}>
+₹51 – बेसिक प्लान
+</option>
+
+<option value="₹151 – एडवांस प्लान"
+{% if plan == "₹151 – एडवांस प्लान" %}selected{% endif %}>
+₹151 – एडवांस प्लान
+</option>
+
+<option value="₹251 – प्रो प्लान"
+{% if plan == "₹251 – प्रो प्लान" %}selected{% endif %}>
+₹251 – प्रो प्लान
+</option>
+
+<option value="₹501 – अल्टीमेट प्लान"
+{% if plan == "₹501 – अल्टीमेट प्लान" %}selected{% endif %}>
+₹501 – अल्टीमेट प्लान
+</option>
+
 </select>
+
 
 <select name="source">
+
 <option value="">All Sources</option>
-<option value="Website">Website</option>
-<option value="Manual">Manual</option>
+
+<option value="Website"
+{% if source == "Website" %}selected{% endif %}>
+Website
+</option>
+
+<option value="Manual"
+{% if source == "Manual" %}selected{% endif %}>
+Manual
+</option>
+
 </select>
+
 
 <select name="status">
+
 <option value="">All Status</option>
-<option value="Pending">Pending</option>
-<option value="Reviewed">Reviewed</option>
-<option value="Completed">Completed</option>
+
+<option value="Pending"
+{% if status == "Pending" %}selected{% endif %}>
+Pending
+</option>
+
+<option value="Reviewed"
+{% if status == "Reviewed" %}selected{% endif %}>
+Reviewed
+</option>
+
+<option value="Completed"
+{% if status == "Completed" %}selected{% endif %}>
+Completed
+</option>
+
 </select>
+
 
 <select name="payment">
+
 <option value="">All Payment</option>
-<option value="Pending">Pending</option>
-<option value="Paid">Paid</option>
+
+<option value="Pending"
+{% if payment == "Pending" %}selected{% endif %}>
+Pending
+</option>
+
+<option value="Paid"
+{% if payment == "Paid" %}selected{% endif %}>
+Paid
+</option>
+
 </select>
 
-<input type="date" name="start_date">
-<input type="date" name="end_date">
+
+<input type="date" name="start_date" value="{{ start_date or '' }}">
+<input type="date" name="end_date" value="{{ end_date or '' }}">
 
 <button class="btn">Apply</button>
 
