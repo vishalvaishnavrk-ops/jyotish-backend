@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 import os
 
 from app.routes import admin
 from app.routes import website
 
 app = FastAPI()
+
+templates = Jinja2Templates(directory="templates")
 
 
 # ---------- FOLDERS ----------
@@ -24,6 +27,7 @@ if not os.path.exists(REPORT_DIR):
 # ---------- STATIC ----------
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 app.mount("/reports", StaticFiles(directory="reports"), name="reports")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # ---------- CORS ----------
 app.add_middleware(
