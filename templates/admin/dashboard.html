@@ -1,1 +1,59 @@
+{% extends "admin/layout.html" %}
 
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Clients</h3>
+<p>{{ total_clients }}</p>
+</div>
+
+<div class="card">
+<h3>Pending Payment</h3>
+<p>{{ pending_payment }}</p>
+</div>
+
+<div class="card">
+<h3>Completed Reports</h3>
+<p>{{ completed_reports }}</p>
+</div>
+
+</div>
+
+<table>
+
+<tr>
+<th>Client Code</th>
+<th>Name</th>
+<th>Plan</th>
+<th>Status</th>
+<th>Phone</th>
+<th>Action</th>
+</tr>
+
+{% for c in clients %}
+
+<tr>
+
+<td>{{ c.client_code }}</td>
+<td>{{ c.name }}</td>
+<td>{{ c.plan }}</td>
+<td>{{ c.status }}</td>
+<td>{{ c.phone }}</td>
+
+<td>
+<a class="btn" href="/admin/client/{{c.id}}">
+View
+</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}
