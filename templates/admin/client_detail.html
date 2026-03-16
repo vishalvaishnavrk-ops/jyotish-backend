@@ -4,14 +4,26 @@
 
 <h1>Client Detail</h1>
 
-<div class="card">
+
+<!-- CLIENT INFO -->
+
+<div class="client-card">
+
+<h3>Client Information</h3>
 
 <p><b>Client Code:</b> {{client.client_code}}</p>
 <p><b>Name:</b> {{client.name}}</p>
 <p><b>Phone:</b> {{client.phone}}</p>
 <p><b>Plan:</b> {{client.plan}}</p>
+<p><b>Status:</b> {{client.status}}</p>
 
 </div>
+
+
+
+<!-- PALM IMAGES -->
+
+<div class="image-card">
 
 <h3>Palm Images</h3>
 
@@ -25,34 +37,117 @@
 
 </div>
 
+</div>
+
+
+
+<!-- PAYMENT SECTION -->
+
+<div class="payment-card">
+
+<h3>Payment Details</h3>
+
+<p><b>Status:</b> {{client.payment_status}}</p>
+<p><b>Date:</b> {{client.payment_date}}</p>
+
+<form method="post" action="/admin/client/{{client.id}}/payment">
+
+<select name="payment_status">
+
+<option value="Pending"
+{% if client.payment_status=="Pending" %}selected{% endif %}>
+Pending
+</option>
+
+<option value="Paid"
+{% if client.payment_status=="Paid" %}selected{% endif %}>
+Paid
+</option>
+
+</select>
+
+<input type="text" name="payment_ref" placeholder="Payment Reference">
+
+<button class="btn">Update Payment</button>
+
+</form>
+
+</div>
+
+
+
+<!-- AI DRAFT -->
+
+<div class="draft-card">
+
 <h3>AI Draft</h3>
 
 <form method="post" action="/admin/client/{{client.id}}/update">
 
-<textarea name="ai_draft">
+<textarea name="ai_draft" rows="12">{{client.ai_draft}}</textarea>
 
-{{client.ai_draft}}
+<br>
 
-</textarea>
+<label>Status</label>
 
-<button class="btn-primary">Save Draft</button>
+<select name="status">
+
+<option value="Pending"
+{% if client.status=="Pending" %}selected{% endif %}>
+Pending
+</option>
+
+<option value="Reviewed"
+{% if client.status=="Reviewed" %}selected{% endif %}>
+Reviewed
+</option>
+
+<option value="Completed"
+{% if client.status=="Completed" %}selected{% endif %}>
+Completed
+</option>
+
+</select>
+
+<button class="btn">Save Review</button>
 
 </form>
 
-<div class="actions">
+</div>
+
+
+
+<!-- WORKFLOW -->
+
+<div class="workflow-card">
+
+<h3>Workflow Actions</h3>
 
 <form method="post" action="/admin/client/{{client.id}}/generate-ai">
-<button class="btn">Generate AI</button>
+
+<button class="btn">Generate AI Draft</button>
+
 </form>
 
 <form method="post" action="/admin/client/{{client.id}}/generate-pdf">
+
 <button class="btn">Generate PDF</button>
+
 </form>
 
 <a class="btn" href="/admin/client/{{client.id}}/pdf">
+
 Download PDF
+
+</a>
+
+<a class="btn" href="/admin/client/{{client.id}}/send-whatsapp">
+
+Send WhatsApp
+
 </a>
 
 </div>
+
 
 {% endblock %}
