@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+
+<meta charset="UTF-8">
+<title>Jyotish Admin Panel</title>
+
+<link rel="stylesheet" href="/static/css/admin.css">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Jyotish SaaS</h2>
+
+<a href="/admin/dashboard">Dashboard</a>
+<a href="/admin/add-client">Add Client</a>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<div>Admin Panel</div>
+
+<div>
+<a href="/admin/dashboard">Home</a>
+</div>
+
+</div>
+
+<div class="content">
+
+{% block content %}
+{% endblock %}
+
+</div>
+
+</div>
+
+</body>
+</html>
