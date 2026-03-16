@@ -1,1 +1,73 @@
+{% extends "admin/layout.html" %}
 
+{% block content %}
+
+<h1>Add New Client</h1>
+
+<form method="post" action="/admin/add-client" enctype="multipart/form-data">
+
+<div class="form-grid">
+
+<div>
+
+<label>Name</label>
+<input name="name" required>
+
+</div>
+
+<div>
+
+<label>Phone</label>
+<input name="phone" required>
+
+</div>
+
+<div>
+
+<label>DOB</label>
+<input name="dob">
+
+</div>
+
+<div>
+
+<label>Time Of Birth</label>
+<input name="tob">
+
+</div>
+
+<div>
+
+<label>Place</label>
+<input name="place">
+
+</div>
+
+<div>
+
+<label>Plan</label>
+
+<select name="plan">
+
+<option>₹51 – बेसिक प्लान</option>
+<option>₹151 – एडवांस प्लान</option>
+<option>₹251 – प्रो प्लान</option>
+<option>₹501 – अल्टीमेट प्लान</option>
+
+</select>
+
+</div>
+
+</div>
+
+<label>Main Question</label>
+<textarea name="questions"></textarea>
+
+<label>Palm Images</label>
+<input type="file" name="images" multiple>
+
+<button class="btn-primary">Save Client</button>
+
+</form>
+
+{% endblock %}
