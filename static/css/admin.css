@@ -386,24 +386,24 @@ margin-bottom: 0;
   font-size: 14px;
 }
 
-/* ===== WORKFLOW FINAL FIX (SINGLE ROW) ===== */
+/* ===== WORKFLOW FINAL PERFECT FIX ===== */
 
 .workflow-row {
 display: flex;
 gap: 10px;
-flex-wrap: nowrap;       /* ❌ wrap बंद */
-overflow-x: auto;        /* mobile safe */
+flex-wrap: nowrap;        /* एक ही row */
+overflow-x: auto;
 }
 
-/* ALL BUTTONS SAME SIZE */
+/* ALL BUTTONS SAME HEIGHT (NO STRETCH) */
 
 .workflow-row a,
 .workflow-row button {
-flex: 1;                 /* 🔥 equal width */
 height: 42px;
-min-width: 140px;
-display: flex;
+padding: 0 16px;
+display: inline-flex;
 align-items: center;
 justify-content: center;
-white-space: nowrap;     /* text break न हो */
+white-space: nowrap;
+flex: none;              /* 🔥 IMPORTANT (no stretch) */
 }
