@@ -342,34 +342,30 @@ margin-bottom: 0;
   resize: vertical;
 }
 
-/* ===== FINAL WORKFLOW FIX (CLEAN & STABLE) ===== */
+/* FIX FORM BREAK */
+
+.wf-form {
+display: inline;
+margin: 0;
+}
+
+/* FINAL BUTTON STYLE */
 
 .workflow-row {
 display: flex;
 gap: 12px;
-flex-wrap: nowrap;        /* single line */
-overflow-x: auto;         /* scroll if needed */
+flex-wrap: nowrap;
+overflow-x: auto;
 }
 
-/* SAME SIZE BUTTONS */
-
-.workflow-row a,
-.workflow-row button {
+.wf-btn {
 height: 42px;
-min-width: 140px;
+min-width: 150px;
 padding: 0 16px;
-display: inline-flex;
+display: flex;
 align-items: center;
 justify-content: center;
-border-radius: 8px;
-background: #9c0000;
-color: white;
-text-decoration: none;
-border: none;
-font-size: 14px;
-font-weight: 500;
 white-space: nowrap;
-flex: none;
 }
 
 /* HOVER */
