@@ -234,31 +234,24 @@ def client_detail(client_id: int, request: Request):
     if not cdata:
         return HTMLResponse("Client not found")
 
-    # ---------- IMAGE PARSE ----------
+    # ---------- IMAGES ----------
     images_list = []
 
     images_raw = cdata[9] if cdata[9] else ""
 
     if isinstance(images_raw, str):
-        cleaned = images_raw.replace("[","").replace("]","").replace("'","").replace('"',"")
-        
-        for img in cleaned.split(","):
+        for img in images_raw.split(","):
             img = img.strip()
-
-            if img.startswith("uploads/"):
-                img = img.replace("uploads/","")
-
             if img != "":
                 images_list.append(img)
 
-    # ---------- CLIENT OBJECT ----------
+    # ---------- CLIENT ----------
     client = {
         "id": cdata[0],
         "client_code": cdata[1],
         "name": cdata[2],
         "phone": cdata[3],
         "plan": cdata[7],
-        "images": cdata[9],
         "status": cdata[11],
         "payment_status": cdata[12],
         "payment_date": cdata[13],
@@ -274,141 +267,6 @@ def client_detail(client_id: int, request: Request):
             "images": images_list,
         },
     )
-
-<div style="border-bottom:2px solid #d4af37;margin-bottom:20px"></div>
-
-<body style="font-family:Arial;background:#f6efe9">
-
-<h2 style="background:#8b0000;color:white;padding:15px">
-Client Detail
-</h2>
-
-<div style="padding:30px;border-radius:12px;background:white">
-
-<p><b>Client Code:</b> {cdata[1]}</p>
-<p><b>Name:</b> {cdata[2]}</p>
-<p><b>Phone:</b> {cdata[3]}</p>
-<p><b>Plan:</b> {cdata[7]}</p>
-
-<p><b>Palm Images:</b><br>{images_html}</p>
-
-<hr>
-
-<h3>Payment Details</h3>
-
-<p><b>Status:</b> {cdata[12] or "Pending"}</p>
-<p><b>Payment Date:</b> {cdata[13] or "-"}</p>
-<p><b>Payment Ref:</b> {cdata[14] or "-"}</p>
-
-<form method="post" action="/admin/client/{client_id}/payment">
-
-<label>Update Payment Status:</label><br>
-
-<select name="payment_status">
-
-<option value="Pending" {"selected" if cdata[12]=="Pending" else ""}>
-Pending
-</option>
-
-<option value="Paid" {"selected" if cdata[12]=="Paid" else ""}>
-Paid
-</option>
-
-</select>
-
-<br><br>
-
-<label>Payment Ref:</label><br>
-<input name="payment_ref" style="width:300px">
-
-<br><br>
-
-<button style="background:#28a745;color:white;padding:10px;border:none;border-radius:5px;">
-Update Status
-</button>
-
-</form>
-
-<hr>
-
-<h3>AI Draft</h3>
-
-<form method="post" action="/admin/client/{client_id}/update">
-
-<textarea name="ai_draft" rows="12" style="width:100%">
-{cdata[15]}
-</textarea>
-
-<br><br>
-
-<label>Status</label>
-
-<select name="status">
-
-<option {"selected" if cdata[11]=="Pending" else ""}>Pending</option>
-<option {"selected" if cdata[11]=="Reviewed" else ""}>Reviewed</option>
-<option {"selected" if cdata[11]=="Completed" else ""}>Completed</option>
-
-</select>
-
-<br><br>
-
-<button style="background:#8b0000;color:white;padding:10px;border:none">
-Save Update
-</button>
-
-</form>
-
-<hr>
-
-<form method="post" action="/admin/client/{client_id}/generate-ai">
-
-<button style="background:#007bff;color:white;padding:10px;border:none">
-Generate AI Draft
-</button>
-
-</form>
-
-<br>
-
-<form method="post" action="/admin/client/{client_id}/generate-pdf">
-
-<button style="background:#6f42c1;color:white;padding:10px;border:none">
-Generate PDF
-</button>
-
-</form>
-
-<br>
-
-<a href="/admin/client/{client_id}/pdf">
-
-<button style="background:#8b0000;color:white;padding:10px;border:none">
-Download PDF
-</button>
-
-</a>
-
-<br><br>
-
-<a href="/admin/client/{client_id}/send-whatsapp">
-
-<button style="background:#25D366;color:white;padding:10px;border:none">
-Send WhatsApp
-</button>
-
-</a>
-
-<br><br>
-
-<a href="/admin/dashboard"> Back to Dashboard</a>
-
-</div>
-
-</body>
-
-</html>
-"""
 
 # ---------- UPDATE PAYMENT ----------
 @router.post("/admin/client/{client_id}/payment")
