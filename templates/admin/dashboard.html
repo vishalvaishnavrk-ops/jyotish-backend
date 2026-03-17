@@ -156,13 +156,12 @@ Paid
 <td>
 
 {% if c[8] == "Paid" %} <span class="paid">Paid</span>
-
+{% if c[8] == "Pending" %} <span class="pending">Pending</span>
 {% else %}
 
-<form method="post" action="/admin/client/{{c[0]}}/mark-paid" style="display:inline;">
+<form method="post" action="/admin/mark-paid/{{c[0]}}" style="display:inline;">
 <button class="btn">Mark Paid</button>
 </form>
-{% endif %}
 
 </td>
   
