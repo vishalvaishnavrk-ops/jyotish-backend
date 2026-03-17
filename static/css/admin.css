@@ -385,3 +385,25 @@ margin-bottom: 0;
   padding: 0 14px;
   font-size: 14px;
 }
+
+/* ===== WORKFLOW FINAL FIX (SINGLE ROW) ===== */
+
+.workflow-row {
+display: flex;
+gap: 10px;
+flex-wrap: nowrap;       /* ❌ wrap बंद */
+overflow-x: auto;        /* mobile safe */
+}
+
+/* ALL BUTTONS SAME SIZE */
+
+.workflow-row a,
+.workflow-row button {
+flex: 1;                 /* 🔥 equal width */
+height: 42px;
+min-width: 140px;
+display: flex;
+align-items: center;
+justify-content: center;
+white-space: nowrap;     /* text break न हो */
+}
