@@ -270,7 +270,8 @@ def client_detail(client_id: int, request: Request):
             # 🔥 FLAGS FOR BUTTON CONTROL
             "can_generate_ai": client["payment_status"] == "Paid" and client.get("ai_generated", 0) == 0,
             "can_generate_pdf": (ai_draft and status == "Reviewed") or status == "Completed"
-            "pdf_ready": os.path.exists(os.path.join(REPORT_DIR, f"{client['client_code']}.pdf")),
+            "pdf_ready": os.path.exists(os.path.join(REPORT_DIR, f"{client['client_code']}.pdf")
+            ),
         },
     )
 
