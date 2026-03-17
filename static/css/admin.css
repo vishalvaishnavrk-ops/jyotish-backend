@@ -358,3 +358,30 @@ margin-bottom: 8px;
 .section-card > *:last-child {
 margin-bottom: 0;
 }
+
+/* ===== AI DRAFT FINAL HEIGHT ===== */
+
+.section-card textarea {
+  min-height: 260px;   /* flexible height */
+  resize: vertical;
+}
+
+
+/* ===== WORKFLOW BUTTON PERFECT ALIGN ===== */
+
+.workflow-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.workflow-row a,
+.workflow-row button {
+  height: 42px;
+  min-width: 140px;   /* equal width feel */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  font-size: 14px;
+}
