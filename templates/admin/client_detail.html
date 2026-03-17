@@ -116,30 +116,6 @@ Completed
 
 <div class="workflow-row">
 
-<form method="post" action="/admin/client/{{client.id}}/generate-ai">
-
-<button class="btn"
-{% if not can_generate_ai %}disabled style="opacity:0.5;cursor:not-allowed;"{% endif %}>
-Generate AI Draft
-</button>
-
-</form>
-
-
-<form method="post" action="/admin/client/{{client.id}}/generate-pdf">
-
-<button class="btn"
-{% if not can_generate_pdf %}disabled style="opacity:0.5;cursor:not-allowed;"{% endif %}>
-Generate PDF
-</button>
-
-</form>
-
-
-<h3>Workflow</h3>
-
-<div class="workflow-row">
-
 <form method="post" action="/admin/client/{{client.id}}/generate-ai" class="wf-form">
 <button type="submit" class="btn wf-btn"
 {% if not can_generate_ai %}disabled{% endif %}>
