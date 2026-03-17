@@ -342,27 +342,28 @@ margin-bottom: 0;
   resize: vertical;
 }
 
-/* FIX FORM BREAK */
-
-.wf-form {
-display: inline;
-margin: 0;
-}
-
-/* FINAL BUTTON STYLE */
+/* ===== FINAL WORKFLOW FIX ===== */
 
 .workflow-row {
 display: flex;
-gap: 12px;
-flex-wrap: nowrap;
-overflow-x: auto;
+align-items: center;
+gap: 10px;
+flex-wrap: nowrap;   /* force one line */
 }
 
-.wf-btn {
+/* IMPORTANT: FORM INLINE */
+
+.wf-inline {
+display: inline-flex;
+margin: 0;
+}
+
+/* BUTTON FIX */
+
+.workflow-row .btn {
 height: 42px;
-min-width: 150px;
 padding: 0 16px;
-display: flex;
+display: inline-flex;
 align-items: center;
 justify-content: center;
 white-space: nowrap;
