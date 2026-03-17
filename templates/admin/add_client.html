@@ -10,10 +10,10 @@
 <h3>Basic Details</h3>
 
 <div class="form-grid">
-<input type="text" name="name" placeholder="Client Name" required>
-<input type="text" name="phone" placeholder="Phone Number" required>
+<input type="text" name="name" placeholder="Client Name *" required>
+<input type="text" name="phone" placeholder="Phone Number *" required>
 </div>
-
+  
 </div>
 
 
@@ -21,25 +21,23 @@
 <h3>Birth Details</h3>
 
 <div class="form-grid">
-<input type="text" name="dob" placeholder="Date of Birth" required>
+<input type="text" name="dob" placeholder="Date of Birth *" required>
 <input type="text" name="tob" placeholder="Time of Birth (HH:MM)">
 <input type="text" name="place" placeholder="Birth Place">
 </div>
 
-</div>
-
-
 <div class="section-card">
 <h3>Plan & Questions</h3>
 
-<select name="plan">
+<select name="plan" required>
+<option value="">Select Plan *</option>
 <option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
 <option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
 <option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
 <option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
 </select>
-
-<textarea name="questions" placeholder="Client Questions"></textarea>
+  
+<textarea name="questions" placeholder="Client Questions *" required></textarea>
 
 </div>
 
@@ -47,7 +45,7 @@
 <div class="section-card">
 <h3>Upload Palm Images</h3>
 
-<input type="file" name="images" multiple>
+<input type="file" name="images" multiple required>
 </div>
 
 <div style="margin-top:20px;">
