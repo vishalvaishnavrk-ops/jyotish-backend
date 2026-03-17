@@ -136,22 +136,35 @@ Generate PDF
 </form>
 
 
-<a class="btn"
+<h3>Workflow</h3>
+
+<div class="workflow-row">
+
+<form method="post" action="/admin/client/{{client.id}}/generate-ai" class="wf-form">
+<button type="submit" class="btn wf-btn"
+{% if not can_generate_ai %}disabled{% endif %}>
+Generate AI Draft
+</button>
+</form>
+
+<form method="post" action="/admin/client/{{client.id}}/generate-pdf" class="wf-form">
+<button type="submit" class="btn wf-btn"
+{% if not can_generate_pdf %}disabled{% endif %}>
+Generate PDF
+</button>
+</form>
+
+<a class="btn wf-btn"
 {% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}
 href="/admin/client/{{client.id}}/pdf">
+Download PDF </a>
 
-Download PDF
-
-</a>
-
-
-<a class="btn"
+<a class="btn wf-btn"
 {% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}
 href="/admin/client/{{client.id}}/send-whatsapp">
+Send WhatsApp </a>
 
-Send WhatsApp
-
-</a>
+</div>
 
 </div>
   
