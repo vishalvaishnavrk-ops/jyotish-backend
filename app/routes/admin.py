@@ -473,75 +473,13 @@ PDF डाउनलोड करें:
     return RedirectResponse(link)    
 
 # ---------- ADD CLIENT FORM ----------
-@router.get("/admin/add-client", response_class=HTMLResponse)
-def add_client_form():
-
-    return """
-<html>
-<body style="font-family:Arial;background:#f6efe9">
-
-<div style="width:650px;margin:40px auto;background:white;padding:25px;border-radius:10px">
-
-<h2 style="color:#8b0000;text-align:center">नया क्लाइंट जोड़ें</h2>
-
-<form method="post" action="/admin/add-client" enctype="multipart/form-data">
-
-नाम<br>
-<input name="name" required style="width:100%;padding:8px"><br><br>
-
-मोबाइल नंबर<br>
-<input name="phone" required style="width:100%;padding:8px"><br><br>
-
-जन्म तिथि<br>
-<input name="dob" required style="width:100%;padding:8px"><br><br>
-
-जन्म समय
-<input name="tob" placeholder="HH:MM" style="width:100%;padding:8px"><br><br>
-
-जन्म स्थान
-<input name="place" placeholder="City" style="width:100%;padding:8px"><br><br>
-
-मुख्य प्रश्न<br>
-<textarea name="questions" required style="width:100%;padding:8px"></textarea><br><br>
-
-प्लान चुनें<br>
-
-<select name="plan" style="width:100%;padding:8px">
-
-<option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
-<option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
-<option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
-<option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
-
-</select>
-
-<br><br>
-
-हथेली की फोटो<br>
-<input type="file" name="images" multiple>
-
-<br><br>
-
-<button style="padding:10px 20px;background:#8b0000;color:white;border:none">
-Save Client
-</button>
-
-</form>
-
-<br>
-
-<a href="/admin/dashboard">
-<button style="background:#555;color:white;padding:10px;border:none;border-radius:6px;">
-Back to Dashboard
-</button>
-</a>
-
-</div>
-
-</body>
-</html>
-"""
-
+@router.get("/admin/add-client")
+def add_client_form(request: Request):
+    return templates.TemplateResponse(
+        "admin/add_client.html",
+        {"request": request}
+    )
+    
 @router.post("/admin/add-client")
 async def add_client(
 name:str=Form(...),
