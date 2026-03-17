@@ -5,25 +5,25 @@
 <h1>Client Detail</h1>
 
 
-<!-- CLIENT INFO -->
-
-<div class="client-card">
+<div class="section-card">
 
 <h3>Client Information</h3>
 
-<p><b>Client Code:</b> {{client.client_code}}</p>
-<p><b>Name:</b> {{client.name}}</p>
-<p><b>Phone:</b> {{client.phone}}</p>
-<p><b>Plan:</b> {{client.plan}}</p>
-<p><b>Status:</b> {{client.status}}</p>
+<div class="client-grid">
+
+<div><b>Client Code</b><br>{{client.client_code}}</div>
+<div><b>Name</b><br>{{client.name}}</div>
+<div><b>Phone</b><br>{{client.phone}}</div>
+<div><b>Plan</b><br>{{client.plan}}</div>
+<div><b>Status</b><br>{{client.status}}</div>
+
+</div>
 
 </div>
 
 
 
-<!-- PALM IMAGES -->
-
-<div class="image-card">
+<div class="section-card">
 
 <h3>Palm Images</h3>
 
@@ -41,14 +41,9 @@
 
 
 
-<!-- PAYMENT SECTION -->
+<div class="section-card">
 
-<div class="payment-card">
-
-<h3>Payment Details</h3>
-
-<p><b>Status:</b> {{client.payment_status}}</p>
-<p><b>Date:</b> {{client.payment_date}}</p>
+<h3>Payment Update</h3>
 
 <form method="post" action="/admin/client/{{client.id}}/payment">
 
@@ -66,7 +61,7 @@ Paid
 
 </select>
 
-<input type="text" name="payment_ref" placeholder="Payment Reference">
+<input type="text" name="payment_ref" placeholder="Payment Ref">
 
 <button class="btn">Update Payment</button>
 
@@ -76,11 +71,9 @@ Paid
 
 
 
-<!-- AI DRAFT -->
+<div class="section-card">
 
-<div class="draft-card">
-
-<h3>AI Draft</h3>
+<h3>AI Draft & Review</h3>
 
 <form method="post" action="/admin/client/{{client.id}}/update">
 
@@ -117,11 +110,11 @@ Completed
 
 
 
-<!-- WORKFLOW -->
+<div class="section-card">
 
-<div class="workflow-card">
+<h3>Workflow</h3>
 
-<h3>Workflow Actions</h3>
+<div class="workflow-row">
 
 <form method="post" action="/admin/client/{{client.id}}/generate-ai">
 
@@ -146,6 +139,8 @@ Download PDF
 Send WhatsApp
 
 </a>
+
+</div>
 
 </div>
 
