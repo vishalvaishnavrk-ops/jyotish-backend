@@ -220,8 +220,8 @@ def mark_paid(client_id: int):
     return RedirectResponse("/admin/dashboard",status_code=302)
 
 # ---------- CLIENT DETAIL ----------
-@router.get("/admin/client/{client_id}", response_class=HTMLResponse)
-def client_detail(client_id: int):
+@router.get("/admin/client/{client_id}")
+def client_detail(client_id: int, request: Request):
 
     conn = get_db()
     c = conn.cursor()
@@ -231,16 +231,17 @@ def client_detail(client_id: int):
 
     conn.close()
 
-    images_html = ""
+    if not cdata:
+        return HTMLResponse("Client not found")
+
+    # ---------- IMAGE PARSE ----------
+    images_list = []
 
     images_raw = cdata[9] if cdata[9] else ""
 
-    images_list = []
-
     if isinstance(images_raw, str):
-
         cleaned = images_raw.replace("[","").replace("]","").replace("'","").replace('"',"")
-    
+        
         for img in cleaned.split(","):
             img = img.strip()
 
@@ -250,14 +251,29 @@ def client_detail(client_id: int):
             if img != "":
                 images_list.append(img)
 
-    for img in images_list:
+    # ---------- CLIENT OBJECT ----------
+    client = {
+        "id": cdata[0],
+        "client_code": cdata[1],
+        "name": cdata[2],
+        "phone": cdata[3],
+        "plan": cdata[7],
+        "images": cdata[9],
+        "status": cdata[11],
+        "payment_status": cdata[12],
+        "payment_date": cdata[13],
+        "payment_ref": cdata[14],
+        "ai_draft": cdata[15],
+    }
 
-        images_html += f"""
-        <img src="{img}"
-        style="width:170px;border-radius:10px;margin:6px;border-radius:10px;border:1px solid #ccc;">
-        """
-    return f"""
-<html>
+    return templates.TemplateResponse(
+        "admin/client_detail.html",
+        {
+            "request": request,
+            "client": client,
+            "images": images_list,
+        },
+    )
 
 <div style="border-bottom:2px solid #d4af37;margin-bottom:20px"></div>
 
