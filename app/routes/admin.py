@@ -257,6 +257,7 @@ def client_detail(client_id: int, request: Request):
         "payment_date": cdata[13],
         "payment_ref": cdata[14],
         "ai_draft": cdata[15],
+        "ai_generated": cdata[17] if len(cdata) > 17 else 0,
     }
 
     return templates.TemplateResponse(
@@ -265,6 +266,11 @@ def client_detail(client_id: int, request: Request):
             "request": request,
             "client": client,
             "images": images_list,
+
+            # 🔥 FLAGS FOR BUTTON CONTROL
+            "can_generate_ai": client["payment_status"] == "Paid" and client.get("ai_generated", 0) == 0,
+            "can_generate_pdf": client["status"] == "Reviewed",
+            "pdf_ready": os.path.exists(os.path.join(REPORT_DIR, f"{client['client_code']}.pdf")),
         },
     )
 
