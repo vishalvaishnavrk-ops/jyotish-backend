@@ -342,20 +342,20 @@ margin-bottom: 0;
   resize: vertical;
 }
 
-/* ===== FINAL WORKFLOW ONE LINE FIX ===== */
+/* ===== FINAL WORKFLOW PERFECT ALIGN ===== */
 
 .workflow-row {
 display: flex;
-gap: 10px;
-flex-wrap: nowrap;     /* force one line */
+gap: 12px;
 align-items: center;
 }
 
 /* ALL BUTTONS SAME SIZE */
 
 .workflow-row .wf-btn {
+flex: 1;                /* equal width */
 height: 42px;
-width: 160px;          /* 🔥 FIXED WIDTH */
+min-width: 140px;
 display: flex;
 align-items: center;
 justify-content: center;
