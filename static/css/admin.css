@@ -346,27 +346,35 @@ margin-bottom: 0;
 
 .workflow-row {
 display: flex;
+gap: 12px;
+flex-wrap: nowrap;
 align-items: center;
-gap: 10px;
-flex-wrap: nowrap;   /* force one line */
 }
 
-/* IMPORTANT: FORM INLINE */
+/* FIX FORM BREAK */
 
 .wf-inline {
 display: inline-flex;
 margin: 0;
 }
 
-/* BUTTON FIX */
+/* SAME BUTTON DESIGN */
 
-.workflow-row .btn {
+.wf-btn {
 height: 42px;
-padding: 0 16px;
+padding: 0 18px;
 display: inline-flex;
 align-items: center;
 justify-content: center;
 white-space: nowrap;
+text-decoration: none !important;
+}
+
+/* DISABLED LOOK */
+
+.wf-btn:disabled {
+opacity: 0.5;
+cursor: not-allowed;
 }
 
 /* HOVER */
