@@ -118,30 +118,43 @@ Completed
 
 <form method="post" action="/admin/client/{{client.id}}/generate-ai">
 
-<button class="btn">Generate AI Draft</button>
+<button class="btn"
+{% if not can_generate_ai %}disabled style="opacity:0.5;cursor:not-allowed;"{% endif %}>
+Generate AI Draft
+</button>
 
 </form>
+
 
 <form method="post" action="/admin/client/{{client.id}}/generate-pdf">
 
-<button class="btn">Generate PDF</button>
+<button class="btn"
+{% if not can_generate_pdf %}disabled style="opacity:0.5;cursor:not-allowed;"{% endif %}>
+Generate PDF
+</button>
 
 </form>
 
-<a class="btn" href="/admin/client/{{client.id}}/pdf">
+
+<a class="btn"
+{% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}
+href="/admin/client/{{client.id}}/pdf">
 
 Download PDF
 
 </a>
 
-<a class="btn" href="/admin/client/{{client.id}}/send-whatsapp">
+
+<a class="btn"
+{% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}
+href="/admin/client/{{client.id}}/send-whatsapp">
 
 Send WhatsApp
 
 </a>
 
 </div>
-
+  
 </div>
 
 
