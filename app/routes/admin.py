@@ -390,7 +390,7 @@ def create_pdf(client_id: int):
 
     conn.close()
 
-    if data[0] != "Reviewed":
+    if data[0] not in ["Reviewed", "Completed"]:
         return HTMLResponse(
             "<h3 style='color:red;text-align:center;margin-top:80px;'>Review required before PDF generation</h3>"
         )
