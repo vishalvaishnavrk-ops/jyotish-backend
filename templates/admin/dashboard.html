@@ -156,11 +156,13 @@ Paid
 <td>
 
 {% if c[8] == "Paid" %} <span class="paid">Paid</span>
+
 {% else %}
 
 <form method="post" action="/admin/mark-paid/{{c[0]}}" style="display:inline;">
 <button class="btn">Mark Paid</button>
 </form>
+{% endif %}
 
 </td>
   
