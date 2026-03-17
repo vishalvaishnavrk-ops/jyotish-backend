@@ -116,31 +116,17 @@ Completed
 
 <div class="workflow-row">
 
-<form method="post" action="/admin/client/{{client.id}}/generate-ai" class="wf-form">
-<button type="submit" class="btn wf-btn"
-{% if not can_generate_ai %}disabled{% endif %}>
-Generate AI Draft
-</button>
+<form method="post" action="/admin/client/{{client.id}}/generate-ai" class="wf-inline">
+  <button type="submit" class="btn">Generate AI Draft</button>
 </form>
 
-<form method="post" action="/admin/client/{{client.id}}/generate-pdf" class="wf-form">
-<button type="submit" class="btn wf-btn"
-{% if not can_generate_pdf %}disabled{% endif %}>
-Generate PDF
-</button>
+<form method="post" action="/admin/client/{{client.id}}/generate-pdf" class="wf-inline">
+  <button type="submit" class="btn">Generate PDF</button>
 </form>
 
-<a class="btn wf-btn"
-{% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}
-href="/admin/client/{{client.id}}/pdf">
-Download PDF </a>
+<a href="/admin/client/{{client.id}}/pdf" class="btn">Download PDF</a>
 
-<a class="btn wf-btn"
-{% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}
-href="/admin/client/{{client.id}}/send-whatsapp">
-Send WhatsApp </a>
-
-</div>
+<a href="/admin/client/{{client.id}}/send-whatsapp" class="btn">Send WhatsApp</a>
 
 </div>
   
