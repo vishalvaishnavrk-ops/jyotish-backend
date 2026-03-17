@@ -325,30 +325,6 @@ height: 160px;
 margin-bottom: 12px;
 }
 
-/* ===== WORKFLOW BUTTON FIX ===== */
-
-.workflow-row a,
-.workflow-row button {
-display: inline-block;
-padding: 10px 16px;
-border-radius: 8px;
-background: #9c0000;
-color: white;
-text-decoration: none;
-border: none;
-font-size: 14px;
-font-weight: 500;
-}
-
-.workflow-row a:hover,
-.workflow-row button:hover {
-background: #b00000;
-}
-
-.workflow-row a {
-text-decoration: none !important;
-}
-
 /* ===== SECTION INNER SPACING ===== */
 
 .section-card > * {
@@ -366,44 +342,39 @@ margin-bottom: 0;
   resize: vertical;
 }
 
-
-/* ===== WORKFLOW BUTTON PERFECT ALIGN ===== */
-
-.workflow-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.workflow-row a,
-.workflow-row button {
-  height: 42px;
-  min-width: 140px;   /* equal width feel */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 14px;
-  font-size: 14px;
-}
-
-/* ===== WORKFLOW FINAL PERFECT FIX ===== */
+/* ===== FINAL WORKFLOW FIX (CLEAN & STABLE) ===== */
 
 .workflow-row {
 display: flex;
-gap: 10px;
-flex-wrap: nowrap;        /* एक ही row */
-overflow-x: auto;
+gap: 12px;
+flex-wrap: nowrap;        /* single line */
+overflow-x: auto;         /* scroll if needed */
 }
 
-/* ALL BUTTONS SAME HEIGHT (NO STRETCH) */
+/* SAME SIZE BUTTONS */
 
 .workflow-row a,
 .workflow-row button {
 height: 42px;
+min-width: 140px;
 padding: 0 16px;
 display: inline-flex;
 align-items: center;
 justify-content: center;
+border-radius: 8px;
+background: #9c0000;
+color: white;
+text-decoration: none;
+border: none;
+font-size: 14px;
+font-weight: 500;
 white-space: nowrap;
-flex: none;              /* 🔥 IMPORTANT (no stretch) */
+flex: none;
+}
+
+/* HOVER */
+
+.workflow-row a:hover,
+.workflow-row button:hover {
+background: #b00000;
 }
