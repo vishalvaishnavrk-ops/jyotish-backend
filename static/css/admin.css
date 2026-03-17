@@ -250,14 +250,6 @@ border-radius: 8px;
 box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* ===== WORKFLOW ===== */
-
-.workflow-row {
-display: flex;
-gap: 10px;
-flex-wrap: wrap;
-}
-
 /* ===== DISABLED ===== */
 
 button:disabled {
@@ -342,22 +334,36 @@ margin-bottom: 0;
   resize: vertical;
 }
 
-/* ===== FINAL WORKFLOW PERFECT ALIGN ===== */
+/* ===== FINAL WORKFLOW CLEAN (NO CONFLICT) ===== */
 
 .workflow-row {
 display: flex;
 gap: 12px;
 align-items: center;
+flex-wrap: nowrap;   /* force one line */
 }
 
-/* ALL BUTTONS SAME SIZE */
+/* FIX FORM BREAK */
+
+.wf-inline {
+display: inline-flex;
+margin: 0;
+}
+
+/* SAME BUTTON SIZE */
 
 .workflow-row .wf-btn {
-flex: 1;                /* equal width */
 height: 42px;
-min-width: 140px;
-display: flex;
+min-width: 150px;
+padding: 0 16px;
+display: inline-flex;
 align-items: center;
 justify-content: center;
 white-space: nowrap;
+}
+
+/* REMOVE UNDERLINE */
+
+.workflow-row a {
+text-decoration: none !important;
 }
