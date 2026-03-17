@@ -272,3 +272,89 @@ textarea::placeholder {
 color: #999;
 font-style: italic;
 }
+
+/* ===== GLOBAL LEFT GAP FIX ===== */
+
+.main {
+margin-left: 120px;
+}
+
+.container {
+padding: 20px 25px;
+}
+
+/* ===== FILTER & TABLE GAP ===== */
+
+.filters {
+margin-bottom: 15px;
+}
+
+table {
+margin-top: 10px;
+}
+
+/* ===== FORM FIELD SPACING ===== */
+
+.section-card select,
+.section-card textarea {
+margin-top: 10px;
+}
+
+.section-card textarea {
+margin-top: 12px;
+}
+
+/* ===== PAYMENT SECTION SPACING ===== */
+
+.section-card input,
+.section-card select {
+margin-bottom: 10px;
+}
+
+.section-card button {
+margin-top: 10px;
+}
+
+/* ===== AI DRAFT HEIGHT + SPACING ===== */
+
+textarea {
+height: 160px;
+}
+
+.section-card textarea {
+margin-bottom: 12px;
+}
+
+/* ===== WORKFLOW BUTTON FIX ===== */
+
+.workflow-row a,
+.workflow-row button {
+display: inline-block;
+padding: 10px 16px;
+border-radius: 8px;
+background: #9c0000;
+color: white;
+text-decoration: none;
+border: none;
+font-size: 14px;
+font-weight: 500;
+}
+
+.workflow-row a:hover,
+.workflow-row button:hover {
+background: #b00000;
+}
+
+.workflow-row a {
+text-decoration: none !important;
+}
+
+/* ===== SECTION INNER SPACING ===== */
+
+.section-card > * {
+margin-bottom: 8px;
+}
+
+.section-card > *:last-child {
+margin-bottom: 0;
+}
