@@ -469,12 +469,23 @@ def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
 @router.post("/admin/client/{client_id}/generate-ai")
 def manual_ai_generate(client_id:int):
 
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT ai_generated FROM clients WHERE id=%s",(client_id,))
+    row = c.fetchone()
+
+    conn.close()
+
+    if row and row[0] == 1:
+        return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+
     try:
         generate_ai_draft(client_id)
     except Exception as e:
-        print("AI ERROR:",e)
+        print("AI ERROR:", e)
 
-    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
+    return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
 # ---------- GENERATE PDF ----------
 @router.post("/admin/client/{client_id}/generate-pdf")
