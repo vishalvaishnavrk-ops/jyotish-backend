@@ -341,18 +341,26 @@ def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
 
 # ---------- GENERATE AI ----------
 @router.post("/admin/client/{client_id}/generate-ai")
-def manual_ai_generate(client_id:int):
+def manual_ai_generate(client_id: int):
 
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT ai_generated FROM clients WHERE id=%s",(client_id,))
-    row = c.fetchone()
+    c.execute("SELECT payment_status, ai_generated FROM clients WHERE id=%s", (client_id,))
+    data = c.fetchone()
 
     conn.close()
 
-    if row and row[0] == 1:
-        return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+    payment_status = data[0]
+    ai_generated = data[1] if data[1] else 0
+
+    # ❌ Block if payment not done
+    if payment_status != "Paid":
+        return HTMLResponse("<h3 style='color:red;text-align:center;'>Payment required before AI generation</h3>")
+
+    # ❌ Block if already generated
+    if ai_generated == 1:
+        return HTMLResponse("<h3 style='color:red;text-align:center;'>AI already generated</h3>")
 
     try:
         generate_ai_draft(client_id)
@@ -363,25 +371,24 @@ def manual_ai_generate(client_id:int):
 
 # ---------- GENERATE PDF ----------
 @router.post("/admin/client/{client_id}/generate-pdf")
-def create_pdf(client_id:int):
+def create_pdf(client_id: int):
 
-    conn=get_db()
-    c=conn.cursor()
+    conn = get_db()
+    c = conn.cursor()
 
-    c.execute("SELECT status FROM clients WHERE id=%s",(client_id,))
-    data=c.fetchone()
+    c.execute("SELECT status FROM clients WHERE id=%s", (client_id,))
+    data = c.fetchone()
 
     conn.close()
 
-    if data[0]!="Reviewed":
+    if data[0] != "Reviewed":
         return HTMLResponse(
-        "<h3 style='color:red;text-align:center;margin-top:80px;'>PDF Generate blocked. Mark draft Reviewed first.</h3>"
+            "<h3 style='color:red;text-align:center;margin-top:80px;'>Review required before PDF generation</h3>"
         )
 
     generate_pdf_report(client_id)
 
-    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
-
+    return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
 # ---------- DOWNLOAD PDF ----------
 @router.get("/admin/client/{client_id}/pdf")
@@ -414,16 +421,28 @@ def send_whatsapp(client_id: int):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT name, phone, client_code FROM clients WHERE id=%s",(client_id,))
+    c.execute("SELECT name, phone, client_code, status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
 
     if not data:
         conn.close()
         return HTMLResponse("Client not found")
 
-    name, phone_number, client_code = data
+    name, phone_number, client_code, status = data
 
-    c.execute("UPDATE clients SET status='Completed' WHERE id=%s",(client_id,))
+    # ❌ Block if not reviewed/completed
+    if status not in ["Reviewed", "Completed"]:
+        conn.close()
+        return HTMLResponse("<h3 style='color:red;text-align:center;'>Complete review before sending</h3>")
+
+    file_name = f"{client_code}.pdf"
+    file_path = os.path.join(REPORT_DIR, file_name)
+
+    if not os.path.exists(file_path):
+        conn.close()
+        return HTMLResponse("<h3 style='color:red;text-align:center;'>Generate PDF first</h3>")
+
+    c.execute("UPDATE clients SET status='Completed' WHERE id=%s", (client_id,))
     conn.commit()
     conn.close()
 
@@ -431,19 +450,19 @@ def send_whatsapp(client_id: int):
 
     pdf_url = f"{base_url}/reports/{client_code}.pdf"
 
-    message=f"""नमस्ते {name},
+    message = f"""नमस्ते {name},
 
-    आपकी हस्तरेखा रिपोर्ट तैयार है।
+आपकी हस्तरेखा रिपोर्ट तैयार है।
 
-    PDF डाउनलोड करें:
-    {pdf_url}
+PDF डाउनलोड करें:
+{pdf_url}
 
-    – आचार्य विशाल वैष्णव
-    """
+– आचार्य विशाल वैष्णव
+"""
 
-    encoded=urllib.parse.quote(message)
+    encoded = urllib.parse.quote(message)
 
-    link=f"https://wa.me/91{phone_number}?text={encoded}"
+    link = f"https://wa.me/91{phone_number}?text={encoded}"
 
     return RedirectResponse(link)    
 
