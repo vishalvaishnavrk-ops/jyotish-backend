@@ -5,69 +5,59 @@
 <h1>Add New Client</h1>
 
 <form method="post" action="/admin/add-client" enctype="multipart/form-data">
+  
+<div class="section-card">
+<h3>Basic Details</h3>
 
 <div class="form-grid">
-
-<div>
-
-<label>Name</label>
-<input name="name" required>
+<input type="text" name="name" placeholder="Client Name" required>
+<input type="text" name="phone" placeholder="Phone Number" required>
+</div>
 
 </div>
 
-<div>
 
-<label>Phone</label>
-<input name="phone" required>
+<div class="section-card">
+<h3>Birth Details</h3>
+
+<div class="form-grid">
+<input type="text" name="dob" placeholder="Date of Birth" required>
+<input type="text" name="tob" placeholder="Time of Birth (HH:MM)">
+<input type="text" name="place" placeholder="Birth Place">
+</div>
 
 </div>
 
-<div>
 
-<label>DOB</label>
-<input name="dob">
-
-</div>
-
-<div>
-
-<label>Time Of Birth</label>
-<input name="tob">
-
-</div>
-
-<div>
-
-<label>Place</label>
-<input name="place">
-
-</div>
-
-<div>
-
-<label>Plan</label>
+<div class="section-card">
+<h3>Plan & Questions</h3>
 
 <select name="plan">
-
-<option>₹51 – बेसिक प्लान</option>
-<option>₹151 – एडवांस प्लान</option>
-<option>₹251 – प्रो प्लान</option>
-<option>₹501 – अल्टीमेट प्लान</option>
-
+<option value="₹51 – बेसिक प्लान">₹51 – बेसिक प्लान</option>
+<option value="₹151 – एडवांस प्लान">₹151 – एडवांस प्लान</option>
+<option value="₹251 – प्रो प्लान">₹251 – प्रो प्लान</option>
+<option value="₹501 – अल्टीमेट प्लान">₹501 – अल्टीमेट प्लान</option>
 </select>
 
-</div>
+<textarea name="questions" placeholder="Client Questions"></textarea>
 
 </div>
 
-<label>Main Question</label>
-<textarea name="questions"></textarea>
 
-<label>Palm Images</label>
+<div class="section-card">
+<h3>Upload Palm Images</h3>
+
 <input type="file" name="images" multiple>
+</div>
 
-<button class="btn-primary">Save Client</button>
+<div style="margin-top:20px;">
+<button type="submit" class="btn">Save Client</button>
+
+<a href="/admin/dashboard" class="btn" style="background:#777;">
+Back
+</a>
+</div>
 
 </form>
 
-{% endblock %}
+{% endblock %}  
