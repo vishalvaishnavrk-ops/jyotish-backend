@@ -342,44 +342,22 @@ margin-bottom: 0;
   resize: vertical;
 }
 
-/* ===== FINAL WORKFLOW FIX ===== */
+/* ===== FINAL WORKFLOW ONE LINE FIX ===== */
 
 .workflow-row {
 display: flex;
-gap: 12px;
-flex-wrap: nowrap;
+gap: 10px;
+flex-wrap: nowrap;     /* force one line */
 align-items: center;
 }
 
-/* FIX FORM BREAK */
+/* ALL BUTTONS SAME SIZE */
 
-.wf-inline {
-display: inline-flex;
-margin: 0;
-}
-
-/* SAME BUTTON DESIGN */
-
-.wf-btn {
+.workflow-row .wf-btn {
 height: 42px;
-padding: 0 18px;
-display: inline-flex;
+width: 160px;          /* 🔥 FIXED WIDTH */
+display: flex;
 align-items: center;
 justify-content: center;
 white-space: nowrap;
-text-decoration: none !important;
-}
-
-/* DISABLED LOOK */
-
-.wf-btn:disabled {
-opacity: 0.5;
-cursor: not-allowed;
-}
-
-/* HOVER */
-
-.workflow-row a:hover,
-.workflow-row button:hover {
-background: #b00000;
 }
