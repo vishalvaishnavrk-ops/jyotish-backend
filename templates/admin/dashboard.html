@@ -136,6 +136,7 @@ Paid
 <div class="table-wrapper">
 <table>
 
+<thead>  
 <tr>
 <th>Client Code</th>
 <th>Name</th>
@@ -147,9 +148,11 @@ Paid
 <th>Date</th>  
 <th>Action</th>
 </tr>
-
+<thead>
+  
 {% for c in clients %}
 
+<tbody>  
 <tr>
 
 <td>{{ c[1] }}</td>
@@ -187,6 +190,7 @@ Paid
 
 {% endfor %}
 
+<tbody>  
 </table>
 </div>
 
