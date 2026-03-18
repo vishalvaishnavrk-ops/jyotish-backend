@@ -114,7 +114,18 @@ end_date: str = Query(None)
         sql+=" AND created_at <= %s"
         params.append(end_date+" 23:59:59")
 
-    sql+=" ORDER BY payment_status DESC, priority ASC, created_at DESC"
+    sql += """
+    ORDER BY
+    CASE
+    WHEN payment_status='Paid' AND status='Reviewed' THEN 1
+    WHEN payment_status='Paid' AND status='Pending' THEN 2
+    WHEN payment_status='Pending' THEN 3
+    WHEN status='Completed' THEN 4
+    ELSE 5
+    END,
+    priority ASC,
+    created_at DESC
+    """
 
     c.execute(sql,params)
     rows_db=c.fetchall()
