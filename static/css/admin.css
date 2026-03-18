@@ -160,6 +160,20 @@ tr:nth-child(even) {
 background: #faf6f0;
 }
 
+.table-wrapper {
+max-height: 500px;
+overflow-y: auto;
+border-radius: 10px;
+}
+
+/* Sticky header */
+.table-wrapper thead th {
+position: sticky;
+top: 0;
+background: #9c0000;
+z-index: 2;
+}
+
 /* ===== STATUS ===== */
 
 .paid {
