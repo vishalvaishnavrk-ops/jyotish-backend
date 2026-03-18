@@ -19,9 +19,16 @@
 <div class="brand-sub">Palm Reports</div>
 
 </div>
+  
+<hr>
+  
+<a href="/admin/dashboard" class="{% if request.url.path == '/admin/dashboard' %}active{% endif %}">
+Dashboard
+</a>
 
-<a href="/admin/dashboard">Dashboard</a>
-<a href="/admin/add-client">Add Client</a>
+<a href="/admin/add-client" class="{% if request.url.path == '/admin/add-client' %}active{% endif %}">
+Add Client
+</a>
 
 </div>
 
