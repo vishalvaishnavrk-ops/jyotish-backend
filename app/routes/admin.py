@@ -131,6 +131,7 @@ end_date: str = Query(None)
     rows_db=c.fetchall()
     conn.close()
 
+
     rows=""
 
     for r in rows_db:
@@ -173,6 +174,11 @@ Mark Paid
             "pending_payment": sum(1 for r in rows_db if r[8] != "Paid"),
             "completed_reports": sum(1 for r in rows_db if r[6] == "Completed"),
             "reviewed_reports": sum(1 for r in rows_db if r[6] == "Reviewed"),
+            "pending_reports": sum(
+                1 for r in rows_db
+                if r[8] == "Paid" and r[6] == "Pending"
+            ),
+
             "total_revenue": sum(
                 501 if "501" in r[4] else
                 251 if "251" in r[4] else
