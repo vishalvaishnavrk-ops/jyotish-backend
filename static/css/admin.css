@@ -298,10 +298,6 @@ font-style: italic;
 margin-left: 120px;
 }
 
-.container {
-padding: 20px 25px;
-}
-
 /* ===== FILTER & TABLE GAP ===== */
 
 .filters {
@@ -393,4 +389,31 @@ white-space: nowrap;
 
 .workflow-row a {
 text-decoration: none !important;
+}
+
+/* ===== FINAL DASHBOARD SCROLL SYSTEM ===== */
+
+/* page scroll band */
+body {
+overflow: hidden;
+}
+
+/* container fixed frame */
+.container {
+height: calc(100vh - 70px);
+overflow: hidden;
+}
+
+/* table scroll area */
+.table-wrapper {
+height: calc(100vh - 260px); /* adjust if needed */
+overflow-y: auto;
+}
+
+/* sticky header */
+.table-wrapper thead th {
+position: sticky;
+top: 0;
+z-index: 2;
+background: #9c0000;
 }
