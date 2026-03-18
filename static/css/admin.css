@@ -414,6 +414,29 @@ overflow-y: auto;
 .table-wrapper thead th {
 position: sticky;
 top: 0;
-z-index: 2;
 background: #9c0000;
+color: white;
+z-index: 5;          /* 🔥 increase किया */
+}
+
+/* IMPORTANT: table structure fix */
+.table-wrapper table {
+border-collapse: separate;
+border-spacing: 0;
+}
+
+.table-wrapper tbody tr:nth-child(even) {
+background: #faf6f0;
+}
+
+.table-wrapper table {
+width: 100%;
+}
+
+/* force proper layout */
+.table-wrapper thead,
+.table-wrapper tbody tr {
+display: table;
+width: 100%;
+table-layout: fixed;
 }
