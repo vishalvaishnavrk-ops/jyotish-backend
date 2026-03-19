@@ -424,3 +424,9 @@ background: #9c0000;
 color: white;
 z-index: 10;
 }
+
+/* ONLY CLIENT QUESTION BOX */
+.question-box {
+min-height: 130px;
+resize: vertical;
+}
