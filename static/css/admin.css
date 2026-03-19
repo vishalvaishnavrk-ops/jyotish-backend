@@ -173,20 +173,6 @@ tr:nth-child(even) {
 background: #faf6f0;
 }
 
-.table-wrapper {
-max-height: 500px;
-overflow-y: auto;
-border-radius: 10px;
-}
-
-/* Sticky header */
-.table-wrapper thead th {
-position: sticky;
-top: 0;
-background: #9c0000;
-z-index: 2;
-}
-
 /* ===== STATUS ===== */
 
 .paid {
@@ -404,10 +390,24 @@ flex: 1;
 overflow-y: auto;
 }
 
-/* sticky header */
+/* ===== FINAL PERFECT TABLE SCROLL ===== */
+
+.table-wrapper {
+overflow-y: auto;
+max-height: 500px;
+}
+
+/* THIS IS THE REAL FIX */
+.table-wrapper table {
+border-collapse: collapse;   /* 🔥 important */
+width: 100%;
+}
+
+/* STICKY HEADER */
 .table-wrapper thead th {
 position: sticky;
 top: 0;
 background: #9c0000;
-z-index: 5;
+color: white;
+z-index: 10;
 }
