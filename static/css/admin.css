@@ -413,3 +413,12 @@ background: #9c0000;
 color: white;
 z-index: 10;
 }
+
+th, td {
+border-right: 1px solid #eee;
+}
+
+th:last-child,
+td:last-child {
+border-right: none;
+}
