@@ -393,11 +393,6 @@ text-decoration: none !important;
 
 /* ===== FINAL DASHBOARD SCROLL SYSTEM ===== */
 
-/* page scroll band */
-body {
-overflow: hidden;
-}
-
 /* container fixed frame */
 .container {
 height: calc(100vh - 70px);
@@ -439,4 +434,16 @@ width: 100%;
 display: table;
 width: 100%;
 table-layout: fixed;
+}
+
+/* ===== DASHBOARD ONLY SCROLL CONTROL ===== */
+
+.dashboard-page {
+height: calc(100vh - 70px);
+overflow: hidden;
+}
+
+.dashboard-page .table-wrapper {
+height: calc(100vh - 260px);
+overflow-y: auto;
 }
