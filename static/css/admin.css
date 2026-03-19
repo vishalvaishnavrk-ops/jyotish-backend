@@ -107,7 +107,7 @@ margin-bottom: 15px;
 
 .card {
 background: white;
-padding: 8px 12px;
+padding: 6px 12px;
 border-radius: 10px;
 box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 flex: 1;
@@ -116,7 +116,7 @@ border-left: 4px solid #f59a3c;
 
 .card h4 {
 margin: 0;
-font-size: 13px;
+font-size: 14px;
 color: #555;
 }
 
