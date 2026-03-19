@@ -107,7 +107,7 @@ margin-bottom: 15px;
 
 .card {
 background: white;
-padding: 6px 10px;
+padding: 6px 8px;
 border-radius: 10px;
 box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 flex: 1;
@@ -116,7 +116,7 @@ border-left: 4px solid #f59a3c;
 
 .card h4 {
 margin: 0;
-font-size: 14px;
+font-size: 13px;
 color: #555;
 }
 
@@ -124,7 +124,8 @@ color: #555;
 font-size: 18px;
 font-weight: 700;
 color: #9c0000;
-margin-top: 4px;
+margin-top: 2px;
+margin-bottom: 0;  
 }
 
 /* ===== FILTERS ===== */
@@ -212,7 +213,8 @@ background: #b00000;
 /* ===== SECTION CARD ===== */
 
 .section-card {
-background: #fff8f0;
+background: #f3e9dc;   /* soft warm contrast */
+border: 1px solid #e2d3c2;  
 padding: 20px;
 border-radius: 12px;
 margin-bottom: 20px;
