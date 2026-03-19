@@ -425,8 +425,9 @@ color: white;
 z-index: 10;
 }
 
-/* ONLY CLIENT QUESTION BOX */
+/* FIX: ONLY CLIENT QUESTION BOX */
 .question-box {
-min-height: 130px;
+height: 120px !important;
+min-height: 120px !important;
 resize: vertical;
 }
