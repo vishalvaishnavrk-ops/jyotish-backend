@@ -151,8 +151,7 @@ border: 1px solid #ccc;
 table {
 width: 100%;
 background: white;
-border-radius: 10px;
-overflow: hidden;
+border-collapse: collapse;
 box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
@@ -393,8 +392,10 @@ overflow-y: auto;
 /* ===== FINAL PERFECT TABLE SCROLL ===== */
 
 .table-wrapper {
+flex: 1;
 overflow-y: auto;
-max-height: 500px;
+border-radius: 10px;
+overflow: hidden;
 }
 
 /* THIS IS THE REAL FIX */
