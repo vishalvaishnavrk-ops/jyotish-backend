@@ -392,6 +392,8 @@ overflow-y: auto;
 /* ===== FINAL PERFECT TABLE SCROLL ===== */
 
 .table-wrapper {
+flex: 1;
+overflow-y: auto;
 border-radius: 10px;
 overflow: hidden;
 }
@@ -401,27 +403,6 @@ overflow: hidden;
 .table-wrapper table {
 width: 100%;
 border-collapse: collapse;
-}
-
-/* HEADER FIX */
-.table-wrapper thead {
-display: table;
-width: 100%;
-table-layout: fixed;
-}
-
-/* BODY SCROLL */
-.table-wrapper tbody {
-display: block;
-max-height: 400px;   /* adjust if needed */
-overflow-y: auto;
-}
-
-/* ROW FIX */
-.table-wrapper tbody tr {
-display: table;
-width: 100%;
-table-layout: fixed;
 }
 
 /* STICKY HEADER */
