@@ -24,46 +24,35 @@ REPORT_DIR = "reports"
 
 
 # ---------- ADMIN LOGIN ----------
-@router.get("/admin", response_class=HTMLResponse)
-def admin_login():
-    return """
-<html>
-<body style="font-family:Arial;background:#f6efe9">
-
-<div style="width:360px;margin:120px auto;background:white;padding:25px;border-radius:10px">
-
-<h2 style="text-align:center;color:#8b0000">Admin Login</h2>
-
-<form method="post" action="/admin/login">
-
-Username<br>
-<input name="username" required style="width:100%;padding:8px"><br><br>
-
-Password<br>
-<input type="password" name="password" required style="width:100%;padding:8px"><br><br>
-
-<button style="width:100%;padding:10px;background:#8b0000;color:white;border:none">
-Login
-</button>
-
-</form>
-
-</div>
-
-</body>
-</html>
-"""
+@router.get("/admin/login")
+def login_page(request: Request):
+    return templates.TemplateResponse("admin/login.html", {"request": request})
 
 
 @router.post("/admin/login")
-def admin_login_post(username: str = Form(...), password: str = Form(...)):
+def login(request: Request, username: str = Form(...), password: str = Form(...)):
 
-    if username == "admin" and password == "admin123":
+    admin_user = os.getenv("ADMIN_USERNAME")
+    admin_pass = os.getenv("ADMIN_PASSWORD")
+
+    if username == admin_user and password == admin_pass:
+        request.session["admin"] = True
         return RedirectResponse("/admin/dashboard", status_code=302)
 
-    return HTMLResponse("<h3>Invalid Login</h3>")
+    return templates.TemplateResponse("admin/login.html", {
+        "request": request,
+        "error": "Invalid credentials"
+    })
 
-
+def check_admin(request: Request):
+    if not request.session.get("admin"):
+        return RedirectResponse("/admin/login", status_code=302)
+        
+@router.get("/admin/logout")
+def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse("/admin/login", status_code=302)
+    
 # ---------- DASHBOARD ----------
 @router.get("/admin/dashboard")
 def dashboard(request: Request,
@@ -75,6 +64,10 @@ payment: str = Query(None),
 start_date: str = Query(None),
 end_date: str = Query(None)
 ):
+    auth = check_admin(request)
+    if auth:
+        return auth
+        
     conn = get_db()
     c = conn.cursor()
 
@@ -239,7 +232,10 @@ def mark_paid(client_id: int):
 # ---------- CLIENT DETAIL ----------
 @router.get("/admin/client/{client_id}")
 def client_detail(client_id: int, request: Request):
-
+    auth = check_admin(request)
+    if auth:
+        return auth
+        
     conn = get_db()
     c = conn.cursor()
 
@@ -419,7 +415,10 @@ def create_pdf(client_id: int):
 # ---------- DOWNLOAD PDF ----------
 @router.get("/admin/client/{client_id}/pdf")
 def download_pdf(client_id: int):
-
+    auth = check_admin(request)
+    if auth:
+        return auth
+        
     conn = get_db()
     c = conn.cursor()
 
@@ -443,7 +442,10 @@ def download_pdf(client_id: int):
 # ---------- SEND WHATSAPP ----------
 @router.get("/admin/client/{client_id}/send-whatsapp")
 def send_whatsapp(client_id: int):
-
+    auth = check_admin(request)
+    if auth:
+        return auth
+        
     conn = get_db()
     c = conn.cursor()
 
@@ -495,6 +497,9 @@ PDF डाउनलोड करें:
 # ---------- ADD CLIENT FORM ----------
 @router.get("/admin/add-client")
 def add_client_form(request: Request):
+    auth = check_admin(request)
+    if auth:
+        return auth
     return templates.TemplateResponse(
         "admin/add_client.html",
         {"request": request}
