@@ -2,29 +2,34 @@
 <html>
 <head>
     <title>Login - VATS Palm Reports</title>
+
+    <!-- Google Font (premium feel) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/admin.css">
 </head>
 
-<body style="background:#f6efe5;">
+<body class="login-body">
 
-<!-- HEADER (same as dashboard) -->
+<!-- HEADER (same dashboard style) -->
 <div class="header">
     आचार्य विशाल वैष्णव – हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिष
 </div>
 
-<!-- LOGIN BOX -->
-<div class="login-wrapper">
+<!-- CENTER CONTENT -->
+<div class="login-container">
 
+    <!-- LOGO -->
+    <img src="/static/ganesha.png" class="login-logo">
+
+    <!-- BRAND NAME -->
+    <h1 class="brand-title">VATS Palm Reports</h1>
+
+    <!-- CARD -->
     <div class="login-card">
 
-        <!-- LOGO -->
-        <div class="login-logo">
-            <img src="/static/ganesha.png" alt="logo">
-            <h2>VATS Palm Reports</h2>
-            <p>Admin Panel Access</p>
-        </div>
+        <h3>Admin Panel Access</h3>
 
-        <!-- FORM -->
         <form method="post">
 
             <input type="text" name="username" placeholder="Username" required>
@@ -35,10 +40,10 @@
 
         </form>
 
-        <p style="font-size:12px;color:#999;margin-top:10px;">
-        Secure Admin Access • Authorized Use Only
+        <p class="secure-line">
+            Secure Admin Access • Authorized Use Only
         </p>
-        
+
     </div>
 
 </div>
