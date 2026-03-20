@@ -24,6 +24,10 @@ REPORT_DIR = "reports"
 
 
 # ---------- ADMIN LOGIN ----------
+@router.get("/admin")
+def admin_root():
+    return RedirectResponse(url="/admin/login")
+    
 @router.get("/admin/login")
 def login_page(request: Request):
     return templates.TemplateResponse("admin/login.html", {"request": request})
