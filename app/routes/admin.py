@@ -198,8 +198,12 @@ Mark Paid
 
 # ---------- MARK PAID ----------
 @router.post("/admin/mark-paid/{client_id}")
-def mark_paid(client_id: int):
+def mark_paid(request: Request, client_id: int):
 
+    auth = check_admin(request)
+    if auth:
+        return auth
+        
     conn = get_db()
     c = conn.cursor()
 
@@ -367,8 +371,12 @@ def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
 
 # ---------- GENERATE AI ----------
 @router.post("/admin/client/{client_id}/generate-ai")
-def manual_ai_generate(client_id: int):
+def manual_ai_generate(request: Request, client_id: int):
 
+    auth = check_admin(request)
+    if auth:
+        return auth
+        
     conn = get_db()
     c = conn.cursor()
 
@@ -397,8 +405,12 @@ def manual_ai_generate(client_id: int):
 
 # ---------- GENERATE PDF ----------
 @router.post("/admin/client/{client_id}/generate-pdf")
-def create_pdf(client_id: int):
+def create_pdf(request: Request, client_id: int):
 
+    auth = check_admin(request)
+    if auth:
+        return auth
+        
     conn = get_db()
     c = conn.cursor()
 
@@ -418,7 +430,8 @@ def create_pdf(client_id: int):
 
 # ---------- DOWNLOAD PDF ----------
 @router.get("/admin/client/{client_id}/pdf")
-def download_pdf(client_id: int):
+def download_pdf(request: Request, client_id: int):
+
     auth = check_admin(request)
     if auth:
         return auth
@@ -445,7 +458,8 @@ def download_pdf(client_id: int):
 
 # ---------- SEND WHATSAPP ----------
 @router.get("/admin/client/{client_id}/send-whatsapp")
-def send_whatsapp(client_id: int):
+def send_whatsapp(request: Request, client_id: int):
+
     auth = check_admin(request)
     if auth:
         return auth
