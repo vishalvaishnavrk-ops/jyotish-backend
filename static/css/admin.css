@@ -471,3 +471,18 @@ cursor: pointer;
 .login-box button:hover {
 background: #b00000;
 }
+
+.logout-btn {
+background: #fff;
+color: #9c0000;
+font-weight: 600;
+border-radius: 8px;
+padding: 8px;
+text-align: center;
+margin-top: 15px;
+display: block;
+}
+
+.logout-btn:hover {
+background: #ffe5e5;
+}
