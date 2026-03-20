@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body style="background:#f5efe6;font-family:Arial">
+
+<div style="width:300px;margin:100px auto;background:white;padding:20px;border-radius:10px">
+
+<h2>Admin Login</h2>
+
+{% if error %}
+<p style="color:red">{{ error }}</p>
+{% endif %}
+
+<form method="post">
+<input name="username" placeholder="Username" style="width:100%;padding:8px"><br><br>
+<input type="password" name="password" placeholder="Password" style="width:100%;padding:8px"><br><br>
+<button style="width:100%;padding:10px;background:#9c0000;color:white;border:none">
+Login
+</button>
+</form>
+
+</div>
+
+</body>
+</html>
