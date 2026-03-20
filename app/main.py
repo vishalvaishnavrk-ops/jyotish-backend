@@ -3,11 +3,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 import os
-
+from starlette.middleware.sessions import SessionMiddleware
 from app.routes import admin
 from app.routes import website
 
 app = FastAPI()
+
+app.add_middleware(SessionMiddleware, secret_key="mysecret123")
 
 templates = Jinja2Templates(directory="templates")
 
