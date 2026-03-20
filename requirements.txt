@@ -6,3 +6,4 @@ weasyprint
 openai
 supabase
 jinja2
+itsdangerous
