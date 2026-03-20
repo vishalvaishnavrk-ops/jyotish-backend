@@ -432,46 +432,6 @@ min-height: 120px !important;
 resize: vertical;
 }
 
-/* ===== LOGIN PAGE ===== */
-
-.login-box {
-width: 320px;
-margin: 100px auto;
-background: white;
-padding: 25px;
-border-radius: 12px;
-box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-text-align: center;
-}
-
-.login-box h2 {
-margin-bottom: 20px;
-color: #6b0000;
-}
-
-.login-box input {
-width: 100%;
-padding: 10px;
-margin-bottom: 12px;
-border-radius: 6px;
-border: 1px solid #ccc;
-}
-
-.login-box button {
-width: 100%;
-padding: 10px;
-background: #9c0000;
-color: white;
-border: none;
-border-radius: 8px;
-font-weight: bold;
-cursor: pointer;
-}
-
-.login-box button:hover {
-background: #b00000;
-}
-
 .logout-btn {
 background: #853a3a;
 color: #9c0000;
@@ -485,4 +445,69 @@ display: block;
 
 .logout-btn:hover {
 background: #ffe5e5;
+}
+
+/* ===== LOGIN PAGE PREMIUM ===== */
+
+.login-wrapper {
+display: flex;
+justify-content: center;
+align-items: center;
+height: calc(100vh - 60px);
+}
+
+.login-card {
+width: 360px;
+background: white;
+padding: 30px;
+border-radius: 14px;
+box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+text-align: center;
+}
+
+.login-logo img {
+width: 70px;
+margin-bottom: 10px;
+}
+
+.login-logo h2 {
+margin: 5px 0;
+color: #9c0000;
+font-size: 22px;
+}
+
+.login-logo p {
+font-size: 13px;
+color: #666;
+margin-bottom: 20px;
+}
+
+/* INPUTS */
+
+.login-card input {
+width: 100%;
+padding: 10px;
+margin-bottom: 12px;
+border-radius: 6px;
+border: 1px solid #ccc;
+font-size: 14px;
+}
+
+/* BUTTON */
+
+.login-card button {
+width: 100%;
+padding: 11px;
+background: #9c0000;
+color: white;
+border: none;
+border-radius: 8px;
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.login-card button:hover {
+background: #b00000;
 }
