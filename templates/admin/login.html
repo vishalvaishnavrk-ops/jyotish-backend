@@ -3,38 +3,40 @@
 <head>
     <title>Login - VATS Palm Reports</title>
 
-    <!-- Google Font (premium feel) -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/static/admin.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
 </head>
 
 <body class="login-body">
 
-<!-- HEADER (same dashboard style) -->
-<div class="header">
+<!-- HEADER -->
+<div class="header login-header">
     आचार्य विशाल वैष्णव – हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिष
 </div>
 
-<!-- CENTER CONTENT -->
-<div class="login-container">
+<!-- MAIN CENTER -->
+<div class="login-main">
 
     <!-- LOGO -->
     <img src="/static/ganesha.png" class="login-logo">
 
-    <!-- BRAND NAME -->
+    <!-- BRAND -->
     <h1 class="brand-title">VATS Palm Reports</h1>
 
-    <!-- CARD -->
+    <!-- LOGIN CARD -->
     <div class="login-card">
 
         <h3>Admin Panel Access</h3>
 
-        <form method="post">
+        <form method="post" class="login-form">
 
-            <input type="text" name="username" placeholder="Username" required>
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Enter username" required>
 
-            <input type="password" name="password" placeholder="Password" required>
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
 
             <button type="submit">Login</button>
 
