@@ -7,3 +7,4 @@ openai
 supabase
 jinja2
 itsdangerous
+python-dotenv
