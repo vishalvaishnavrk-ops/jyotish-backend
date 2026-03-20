@@ -511,7 +511,7 @@ text-align: left;
 }
 
 .login-form label {
-font-size: 13px;
+font-size: 14px;
 font-weight: 600;
 color: #444;
 }
@@ -522,7 +522,7 @@ padding: 10px;
 margin-top: 5px;
 margin-bottom: 15px;
 border-radius: 6px;
-border: 1px solid #ccc;
+border: 2px solid #ccc;
 }
 
 /* BUTTON */
