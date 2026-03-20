@@ -2,12 +2,15 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
+from dotenv import load_dotenv
 import os
 from starlette.middleware.sessions import SessionMiddleware
 from app.routes import admin
 from app.routes import website
 
 app = FastAPI()
+
+load_dotenv()
 
 app.add_middleware(SessionMiddleware, secret_key="mysecret123")
 
