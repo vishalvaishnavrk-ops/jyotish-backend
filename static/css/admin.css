@@ -431,3 +431,43 @@ height: 120px !important;
 min-height: 120px !important;
 resize: vertical;
 }
+
+/* ===== LOGIN PAGE ===== */
+
+.login-box {
+width: 320px;
+margin: 100px auto;
+background: white;
+padding: 25px;
+border-radius: 12px;
+box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+text-align: center;
+}
+
+.login-box h2 {
+margin-bottom: 20px;
+color: #6b0000;
+}
+
+.login-box input {
+width: 100%;
+padding: 10px;
+margin-bottom: 12px;
+border-radius: 6px;
+border: 1px solid #ccc;
+}
+
+.login-box button {
+width: 100%;
+padding: 10px;
+background: #9c0000;
+color: white;
+border: none;
+border-radius: 8px;
+font-weight: bold;
+cursor: pointer;
+}
+
+.login-box button:hover {
+background: #b00000;
+}
