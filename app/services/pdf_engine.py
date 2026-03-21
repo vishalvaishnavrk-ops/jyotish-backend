@@ -4,6 +4,7 @@ import os
 import re
 
 from app.database import get_db
+from app.services.supabase_storage import upload_pdf
 
 REPORT_DIR = "reports"
 
@@ -19,6 +20,16 @@ def generate_pdf_report(client_id):
     )
 
     data = c.fetchone()
+    # 🔥 DUPLICATE CHECK
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
+    row = c.fetchone()
+
+    if row and row[0]:
+        return row[0]   # already generated → stop
+
     conn.close()
 
     if not data:
@@ -286,4 +297,22 @@ WhatsApp: +91-6000376976
 
     HTML(string=html).write_pdf(file_path, font_config=font_config)
 
-    return file_name
+    # 🔥 SUPABASE UPLOAD START
+    with open(file_path, "rb") as f:
+        pdf_bytes = f.read()
+
+    pdf_url = upload_pdf(pdf_bytes, file_name)
+
+    # 🔥 SAVE IN DB
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("UPDATE clients SET pdf_url=%s WHERE id=%s", (pdf_url, client_id))
+
+    conn.commit()
+    conn.close()
+
+    # OPTIONAL: local file delete (recommended)
+    os.remove(file_path)
+
+    return pdf_url
