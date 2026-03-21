@@ -494,7 +494,8 @@ def send_whatsapp(request: Request, client_id: int):
 
     base_url = "https://jyotish-backend-gbr9.onrender.com"
 
-    pdf_url = f"{base_url}/reports/{client_code}.pdf"
+    c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
+    pdf_url = c.fetchone()[0]
 
     message = f"""नमस्ते {name},
 
