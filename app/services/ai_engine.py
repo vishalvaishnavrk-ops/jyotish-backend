@@ -13,6 +13,14 @@ def generate_ai_draft(client_id):
 
     data = c.fetchone()
 
+    # 🔥 DUPLICATE AI BLOCK
+    c.execute("SELECT ai_generated FROM clients WHERE id=%s", (client_id,))
+    ai_flag = c.fetchone()[0]
+
+    if ai_flag == 1:
+        conn.close()
+        return "AI already generated"
+        
     name,questions,plan = data
 
     # ---------- PLAN BASED LENGTH ----------
@@ -64,6 +72,9 @@ def generate_ai_draft(client_id):
 * कोई भी सामान्य या घिसे-पिटे वाक्य न लिखें
 * हर विश्लेषण व्यक्तिगत और गहराई वाला हो
 * जहां संभव हो कारण भी बताएं
+* अनावश्यक दोहराव बिल्कुल न करें
+* हर सेक्शन में नई और अलग जानकारी दें
+* उत्तर संक्षिप्त लेकिन प्रभावशाली रखें
 
 रिपोर्ट लगभग {word_limit} शब्दों की होनी चाहिए
 
@@ -131,10 +142,32 @@ Section 8 – आगामी वर्षों का पूर्वानु
 
 """
 
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    USE_REAL_AI = False   # बाद में True करेंगे
 
+    if USE_REAL_AI:
+
+        try:
+            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a senior Vedic astrologer with 15+ years experience."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.6,
+                max_tokens=word_limit + 200
+            )
+
+            draft = response.choices[0].message.content
+
+        except Exception as e:
+            draft = f"AI error: {str(e)}"
+    
     # ---------- DUMMY DRAFT (TEST MODE) ----------
 
+    if not USE_REAL_AI:
+    
     draft = f"""
 
 Section 1 – हस्त संरचना विश्लेषण
