@@ -168,7 +168,7 @@ Section 8 – आगामी वर्षों का पूर्वानु
 
     if not USE_REAL_AI:
     
-    draft = f"""
+        draft = f"""
 
 Section 1 – हस्त संरचना विश्लेषण
 यह एक टेस्ट AI रिपोर्ट है।
