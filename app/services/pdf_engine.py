@@ -301,13 +301,18 @@ WhatsApp: +91-6000376976
     with open(file_path, "rb") as f:
         pdf_bytes = f.read()
 
-    pdf_url = upload_pdf(pdf_bytes, file_name)
+    try:
+        pdf_url = upload_pdf(pdf_bytes, file_name)
+    except Exception as e:
+        print("UPLOAD ERROR:", e)
+        pdf_url = None
 
     # 🔥 SAVE IN DB
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("UPDATE clients SET pdf_url=%s WHERE id=%s", (pdf_url, client_id))
+    if pdf_url:
+        c.execute("UPDATE clients SET pdf_url=%s WHERE id=%s", (pdf_url, client_id))
 
     conn.commit()
     conn.close()
