@@ -279,6 +279,7 @@ def client_detail(client_id: int, request: Request):
         "payment_ref": cdata[14],
         "ai_draft": cdata[15],
         "ai_generated": cdata[17] if len(cdata) > 17 else 0,
+        "pdf_url": cdata[16] if len(cdata) > 16 else None,
     }
 
     ai_draft = client.get("ai_draft")
@@ -294,7 +295,7 @@ def client_detail(client_id: int, request: Request):
             # 🔥 FLAGS FOR BUTTON CONTROL
             "can_generate_ai": client["payment_status"] == "Paid" and client.get("ai_generated", 0) == 0,
             "can_generate_pdf": (ai_draft and status == "Reviewed") or status == "Completed",
-            "pdf_ready": os.path.exists(os.path.join(REPORT_DIR, f"{client['client_code']}.pdf")),
+            "pdf_ready": True if client.get("pdf_url") else False,
         },
     )
 
