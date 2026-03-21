@@ -525,16 +525,16 @@ def add_client_form(request: Request):
     
 @router.post("/admin/add-client")
 async def add_client(
-name:str=Form(...),
-phone:str=Form(...),
-dob:str=Form(...),
-tob: str = Form(...),
-place: str = Form(...),
-questions:str=Form(...),
-plan:str=Form(...),
-images: List[UploadFile] = File(None)
+    name: str = Form(...),
+    phone: str = Form(...),
+    dob: str = Form(...),
+    tob: Optional[str] = Form(None),
+    place: Optional[str] = Form(None),
+    questions: str = Form(...),
+    plan: str = Form(...),
+    images: List[UploadFile] = File(None)
 ):
-
+    
     saved_files=[]
 
     if images:
