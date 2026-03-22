@@ -284,6 +284,8 @@ def client_detail(client_id: int, request: Request):
 
     ai_draft = client.get("ai_draft")
     status = client.get("status")
+
+    print("DEBUG CLIENT DATA:", client)
     
     return templates.TemplateResponse(
         "admin/client_detail.html",
