@@ -494,9 +494,6 @@ def send_whatsapp(request: Request, client_id: int):
     conn.commit()
     conn.close()
 
-    c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
-    pdf_url = c.fetchone()[0]
-
     message = f"""नमस्ते {name},
 
 आपकी हस्तरेखा रिपोर्ट तैयार है 🙏
