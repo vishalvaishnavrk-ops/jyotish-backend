@@ -294,7 +294,7 @@ def client_detail(client_id: int, request: Request):
 
             # 🔥 FLAGS FOR BUTTON CONTROL
             "can_generate_ai": client["payment_status"] == "Paid" and client.get("ai_generated", 0) == 0,
-            "can_generate_pdf": (ai_draft and status == "Reviewed") or status == "Completed",
+            "can_generate_pdf": not client.get("pdf_url") and ((ai_draft and status == "Reviewed") or status == "Completed"),
             "pdf_ready": True if client.get("pdf_url") else False,
         },
     )
@@ -417,7 +417,9 @@ def create_pdf(request: Request, client_id: int):
 
     c.execute("SELECT status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
-
+    if row and row[0]:
+        return row[0]
+    
     conn.close()
 
     if data[0] not in ["Reviewed", "Completed"]:
@@ -431,31 +433,26 @@ def create_pdf(request: Request, client_id: int):
 
 # ---------- DOWNLOAD PDF ----------
 @router.get("/admin/client/{client_id}/pdf")
-def download_pdf(request: Request, client_id: int):
+def download_pdf(client_id: int, request: Request):
 
     auth = check_admin(request)
     if auth:
         return auth
-        
+
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT client_code,status FROM clients WHERE id=%s",(client_id,))
+    c.execute("SELECT pdf_url, status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
 
     conn.close()
 
-    if data[1] not in ["Reviewed","Completed"]:
-        return HTMLResponse("PDF available after review")
-
-    file_name = f"{data[0]}.pdf"
-    file_path = os.path.join(REPORT_DIR, file_name)
-
-    if not os.path.exists(file_path):
+    if not data or not data[0]:
         return HTMLResponse("PDF not generated yet")
 
-    return FileResponse(file_path,media_type="application/pdf",filename=file_name)
+    pdf_url = data[0]
 
+    return RedirectResponse(pdf_url)
 
 # ---------- SEND WHATSAPP ----------
 @router.get("/admin/client/{client_id}/send-whatsapp")
@@ -483,17 +480,19 @@ def send_whatsapp(request: Request, client_id: int):
         return HTMLResponse("<h3 style='color:red;text-align:center;'>Complete review before sending</h3>")
 
     file_name = f"{client_code}.pdf"
-    file_path = os.path.join(REPORT_DIR, file_name)
+    
+    c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
+    pdf_data = c.fetchone()
 
-    if not os.path.exists(file_path):
+    if not pdf_data or not pdf_data[0]:
         conn.close()
         return HTMLResponse("<h3 style='color:red;text-align:center;'>Generate PDF first</h3>")
+
+    pdf_url = pdf_data[0]
 
     c.execute("UPDATE clients SET status='Completed' WHERE id=%s", (client_id,))
     conn.commit()
     conn.close()
-
-    base_url = "https://jyotish-backend-gbr9.onrender.com"
 
     c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
     pdf_url = c.fetchone()[0]
