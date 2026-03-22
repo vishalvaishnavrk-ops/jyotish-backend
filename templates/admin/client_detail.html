@@ -123,22 +123,30 @@ Completed
   </button>
 </form>
 
-<form method="post" action="/admin/client/{{client.id}}/generate-pdf" class="wf-inline">
+<form method="post" action="/admin/client/{{client.id}}/generate-pdf" class="wf-inline"> 
   <button type="submit" class="btn wf-btn"
-  {% if not can_generate_pdf %}disabled{% endif %}>
+  {% if not can_generate_pdf or pdf_ready %}disabled{% endif %}>
     Generate PDF
   </button>
 </form>
+  
+{% if pdf_ready %}
+    <a href="/admin/client/{{client.id}}/pdf" class="btn wf-btn">
+        Download PDF
+    </a>
 
-<a href="/admin/client/{{client.id}}/pdf"
-class="btn wf-btn"
-{% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}>
-Download PDF </a>
+    <a href="/admin/client/{{client.id}}/send-whatsapp" class="btn wf-btn">
+        Send WhatsApp
+    </a>
+{% else %}
+    <button class="btn wf-btn" disabled>
+        Download PDF
+    </button>
 
-<a href="/admin/client/{{client.id}}/send-whatsapp"
-class="btn wf-btn"
-{% if not pdf_ready %}style="opacity:0.5;pointer-events:none;"{% endif %}>
-Send WhatsApp </a>
+    <button class="btn wf-btn" disabled>
+        Send WhatsApp
+    </button>
+{% endif %}
 
 </div>
   
