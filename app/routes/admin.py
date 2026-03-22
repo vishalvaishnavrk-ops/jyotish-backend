@@ -294,7 +294,11 @@ def client_detail(client_id: int, request: Request):
 
             # 🔥 FLAGS FOR BUTTON CONTROL
             "can_generate_ai": client["payment_status"] == "Paid" and client.get("ai_generated", 0) == 0,
-            "can_generate_pdf": not client.get("pdf_url") and ((ai_draft and status == "Reviewed") or status == "Completed"),
+            "can_generate_pdf": (
+                client["payment_status"] == "Paid"
+                and not client.get("pdf_url")
+                and client["status"] in ["Reviewed", "Completed"]
+            ),
             "pdf_ready": True if client.get("pdf_url") else False,
         },
     )
