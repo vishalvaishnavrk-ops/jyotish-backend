@@ -31,7 +31,7 @@
 
 {% for img in images %}
 
-<img src="{{img}}">
+<img src="{{ img }}">
 
 {% endfor %}
 
@@ -50,12 +50,12 @@
 <select name="payment_status">
 
 <option value="Pending"
-{% if client.payment_status=="Pending" %}selected{% endif %}>
+{% if client.payment_status == "Pending" %}selected{% endif %}>
 Pending
 </option>
 
 <option value="Paid"
-{% if client.payment_status=="Paid" %}selected{% endif %}>
+{% if client.payment_status == "Paid" %}selected{% endif %}>
 Paid
 </option>
 
@@ -86,17 +86,17 @@ Paid
 <select name="status">
 
 <option value="Pending"
-{% if client.status=="Pending" %}selected{% endif %}>
+{% if client.status == "Pending" %}selected{% endif %}>
 Pending
 </option>
 
 <option value="Reviewed"
-{% if client.status=="Reviewed" %}selected{% endif %}>
+{% if client.status == "Reviewed" %}selected{% endif %}>
 Reviewed
 </option>
 
 <option value="Completed"
-{% if client.status=="Completed" %}selected{% endif %}>
+{% if client.status == "Completed" %}selected{% endif %}>
 Completed
 </option>
 
