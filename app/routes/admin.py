@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi import Request
-
+from fastapi.templating import Jinja2Templates
 from typing import List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -14,6 +14,8 @@ from app.utils.helpers import generate_client_code
 from app.services.ai_engine import generate_ai_draft
 from app.services.pdf_engine import generate_pdf_report
 from app.services.supabase_storage import upload_palm_image
+
+templates = Jinja2Templates(directory="templates")
 
 router = APIRouter()
 
