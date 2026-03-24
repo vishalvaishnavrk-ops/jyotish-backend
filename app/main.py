@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 import os
 from starlette.middleware.sessions import SessionMiddleware
@@ -13,8 +12,6 @@ app = FastAPI()
 load_dotenv()
 
 app.add_middleware(SessionMiddleware, secret_key="mysecret123")
-
-templates = Jinja2Templates(directory="templates")
 
 
 # ---------- FOLDERS ----------
