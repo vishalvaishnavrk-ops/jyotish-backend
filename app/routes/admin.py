@@ -13,7 +13,7 @@ from app.utils.helpers import generate_client_code
 from app.services.ai_engine import generate_ai_draft
 from app.services.pdf_engine import generate_pdf_report
 from app.services.supabase_storage import upload_palm_image
-from app.core.templates import templates
+from app.core.template_engine import templates
 
 router = APIRouter()
 
