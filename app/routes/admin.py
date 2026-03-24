@@ -17,6 +17,8 @@ from app.services.supabase_storage import upload_palm_image
 
 templates = Jinja2Templates(directory="templates")
 
+templates.env.cache = None
+
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
