@@ -21,12 +21,14 @@
 </div>
   
 <hr>
+
+{% set current_path = request.scope.get('path', '') %}
   
-<a href="/admin/dashboard" class="{% if '/admin/dashboard' in request.url.path %}active{% endif %}">
+<a href="/admin/dashboard" class="{% if '/admin/dashboard' in current_path %}active{% endif %}">
 Dashboard
 </a>
 
-<a href="/admin/add-client" class="{% if '/admin/add-client' in request.url.path %}active{% endif %}">
+<a href="/admin/add-client" class="{% if '/admin/add-client' in current_path %}active{% endif %}">
 Add Client
 </a>
 
