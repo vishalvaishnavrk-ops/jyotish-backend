@@ -243,19 +243,18 @@ def client_detail(client_id: int, request: Request):
     auth = check_admin(request)
     if auth:
         return auth
-        
+
     conn = get_db()
     c = conn.cursor()
 
     c.execute("SELECT * FROM clients WHERE id=%s", (client_id,))
     cdata = c.fetchone()
-
     conn.close()
 
     if not cdata:
         return HTMLResponse("Client not found")
 
-    # ---------- IMAGES ----------
+    # ---------- SAFE IMAGES ----------
     images_list = []
 
     images_raw = cdata[9] if cdata[9] else ""
@@ -263,19 +262,10 @@ def client_detail(client_id: int, request: Request):
     if isinstance(images_raw, str):
         for img in images_raw.split(","):
             img = img.strip()
-            if img != "":
-                images_list.append(str(img))   # force string
+            if img:
+                images_list.append(str(img))
 
-    elif isinstance(images_raw, list):
-        for img in images_raw:
-            images_list.append(str(img))
-        
-    # ---------- CLIENT ----------
-    pdf_url_value = None
-
-    if len(cdata) > 16 and isinstance(cdata[16], str):
-        pdf_url_value = cdata[16]
-
+    # ---------- SAFE CLIENT ----------
     client = {
         "id": int(cdata[0]),
         "client_code": str(cdata[1]),
@@ -288,16 +278,32 @@ def client_detail(client_id: int, request: Request):
         "payment_ref": str(cdata[14]) if cdata[14] else "",
         "ai_draft": str(cdata[15]) if cdata[15] else "",
         "ai_generated": int(cdata[17]) if len(cdata) > 17 and cdata[17] else 0,
-        "pdf_url": str(cdata[16]) if len(cdata) > 16 and cdata[16] else None,
+        "pdf_url": str(cdata[16]) if len(cdata) > 16 and cdata[16] else "",
     }
-    
-    ai_draft = client.get("ai_draft")
-    status = client.get("status")
 
-    print("CLIENT DEBUG:", client)
-    print("IMAGES DEBUG:", images_list)
-    
-    return HTMLResponse("WORKING")
+    # ---------- FLAGS ----------
+    ai_draft = client["ai_draft"]
+    status = client["status"]
+
+    pdf_ready = True if client["pdf_url"] else False
+
+    can_generate_pdf = (not pdf_ready) and ((ai_draft and status == "Reviewed") or status == "Completed")
+
+    # ---------- DEBUG ----------
+    print("CLIENT:", client)
+    print("IMAGES:", images_list)
+
+    return templates.TemplateResponse(
+        "admin/client_detail.html",
+        {
+            "request": request,
+            "client": client,
+            "images": images_list,
+            "can_generate_ai": client["payment_status"] == "Paid" and client["ai_generated"] == 0,
+            "can_generate_pdf": can_generate_pdf,
+            "pdf_ready": pdf_ready,
+        },
+    )
     
 # ---------- UPDATE PAYMENT ----------
 @router.post("/admin/client/{client_id}/payment")
