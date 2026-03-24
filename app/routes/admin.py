@@ -423,11 +423,18 @@ def create_pdf(request: Request, client_id: int):
     conn = get_db()
     c = conn.cursor()
 
+    # ✅ status check
     c.execute("SELECT status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
-    if row and row[0]:
-        return row[0]
-    
+
+    # 🔥 NEW ADD (duplicate PDF prevent)
+    c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
+    existing = c.fetchone()
+
+    if existing and existing[0]:
+        conn.close()
+        return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
+
     conn.close()
 
     if data[0] not in ["Reviewed", "Completed"]:
@@ -438,7 +445,7 @@ def create_pdf(request: Request, client_id: int):
     generate_pdf_report(client_id)
 
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
-
+    
 # ---------- DOWNLOAD PDF ----------
 @router.get("/admin/client/{client_id}/pdf")
 def download_pdf(client_id: int, request: Request):
