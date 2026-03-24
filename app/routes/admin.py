@@ -267,6 +267,11 @@ def client_detail(client_id: int, request: Request):
                 images_list.append(img)
 
     # ---------- CLIENT ----------
+    pdf_url_value = None
+
+    if len(cdata) > 16 and isinstance(cdata[16], str):
+        pdf_url_value = cdata[16]
+
     client = {
         "id": cdata[0],
         "client_code": cdata[1],
@@ -279,13 +284,14 @@ def client_detail(client_id: int, request: Request):
         "payment_ref": cdata[14],
         "ai_draft": cdata[15],
         "ai_generated": cdata[17] if len(cdata) > 17 else 0,
-        "pdf_url": cdata[16] if len(cdata) > 16 else None,
+        "pdf_url": pdf_url_value,
     }
 
     ai_draft = client.get("ai_draft")
     status = client.get("status")
 
-    print("DEBUG CLIENT DATA:", client)
+    print("PDF URL DEBUG:", cdata[16])
+    print("TYPE:", type(cdata[16]))
     
     return templates.TemplateResponse(
         "admin/client_detail.html",
@@ -301,7 +307,7 @@ def client_detail(client_id: int, request: Request):
                 and not client.get("pdf_url")
                 and client["status"] in ["Reviewed", "Completed"]
             ),
-            "pdf_ready": True if client.get("pdf_url") else False,
+            "pdf_ready": True if isinstance(client.get("pdf_url"), str) and client.get("pdf_url") else False,
         },
     )
 
