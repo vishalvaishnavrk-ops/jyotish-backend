@@ -264,8 +264,12 @@ def client_detail(client_id: int, request: Request):
         for img in images_raw.split(","):
             img = img.strip()
             if img != "":
-                images_list.append(img)
+                images_list.append(str(img))   # force string
 
+    elif isinstance(images_raw, list):
+        for img in images_raw:
+            images_list.append(str(img))
+        
     # ---------- CLIENT ----------
     pdf_url_value = None
 
@@ -273,44 +277,28 @@ def client_detail(client_id: int, request: Request):
         pdf_url_value = cdata[16]
 
     client = {
-        "id": cdata[0],
-        "client_code": cdata[1],
-        "name": cdata[2],
-        "phone": cdata[3],
-        "plan": cdata[7],
-        "status": cdata[11],
-        "payment_status": cdata[12],
-        "payment_date": cdata[13],
-        "payment_ref": cdata[14],
-        "ai_draft": cdata[15],
-        "ai_generated": cdata[17] if len(cdata) > 17 else 0,
-        "pdf_url": pdf_url_value,
+        "id": int(cdata[0]),
+        "client_code": str(cdata[1]),
+        "name": str(cdata[2]),
+        "phone": str(cdata[3]),
+        "plan": str(cdata[7]),
+        "status": str(cdata[11]),
+        "payment_status": str(cdata[12]),
+        "payment_date": str(cdata[13]) if cdata[13] else "",
+        "payment_ref": str(cdata[14]) if cdata[14] else "",
+        "ai_draft": str(cdata[15]) if cdata[15] else "",
+        "ai_generated": int(cdata[17]) if len(cdata) > 17 and cdata[17] else 0,
+        "pdf_url": str(cdata[16]) if len(cdata) > 16 and cdata[16] else None,
     }
-
+    
     ai_draft = client.get("ai_draft")
     status = client.get("status")
 
-    print("PDF URL DEBUG:", cdata[16])
-    print("TYPE:", type(cdata[16]))
+    print("CLIENT DEBUG:", client)
+    print("IMAGES DEBUG:", images_list)
     
-    return templates.TemplateResponse(
-        "admin/client_detail.html",
-        {
-            "request": request,
-            "client": client,
-            "images": images_list,
-
-            # 🔥 FLAGS FOR BUTTON CONTROL
-            "can_generate_ai": client["payment_status"] == "Paid" and client.get("ai_generated", 0) == 0,
-            "can_generate_pdf": (
-                client["payment_status"] == "Paid"
-                and not client.get("pdf_url")
-                and client["status"] in ["Reviewed", "Completed"]
-            ),
-            "pdf_ready": True if isinstance(client.get("pdf_url"), str) and client.get("pdf_url") else False,
-        },
-    )
-
+    return HTMLResponse("WORKING")
+    
 # ---------- UPDATE PAYMENT ----------
 @router.post("/admin/client/{client_id}/payment")
 def update_payment(
