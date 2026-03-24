@@ -287,21 +287,16 @@ def client_detail(client_id: int, request: Request):
 
     can_generate_pdf = (not pdf_ready) and ((ai_draft and status == "Reviewed") or status == "Completed")
 
-    # ---------- DEBUG ----------
-    print("CLIENT:", client)
-    print("IMAGES:", images_list)
+    context = {
+        "request": request,
+        "client": client,
+        "images": images_list,
+        "can_generate_ai": client["payment_status"] == "Paid" and client["ai_generated"] == 0,
+        "can_generate_pdf": can_generate_pdf,
+        "pdf_ready": pdf_ready,
+    }
 
-    return templates.TemplateResponse(
-        "admin/client_detail.html",
-        {
-            "request": request,
-            "client": client,
-            "images": images_list,
-            "can_generate_ai": client["payment_status"] == "Paid" and client["ai_generated"] == 0,
-            "can_generate_pdf": can_generate_pdf,
-            "pdf_ready": pdf_ready,
-        },
-    )
+    return templates.TemplateResponse("admin/client_detail.html", context)
     
 # ---------- UPDATE PAYMENT ----------
 @router.post("/admin/client/{client_id}/payment")
