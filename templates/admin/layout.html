@@ -22,11 +22,11 @@
   
 <hr>
   
-<a href="/admin/dashboard" class="{% if request.url.path == '/admin/dashboard' %}active{% endif %}">
+<a href="/admin/dashboard" class="{% if '/admin/dashboard' in request.url.path %}active{% endif %}">
 Dashboard
 </a>
 
-<a href="/admin/add-client" class="{% if request.url.path == '/admin/add-client' %}active{% endif %}">
+<a href="/admin/add-client" class="{% if '/admin/add-client' in request.url.path %}active{% endif %}">
 Add Client
 </a>
 
