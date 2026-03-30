@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi import Request
-from fastapi.templating import Jinja2Templates
 from typing import List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -14,8 +13,19 @@ from app.utils.helpers import generate_client_code
 from app.services.ai_engine import generate_ai_draft
 from app.services.pdf_engine import generate_pdf_report
 from app.services.supabase_storage import upload_palm_image
+from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="templates")
+
+def render(request, template, context=None):
+    context = context or {}
+    return templates.TemplateResponse(
+        template,
+        {
+            "request": request,
+            **context
+        }
+    )
 
 router = APIRouter()
 
@@ -30,7 +40,7 @@ def admin_root():
     
 @router.get("/admin/login")
 def login_page(request: Request):
-    return templates.TemplateResponse("admin/login.html", {"request": request})
+    return render(request, "admin/login.html")
 
 
 @router.post("/admin/login")
@@ -43,8 +53,7 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
         request.session["admin"] = True
         return RedirectResponse("/admin/dashboard", status_code=302)
 
-    return templates.TemplateResponse("admin/login.html", {
-        "request": request,
+    return render(request, "admin/login.html", {
         "error": "Invalid credentials"
     })
 
@@ -162,10 +171,8 @@ Mark Paid
 </tr>
 """
 
-    return templates.TemplateResponse(
-        "admin/dashboard.html",
+    return render(request, "admin/dashboard.html",
         {
-            "request": request,
             "clients": rows_db,
             "total_clients": len(rows_db),
             "pending_payment": sum(1 for r in rows_db if r[8] != "Paid"),
@@ -297,13 +304,7 @@ def client_detail(request: Request, client_id: int):
         "pdf_ready": pdf_ready,
     }
 
-    return templates.TemplateResponse(
-        "admin/client_detail.html",
-        {
-            "request": request,
-            **context
-        }
-    )
+    return render(request, "admin/client_detail.html", context)
     
 # ---------- UPDATE PAYMENT ----------
 @router.post("/admin/client/{client_id}/payment")
@@ -531,10 +532,7 @@ def add_client_form(request: Request):
     auth = check_admin(request)
     if auth:
         return auth
-    return templates.TemplateResponse(
-        "admin/add_client.html",
-        {"request": request}
-    )
+    return render(request, "admin/add_client.html")
     
 @router.post("/admin/add-client")
 async def add_client(
