@@ -15,7 +15,9 @@ from app.services.pdf_engine import generate_pdf_report
 from app.services.supabase_storage import upload_palm_image
 from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="templates")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 def render_template_safe(request: Request, template_name: str, context: dict = None):
     context = context or {}
