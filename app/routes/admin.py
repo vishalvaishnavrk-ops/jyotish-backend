@@ -239,7 +239,7 @@ def mark_paid(request: Request, client_id: int):
 
 # ---------- CLIENT DETAIL ----------
 @router.get("/admin/client/{client_id}")
-def client_detail(client_id: int, request: Request):
+def client_detail(request: Request, client_id: int):
     auth = check_admin(request)
     if auth:
         return auth
@@ -446,7 +446,7 @@ def create_pdf(request: Request, client_id: int):
     
 # ---------- DOWNLOAD PDF ----------
 @router.get("/admin/client/{client_id}/pdf")
-def download_pdf(client_id: int, request: Request):
+def download_pdf(request: Request, client_id: int):
 
     auth = check_admin(request)
     if auth:
