@@ -17,16 +17,16 @@ from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="templates")
 
-def render(request, template, context=None):
+def render_template_safe(request: Request, template_name: str, context: dict = None):
     context = context or {}
     return templates.TemplateResponse(
-        template,
+        template_name,
         {
             "request": request,
             **context
         }
     )
-
+    
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
@@ -40,7 +40,7 @@ def admin_root():
     
 @router.get("/admin/login")
 def login_page(request: Request):
-    return render(request, "admin/login.html")
+    return render_template_safe(request, "admin/login.html")
 
 
 @router.post("/admin/login")
@@ -171,7 +171,7 @@ Mark Paid
 </tr>
 """
 
-    return render(request, "admin/dashboard.html",
+    return render_template_safe(request, "admin/dashboard.html",
         {
             "clients": rows_db,
             "total_clients": len(rows_db),
@@ -304,7 +304,7 @@ def client_detail(request: Request, client_id: int):
         "pdf_ready": pdf_ready,
     }
 
-    return render(request, "admin/client_detail.html", context)
+    return render_template_safe(request, "admin/client_detail.html", context)
     
 # ---------- UPDATE PAYMENT ----------
 @router.post("/admin/client/{client_id}/payment")
@@ -532,7 +532,7 @@ def add_client_form(request: Request):
     auth = check_admin(request)
     if auth:
         return auth
-    return render(request, "admin/add_client.html")
+    return render_template_safe(request, "admin/add_client.html")
     
 @router.post("/admin/add-client")
 async def add_client(
