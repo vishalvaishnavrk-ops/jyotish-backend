@@ -294,13 +294,16 @@ def client_detail(request: Request, client_id: int):
     }
 
     # ---------- FLAGS ----------
-    ai_draft = client["ai_draft"]
     status = client["status"]
 
-    pdf_ready = True if client["pdf_url"] else False
+    pdf_ready = bool(client.get("pdf_url"))
 
-    can_generate_pdf = (not pdf_ready) and ((ai_draft and status == "Reviewed") or status == "Completed")
-
+    can_generate_pdf = (
+        client["payment_status"] == "Paid"
+        and status == "Reviewed"
+        and not pdf_ready
+    )
+    
     context = {
         "client": client,
         "images": images_list,
