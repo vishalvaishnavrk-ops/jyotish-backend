@@ -20,7 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 def render_template_safe(request: Request, template_name: str, context: dict = None):
-    print("TEMPLATE NAME:", template_name, type(template_name))  # 👈 ADD THIS
     context = context or {}
     return templates.TemplateResponse(
         template_name,
