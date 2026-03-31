@@ -125,7 +125,7 @@ Completed
 
 <form method="post" action="/admin/client/{{client.id}}/generate-pdf" class="wf-inline"> 
   <button type="submit" class="btn wf-btn"
-  {% if not can_generate_pdf or pdf_ready %}disabled{% endif %}>
+  {% if not can_generate_pdf %}disabled{% endif %}>
     Generate PDF
   </button>
 </form>
