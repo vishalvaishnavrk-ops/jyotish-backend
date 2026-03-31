@@ -296,7 +296,11 @@ def client_detail(request: Request, client_id: int):
     # ---------- FLAGS ----------
     status = client["status"]
 
-    pdf_ready = bool(client.get("pdf_url"))
+    pdf_ready = (
+        client.get("pdf_url") is not None
+        and client.get("pdf_url") != ""
+        and client.get("pdf_url").startswith("http")
+    )
 
     can_generate_pdf = (
         client["payment_status"] == "Paid"
