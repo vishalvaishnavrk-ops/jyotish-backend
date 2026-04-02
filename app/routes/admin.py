@@ -290,17 +290,15 @@ def client_detail(request: Request, client_id: int):
         "payment_ref": str(cdata[14]) if cdata[14] else "",
         "ai_draft": str(cdata[15]) if cdata[15] else "",
         "ai_generated": int(cdata[17]) if len(cdata) > 17 and cdata[17] else 0,
-        "pdf_url": str(cdata[16]) if len(cdata) > 16 and cdata[16] else "",
+        "pdf_url": cdata[16] if len(cdata) > 16 else None,
     }
 
     # ---------- FLAGS ----------
     status = client["status"]
 
-    pdf_ready = (
-        client.get("pdf_url") is not None
-        and client.get("pdf_url") != ""
-        and client.get("pdf_url").startswith("http")
-    )
+    pdf_url = client.get("pdf_url")
+
+    pdf_ready = isinstance(pdf_url, str) and pdf_url.startswith("http")
 
     can_generate_pdf = (
         client["payment_status"] == "Paid"
