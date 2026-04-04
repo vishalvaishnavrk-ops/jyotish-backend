@@ -131,7 +131,7 @@ Completed
 </form>
   
 {% if pdf_ready %}
-    <a href="/admin/client/{{client.id}}/pdf" class="btn wf-btn">
+    <a href="{{ client.pdf_url }}" target="_blank" class="btn wf-btn">
         Download PDF
     </a>
 
