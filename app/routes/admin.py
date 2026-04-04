@@ -297,11 +297,14 @@ def client_detail(request: Request, client_id: int):
     status = client["status"]
 
     pdf_url = client.get("pdf_url")
+
+    if isinstance(pdf_url, str):
+        pdf_url = pdf_url.strip()
     
     print("DEBUG PDF_URL RAW:", repr(client.get("pdf_url")))
     print("DEBUG PDF_URL CLEAN:", repr(pdf_url))
     
-    pdf_ready = bool(pdf_url) and "http" in pdf_url
+    pdf_ready = bool(pdf_url) and pdf_url.startswith("http")
 
     can_generate_pdf = (
         client["payment_status"] == "Paid"
