@@ -630,13 +630,17 @@ async def add_client(
 
         new_path = f"client_images/{client_code}/{filename}"
 
-        # copy file
-        supabase.storage.from_("palms").copy(
-            f"temp/{filename}",
-            new_path
+        # download temp file
+        file_data = supabase.storage.from_("palms").download(f"temp/{filename}")
+
+        # upload to final location
+        supabase.storage.from_("palms").upload(
+            new_path,
+            file_data,
+            {"content-type": "image/jpeg", "upsert": False}
         )
 
-        # delete temp file
+        # delete temp
         supabase.storage.from_("palms").remove([f"temp/{filename}"])
 
         final_url = f"{SUPABASE_URL}/storage/v1/object/public/palms/{new_path}"
