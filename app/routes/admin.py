@@ -275,8 +275,8 @@ def client_detail(request: Request, client_id: int):
         for img in images_raw.split(","):
             img = img.strip()
             if img:
-                images_list.append(str(img))
-
+                images_list.append(img)   # ✅ direct URL
+            
     # ---------- SAFE CLIENT ----------
     client = {
         "id": int(cdata[0]),
@@ -559,7 +559,7 @@ async def add_client(
     place: Optional[str] = Form(None),
     questions: str = Form(...),
     plan: str = Form(...),
-    images: List[UploadFile] = File(None)
+    images: List[UploadFile] = File(...)
 ):
     
     saved_files=[]
@@ -569,12 +569,12 @@ async def add_client(
 
             unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
-            file_bytes = await img.read()
-
-            image_url = upload_palm_image(file_bytes, unique_name)
-
-            saved_files.append(image_url)
-
+            file_bytes = await file.read()
+            
+            file_url = upload_palm_image(file_bytes, unique_name, client_code)
+            
+            saved_files.append(file_url)
+            
     image_names=",".join(saved_files)
 
     conn=get_db()
