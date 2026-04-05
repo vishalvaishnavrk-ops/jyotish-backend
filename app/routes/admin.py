@@ -559,7 +559,7 @@ async def add_client(
     place: Optional[str] = Form(None),
     questions: str = Form(...),
     plan: str = Form(...),
-    images: List[UploadFile] = File(...)
+    images: List[UploadFile] = File(None)
 ):
     
     saved_files=[]
