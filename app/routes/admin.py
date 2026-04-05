@@ -290,7 +290,7 @@ def client_detail(request: Request, client_id: int):
         "payment_ref": str(cdata[14]) if cdata[14] else "",
         "ai_draft": str(cdata[15]) if cdata[15] else "",
         "ai_generated": int(cdata[17]) if len(cdata) > 17 and cdata[17] else 0,
-        "pdf_url": str(cdata[16]).strip() if len(cdata) > 16 and cdata[16] else None,
+        "pdf_url": str(cdata[19]).strip() if len(cdata) > 19 and cdata[19] else None,
     }
 
     # ---------- FLAGS ----------
