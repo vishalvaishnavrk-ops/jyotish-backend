@@ -27,17 +27,17 @@ async def website_submit(
 
     saved_files = []
 
-    for img in images:
+    client_code = generate_client_code()   # 👈 पहले generate
 
+    for img in images:
         unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
-        file_path = os.path.join(UPLOAD_DIR, unique_name)
+        file_bytes = await img.read()
 
-        with open(file_path, "wb") as f:
-            f.write(await img.read())
+        file_url = upload_palm_image(file_bytes, unique_name, client_code)
 
-        saved_files.append(unique_name)
-
+        saved_files.append(file_url)
+    
     image_names = ",".join(saved_files)
 
     conn = get_db()
