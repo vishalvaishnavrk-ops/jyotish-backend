@@ -26,18 +26,27 @@ async def website_submit(
     images: List[UploadFile] = File(...)
 ):
 
-    saved_files = []
+    client_code = generate_client_code()
 
-    client_code = generate_client_code()   # 👈 पहले generate
+    saved_files = []
 
     for img in images:
         unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
         file_bytes = await img.read()
 
-        file_url = upload_palm_image(file_bytes, unique_name, client_code)
+        # 🔥 TEMP PATH (NO CLIENT CODE YET)
+        temp_path = f"temp/{unique_name}"
 
-        saved_files.append(file_url)
+        supabase.storage.from_("palms").upload(
+            temp_path,
+            file_bytes,
+            {"content-type": "image/jpeg"}
+        )
+
+        temp_url = f"{SUPABASE_URL}/storage/v1/object/public/palms/{temp_path}"
+
+        saved_files.append(temp_url)
     
     image_names = ",".join(saved_files)
 
@@ -79,6 +88,40 @@ async def website_submit(
     conn.commit()
     conn.close()
 
+    # 🔥 FINAL MOVE TO CORRECT CLIENT FOLDER
+
+    final_images = []
+
+    for url in saved_files:
+        filename = url.split("/")[-1]
+
+        new_path = f"client_images/{client_code}/{filename}"
+
+        # copy file
+        supabase.storage.from_("palms").copy(
+            f"temp/{filename}",
+            new_path
+        )
+
+        # delete temp file
+        supabase.storage.from_("palms").remove([f"temp/{filename}"])
+
+        final_url = f"{SUPABASE_URL}/storage/v1/object/public/palms/{new_path}"
+
+        final_images.append(final_url)
+
+    # 🔥 UPDATE DB WITH FINAL URLs
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute(
+        "UPDATE clients SET images=%s WHERE client_code=%s",
+        (",".join(final_images), client_code)
+    )
+
+    conn.commit()
+    conn.close()  
+    
     return {
         "success": True,
         "client_code": client_code
