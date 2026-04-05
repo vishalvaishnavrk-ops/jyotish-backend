@@ -26,7 +26,14 @@ def upload_palm_image(file_bytes, filename):
 def upload_pdf(file_bytes, file_name):
     path = f"reports/{file_name}"
 
-    supabase.storage.from_("reports").upload(path, file_bytes, {"upsert": False})
+    supabase.storage.from_("reports").upload(
+        path,
+        file_bytes,
+        {
+            "content-type": "application/pdf",
+            "upsert": False
+        }
+    )
 
     public_url = supabase.storage.from_("reports").get_public_url(path)
 
