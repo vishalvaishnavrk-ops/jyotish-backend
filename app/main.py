@@ -11,8 +11,14 @@ app = FastAPI()
 
 load_dotenv()
 
-app.add_middleware(SessionMiddleware, secret_key="mysecret123")
-
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="mysecret123",
+    session_cookie="admin_session",
+    max_age=None,   # 🔥 browser close पर expire
+    same_site="lax",
+    https_only=False  # production में True करना
+)
 
 # ---------- FOLDERS ----------
 UPLOAD_DIR = "uploads"
