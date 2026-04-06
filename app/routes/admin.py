@@ -15,6 +15,7 @@ from app.services.pdf_engine import generate_pdf_report
 from app.services.supabase_storage import upload_palm_image
 from fastapi.templating import Jinja2Templates
 from jinja2 import StrictUndefined   # 👈 ADD THIS
+from app.auth import verify_admin
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -51,18 +52,15 @@ def login_page(request: Request):
 @router.post("/admin/login")
 def login(request: Request, username: str = Form(...), password: str = Form(...)):
 
-    admin_user = os.getenv("ADMIN_USERNAME")
-    admin_pass = os.getenv("ADMIN_PASSWORD")
-
-    if username == admin_user and password == admin_pass:
+    if verify_admin(username, password):
         request.session["admin"] = True
         request.session["last_active"] = datetime.now().isoformat()
         return RedirectResponse("/admin/dashboard", status_code=302)
 
-    return render(request, "admin/login.html", {
+    return render_template_safe(request, "admin/login.html", {
         "error": "Invalid credentials"
     })
-
+    
 SESSION_TIMEOUT = 30  # minutes
 
 def check_admin(request: Request):
