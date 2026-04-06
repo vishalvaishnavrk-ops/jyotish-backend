@@ -2,7 +2,7 @@ from fastapi import APIRouter, Form, UploadFile, File, Query
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi import Request
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 import uuid
 import os
@@ -55,16 +55,34 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
     admin_pass = os.getenv("ADMIN_PASSWORD")
 
     if username == admin_user and password == admin_pass:
-        request.session["admin"] = True
+        request.session["last_active"] = datetime.now().isoformat()
         return RedirectResponse("/admin/dashboard", status_code=302)
 
     return render(request, "admin/login.html", {
         "error": "Invalid credentials"
     })
 
+SESSION_TIMEOUT = 30  # minutes
+
 def check_admin(request: Request):
-    if not request.session.get("admin"):
-        return RedirectResponse("/admin/login", status_code=302)
+
+    if "admin" not in request.session:
+        return RedirectResponse("/admin/login")
+
+    # 🔥 idle timeout check
+    last_active = request.session.get("last_active")
+
+    if last_active:
+        last_active_time = datetime.fromisoformat(last_active)
+
+        if datetime.now() - last_active_time > timedelta(minutes=SESSION_TIMEOUT):
+            request.session.clear()
+            return RedirectResponse("/admin/login")
+
+    # 🔥 update activity time
+    request.session["last_active"] = datetime.now().isoformat()
+
+    return None
         
 @router.get("/admin/logout")
 def logout(request: Request):
