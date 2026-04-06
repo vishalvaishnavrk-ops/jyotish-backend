@@ -55,6 +55,7 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
     admin_pass = os.getenv("ADMIN_PASSWORD")
 
     if username == admin_user and password == admin_pass:
+        request.session["admin"] = True
         request.session["last_active"] = datetime.now().isoformat()
         return RedirectResponse("/admin/dashboard", status_code=302)
 
