@@ -15,7 +15,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key="mysecret123",
     session_cookie="admin_session",
-    max_age=None,   # 🔥 browser close पर expire
+    max_age=1800,   # 🔥 browser close पर expire
     same_site="lax",
     https_only=False  # production में True करना
 )
