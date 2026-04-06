@@ -26,35 +26,13 @@ async def website_submit(
     images: List[UploadFile] = File(...)
 ):
 
-    client_code = generate_client_code()
-
-    saved_files = []
-
-    for img in images:
-        unique_name = f"{uuid.uuid4().hex}_{img.filename}"
-
-        file_bytes = await img.read()
-
-        # 🔥 TEMP PATH (NO CLIENT CODE YET)
-        temp_path = f"temp/{unique_name}"
-
-        supabase.storage.from_("palms").upload(
-            temp_path,
-            file_bytes,
-            {"content-type": "image/jpeg"}
-        )
-
-        temp_url = f"{SUPABASE_URL}/storage/v1/object/public/palms/{temp_path}"
-
-        saved_files.append(temp_url)
-    
-    image_names = ",".join(saved_files)
-
     conn = get_db()
     c = conn.cursor()
 
+    # ✅ STEP 1: GENERATE CLIENT CODE
     client_code = generate_client_code()
 
+    # ✅ STEP 2: INSERT CLIENT (WITHOUT IMAGES)
     c.execute(
         """
         INSERT INTO clients
@@ -72,7 +50,7 @@ async def website_submit(
             place,
             plan,
             questions,
-            image_names,
+            "",  # 🔥 EMPTY IMAGES
             "Website",
             "Pending",
             "Pending",
@@ -86,42 +64,28 @@ async def website_submit(
     )
 
     conn.commit()
-    conn.close()
 
-    # 🔥 FINAL MOVE TO CORRECT CLIENT FOLDER
+    # ✅ STEP 3: UPLOAD IMAGES (AFTER DB INSERT)
+    saved_files = []
 
-    final_images = []
+    for img in images:
+        unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
-    for url in saved_files:
-        filename = url.split("/")[-1]
+        file_bytes = await img.read()
 
-        new_path = f"client_images/{client_code}/{filename}"
+        file_url = upload_palm_image(file_bytes, unique_name, client_code)
 
-        # copy file
-        supabase.storage.from_("palms").copy(
-            f"temp/{filename}",
-            new_path
-        )
+        saved_files.append(file_url)
 
-        # delete temp file
-        supabase.storage.from_("palms").remove([f"temp/{filename}"])
-
-        final_url = f"{SUPABASE_URL}/storage/v1/object/public/palms/{new_path}"
-
-        final_images.append(final_url)
-
-    # 🔥 UPDATE DB WITH FINAL URLs
-    conn = get_db()
-    c = conn.cursor()
-
+    # ✅ STEP 4: UPDATE DB WITH IMAGE URLS
     c.execute(
         "UPDATE clients SET images=%s WHERE client_code=%s",
-        (",".join(final_images), client_code)
+        (",".join(saved_files), client_code)
     )
 
     conn.commit()
-    conn.close()  
-    
+    conn.close()
+
     return {
         "success": True,
         "client_code": client_code
