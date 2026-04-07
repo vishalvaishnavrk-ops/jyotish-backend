@@ -77,8 +77,8 @@ Paid
 
 <form method="post" action="/admin/client/{{client.id}}/update">
 
-<textarea name="ai_draft" rows="12">{{client.ai_draft}}</textarea>
-
+<textarea id="ai-box" name="ai_draft" rows="12">{{client.ai_draft}}</textarea>
+  
 <br>
 
 <label>Status</label>
@@ -118,11 +118,12 @@ Completed
 
 <form method="post" action="/admin/client/{{client.id}}/generate-ai" class="wf-inline">
   <button type="submit" class="btn wf-btn"
+  onclick="this.disabled=true; this.innerText='Generating...';"
   {% if not can_generate_ai %}disabled{% endif %}>
     Generate AI Draft
   </button>
 </form>
-
+  
 <form method="post" action="/admin/client/{{client.id}}/generate-pdf" class="wf-inline"> 
   <button type="submit" class="btn wf-btn"
   {% if not can_generate_pdf %}disabled{% endif %}>
@@ -152,5 +153,46 @@ Completed
   
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const form = document.querySelector("form[action*='generate-ai']");
+    const aiBox = document.getElementById("ai-box");
+    const clientId = "{{client.id}}";
+
+    let interval = null;
+
+    // 🔥 CASE 1: manual button click
+    if(form && aiBox){
+        form.addEventListener("submit", function() {
+
+            aiBox.value = "Generating AI draft... please wait...";
+            interval = setInterval(checkAIStatus, 3000);
+        });
+    }
+
+    // 🔥 CASE 2: auto trigger (payment → AI pending)
+    if(aiBox && aiBox.value.includes("pending")){
+        aiBox.value = "Generating AI draft... please wait...";
+        interval = setInterval(checkAIStatus, 3000);
+    }
+
+    function checkAIStatus(){
+
+        fetch(`/admin/client/${clientId}/ai-status`)
+        .then(res => res.json())
+        .then(data => {
+
+            if(data.ready){
+                aiBox.value = data.ai_draft;
+                clearInterval(interval);
+            }
+
+        })
+        .catch(err => console.log(err));
+    }
+
+});
+</script>
 
 {% endblock %}
