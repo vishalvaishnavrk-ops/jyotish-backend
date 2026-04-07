@@ -38,6 +38,35 @@ router = APIRouter()
 UPLOAD_DIR = "uploads"
 REPORT_DIR = "reports"
 
+# 🔥 ADD THIS FUNCTION HERE
+def trigger_ai_generation(client_id):
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT payment_status, ai_generated FROM clients WHERE id=%s", (client_id,))
+    data = c.fetchone()
+
+    if not data:
+        conn.close()
+        return
+
+    payment_status, ai_generated = data
+
+    # ❌ already done → skip
+    if payment_status != "Paid" or ai_generated == 1:
+        conn.close()
+        return
+
+    # 🔥 LOCK FIRST
+    c.execute("UPDATE clients SET ai_generated=1 WHERE id=%s", (client_id,))
+    conn.commit()
+    conn.close()
+
+    try:
+        generate_ai_draft(client_id)
+    except Exception as e:
+        print("AI ERROR:", e)
 
 # ---------- ADMIN LOGIN ----------
 @router.get("/admin")
@@ -259,11 +288,8 @@ def mark_paid(request: Request, client_id: int):
     conn.commit()
     conn.close()
 
-    try:
-        generate_ai_draft(client_id)
-    except Exception as e:
-        print("AI ERROR:", e)
-
+    trigger_ai_generation(client_id)
+    
     return RedirectResponse("/admin/dashboard",status_code=302)
 
 # ---------- CLIENT DETAIL ----------
@@ -384,12 +410,9 @@ def update_payment(
     conn.close()
 
     # AI draft only first time
-    if payment_status == "Paid" and ai_generated == 0:
-        try:
-            generate_ai_draft(client_id)
-        except Exception as e:
-            print("AI ERROR:", e)
-
+    if payment_status == "Paid":
+        trigger_ai_generation(client_id)
+    
     return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
     
 # ---------- UPDATE CLIENT ----------
@@ -437,11 +460,8 @@ def manual_ai_generate(request: Request, client_id: int):
     if ai_generated == 1:
         return HTMLResponse("<h3 style='color:red;text-align:center;'>AI already generated</h3>")
 
-    try:
-        generate_ai_draft(client_id)
-    except Exception as e:
-        print("AI ERROR:", e)
-
+    trigger_ai_generation(client_id)
+    
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
 # ---------- GENERATE PDF ----------
