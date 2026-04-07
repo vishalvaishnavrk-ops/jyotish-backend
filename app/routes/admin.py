@@ -53,21 +53,28 @@ def trigger_ai_generation(client_id):
 
     payment_status, ai_generated = data
 
-    # ❌ already done → skip
     if payment_status != "Paid" or ai_generated == 1:
         conn.close()
         return
 
-    # 🔥 LOCK FIRST
+    # 🔥 LOCK START
     c.execute("UPDATE clients SET ai_generated=1 WHERE id=%s", (client_id,))
     conn.commit()
     conn.close()
 
     try:
         generate_ai_draft(client_id)
+
     except Exception as e:
         print("AI ERROR:", e)
 
+        # 🔥 IMPORTANT: RESET ON FAIL
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("UPDATE clients SET ai_generated=0 WHERE id=%s", (client_id,))
+        conn.commit()
+        conn.close()
+        
 # ---------- ADMIN LOGIN ----------
 @router.get("/admin")
 def admin_root():
