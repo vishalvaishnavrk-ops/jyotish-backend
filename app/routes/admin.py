@@ -635,3 +635,23 @@ async def add_client(
     conn.close()
 
     return RedirectResponse("/admin/dashboard", status_code=302)
+
+@router.get("/admin/client/{client_id}/ai-status")
+def ai_status(request: Request, client_id: int):
+
+    auth = check_admin(request)
+    if auth:
+        return auth
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT ai_draft, ai_generated FROM clients WHERE id=%s", (client_id,))
+    data = c.fetchone()
+
+    conn.close()
+
+    return {
+        "ready": bool(data[1]),
+        "ai_draft": data[0] if data[0] else ""
+    }
