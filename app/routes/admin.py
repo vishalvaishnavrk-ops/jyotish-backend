@@ -682,3 +682,16 @@ def ai_status(request: Request, client_id: int):
         "ready": bool(data[1]),
         "ai_draft": data[0] if data[0] else ""
     }
+
+# 🔥 TEMP DEBUG ROUTE (REMOVE AFTER TEST)
+@router.get("/debug/db")
+def debug_db():
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("SELECT id, payment_status, ai_generated FROM clients ORDER BY id DESC LIMIT 10")
+    data = c.fetchall()
+
+    conn.close()
+
+    return {"data": data}
