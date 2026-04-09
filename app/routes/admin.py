@@ -684,14 +684,14 @@ def ai_status(request: Request, client_id: int):
     }
 
 # 🔥 TEMP DEBUG ROUTE (REMOVE AFTER TEST)
-@router.get("/debug/db")
-def debug_db():
+@router.get("/debug/reset")
+def reset_ai():
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT id, payment_status, ai_generated FROM clients ORDER BY id DESC LIMIT 10")
-    data = c.fetchall()
+    c.execute("UPDATE clients SET ai_generated=0")
+    conn.commit()
 
     conn.close()
 
-    return {"data": data}
+    return {"status": "RESET DONE"}
