@@ -44,36 +44,36 @@ def trigger_ai_generation(client_id):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT payment_status, ai_generated FROM clients WHERE id=%s", (client_id,))
+    c.execute("SELECT payment_status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
 
-    if not data:
-        conn.close()
-        return
-
-    payment_status, ai_generated = data
-
-    if payment_status != "Paid" or ai_generated == 1:
-        conn.close()
-        return
-
-    # 🔥 LOCK START
-    c.execute("UPDATE clients SET ai_generated=1 WHERE id=%s", (client_id,))
-    conn.commit()
     conn.close()
 
+    if not data:
+        return
+
+    payment_status = data[0]
+
+    # ❌ only block if NOT paid
+    if payment_status != "Paid":
+        return
+
     try:
+        print(f"🔥 AI STARTED for {client_id}")
+
         generate_ai_draft(client_id)
 
-    except Exception as e:
-        print("AI ERROR:", e)
-
-        # 🔥 IMPORTANT: RESET ON FAIL
+        # ✅ mark success AFTER generation
         conn = get_db()
         c = conn.cursor()
-        c.execute("UPDATE clients SET ai_generated=0 WHERE id=%s", (client_id,))
+        c.execute("UPDATE clients SET ai_generated=1 WHERE id=%s", (client_id,))
         conn.commit()
         conn.close()
+
+        print(f"✅ AI SUCCESS for {client_id}")
+
+    except Exception as e:
+        print("❌ AI ERROR:", e)
         
 # ---------- ADMIN LOGIN ----------
 @router.get("/admin")
@@ -451,26 +451,23 @@ def manual_ai_generate(request: Request, client_id: int):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT payment_status, ai_generated FROM clients WHERE id=%s", (client_id,))
+    c.execute("SELECT payment_status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
 
     conn.close()
 
     payment_status = data[0]
-    ai_generated = data[1] if data[1] else 0
 
-    # ❌ Block if payment not done
     if payment_status != "Paid":
-        return HTMLResponse("<h3 style='color:red;text-align:center;'>Payment required before AI generation</h3>")
+        return HTMLResponse("Payment required")
 
-    # ❌ Block if already generated
-    if ai_generated == 1:
-        return HTMLResponse("<h3 style='color:red;text-align:center;'>AI already generated</h3>")
+    try:
+        trigger_ai_generation(client_id)
+    except Exception as e:
+        print("MANUAL ERROR:", e)
 
-    trigger_ai_generation(client_id)
-    
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
-
+    
 # ---------- GENERATE PDF ----------
 @router.post("/admin/client/{client_id}/generate-pdf")
 def create_pdf(request: Request, client_id: int):
