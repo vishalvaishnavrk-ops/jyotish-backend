@@ -119,7 +119,7 @@ Completed
 <form method="post" action="/admin/client/{{client.id}}/generate-ai" class="wf-inline">
   <button type="submit" class="btn wf-btn"
   onclick="this.disabled=true; this.innerText='Generating...';"
-  {% if not can_generate_ai %}disabled{% endif %}>
+  {% if client.payment_status != "Paid" %}disabled{% endif %}>
     Generate AI Draft
   </button>
 </form>
