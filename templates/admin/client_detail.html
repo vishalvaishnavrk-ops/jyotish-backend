@@ -116,9 +116,11 @@ Completed
 
 <div class="workflow-row">
 
-<form method="post" action="/admin/client/{{client.id}}/generate-ai" class="wf-inline">
-  <button type="submit" class="btn wf-btn"
-  onclick="this.disabled=true; this.innerText='Generating...';"
+<form onsubmit="return false;" class="wf-inline">
+  <button type="button" class="btn wf-btn"
+  onclick="startAIGeneration(this)">
+      Generate AI Draft
+  </button>
   {% if client.payment_status != "Paid" %}disabled{% endif %}>
     Generate AI Draft
   </button>
@@ -156,24 +158,16 @@ Completed
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    const form = document.querySelector("form[action*='generate-ai']");
     const aiBox = document.getElementById("ai-box");
     const clientId = "{{client.id}}";
 
     let interval = null;
 
-    // 🔥 CASE 1: manual button click
-    if(form && aiBox){
-        form.addEventListener("submit", function() {
-
-            aiBox.value = "Generating AI draft... please wait...";
-            interval = setInterval(checkAIStatus, 3000);
-        });
-    }
-
-    // 🔥 CASE 2: auto trigger (payment done but AI not generated)
+    // 🔥 AUTO TRIGGER (जब Paid है और AI अभी generate नहीं हुआ)
     if(aiBox && "{{client.payment_status}}" === "Paid" && Number("{{client.ai_generated}}") === 0){
+
         aiBox.value = "Generating AI draft... please wait...";
+
         interval = setInterval(checkAIStatus, 3000);
     }
 
@@ -193,6 +187,42 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
+
+
+// 🔥 NEW FUNCTION (Manual AI Button AJAX)
+function startAIGeneration(btn){
+
+    btn.disabled = true;
+    btn.innerText = "Generating...";
+
+    const aiBox = document.getElementById("ai-box");
+    const clientId = "{{client.id}}";
+
+    aiBox.value = "Generating AI draft... please wait...";
+
+    // 🔥 trigger AI generation (NO PAGE RELOAD)
+    fetch(`/admin/client/${clientId}/generate-ai`, {
+        method: "POST"
+    });
+
+    let interval = setInterval(() => {
+
+        fetch(`/admin/client/${clientId}/ai-status`)
+        .then(res => res.json())
+        .then(data => {
+
+            if(data.ready){
+                aiBox.value = data.ai_draft;
+                btn.disabled = false;
+                btn.innerText = "Generate AI Draft";
+                clearInterval(interval);
+            }
+
+        })
+        .catch(err => console.log(err));
+
+    }, 3000);
+}
 </script>
 
 {% endblock %}
