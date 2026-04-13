@@ -171,8 +171,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 CASE 2: auto trigger (payment → AI pending)
-    if(aiBox && aiBox.value.includes("pending")){
+    // 🔥 CASE 2: auto trigger (payment done but AI not generated)
+    if(aiBox && "{{client.payment_status}}" === "Paid" && Number("{{client.ai_generated}}") === 0){
         aiBox.value = "Generating AI draft... please wait...";
         interval = setInterval(checkAIStatus, 3000);
     }
