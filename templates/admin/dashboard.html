@@ -184,14 +184,15 @@ Paid
   
 <td>{{ c[7] }}</td>
   
-<td>
-<a class="btn" href="/admin/client/{{c[0]}}">View</a>
-<a href="/admin/client/{{c[0]}}/send-details" 
-   target="_blank" 
-   class="btn">
-   Send Details
-</a>  
-</td>
+<td style="display:flex; flex-direction:column; gap:6px;">
+  
+    <a href="/admin/client/{{c[0]}}" class="btn">
+        View Details
+    </a>
+
+    <a href="/admin/client/{{c[0]}}/send-details" target="_blank" class="btn">
+        Send Details
+    </a></td>
 
 </tr>
 
