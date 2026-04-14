@@ -187,13 +187,13 @@ Paid
 <td style="display:flex; flex-direction:column; gap:6px; align-items:center;">
 
     <!-- VIEW -->
-    <a href="/admin/client/{{c[0]}}" class="btn btn-view">
+    <a href="/admin/client/{{c[0]}}" class="btn action-btn action-view">
         View Details
     </a>
 
     <!-- SEND DETAILS -->
     {% if c[8] != "Paid" and c[10] == 0 %}
-        <a href="/admin/client/{{c[0]}}/send-details" target="_blank" class="btn btn-send">
+        <a href="/admin/client/{{c[0]}}/send-details" target="_blank" class="btn action-btn action-send">
             Send Details
         </a>
     {% endif %}
@@ -202,7 +202,7 @@ Paid
     {% if c[8] != "Paid" and c[10] == 1 %}
         <a href="https://wa.me/91{{c[3]}}?text=नमस्ते%20🙏%0Aआपका%20Client%20Code%20%3A%20{{c[1]}}%0Aआपका%20payment%20अभी%20तक%20बाकाया%20है,%20कृपया%20payment%20करके%20screenshot%20भेजें%20ताकि%20आपका%20palm%20reading%20report%20process%20प्रारंभ%20किया%20जा%20सके।"
            target="_blank"
-           class="btn btn-follow">
+           class="btn action-btn action-follow">
            Follow-up
         </a>
     {% endif %}
