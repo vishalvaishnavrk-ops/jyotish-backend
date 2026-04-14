@@ -716,7 +716,7 @@ def send_details(request: Request, client_id: int):
     c = conn.cursor()
 
     c.execute("""
-        SELECT client_code, name, phone, plan, dob, tob, place, question
+        SELECT client_code, name, phone, plan, dob, tob, place, questions
         FROM clients WHERE id=%s
     """, (client_id,))
 
