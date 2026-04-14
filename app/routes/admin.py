@@ -784,5 +784,11 @@ https://aacharyavishalvaishnav.pages.dev/upi-qr.png
     encoded_msg = urllib.parse.quote(msg)
 
     wa_link = f"https://wa.me/91{phone}?text={encoded_msg}"
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("UPDATE clients SET details_sent=1 WHERE id=%s", (client_id,))
+    conn.commit()
+    conn.close()
     
     return RedirectResponse(wa_link)
