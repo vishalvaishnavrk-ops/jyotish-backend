@@ -571,3 +571,39 @@ color: #777;
 margin-top: 12px;
 text-align: center;
 }
+
+/* 🔥 DASHBOARD ACTION BUTTONS ONLY */
+
+.action-btn {
+    text-decoration: none !important;
+    display: inline-block;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    width: 130px;
+    white-space: nowrap;
+}
+
+/* view (same red look) */
+.action-view {
+    background: #b30000;
+    color: #fff;
+}
+
+/* send details */
+.action-send {
+    background: #ff9800;
+    color: #fff;
+}
+
+/* follow up */
+.action-follow {
+    background: #007bff;
+    color: #fff;
+}
+
+.action-btn:hover {
+    opacity: 0.9;
+}
