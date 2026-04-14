@@ -186,21 +186,21 @@ Paid
   
 <td style="display:flex; flex-direction:column; gap:6px;">
 
-    <!-- ALWAYS SHOW -->
+    <!-- ALWAYS -->
     <a href="/admin/client/{{c[0]}}" class="btn">
         View Details
     </a>
 
-    <!-- SEND DETAILS (only first time) -->
-    {% if c[5] != "Paid" and c[8] == 0 %}
+    <!-- SEND DETAILS -->
+    {% if c[8] != "Paid" and c[10] == 0 %}
         <a href="/admin/client/{{c[0]}}/send-details" target="_blank" class="btn">
             Send Details
         </a>
     {% endif %}
 
-    <!-- FOLLOW-UP (after details sent) -->
-    {% if c[5] != "Paid" and c[8] == 1 %}
-        <a href="https://wa.me/91{{c[2]}}?text=नमस्ते%20🙏%0Aआपका%20Client%20Code%20%3A%20{{c[1]}}%0Aआपने%20अभी%20तक%20payment%20पूरा%20नहीं%20किया%20है।%0Aकृपया%20payment%20करके%20screenshot%20भेजें।"
+    <!-- FOLLOW-UP -->
+    {% if c[8] != "Paid" and c[10] == 1 %}
+        <a href="https://wa.me/91{{c[3]}}?text=नमस्ते%20🙏%0Aआपका%20Client%20Code%20%3A%20{{c[1]}}%0Aकृपया%20payment%20complete%20करके%20screenshot%20भेजें।"
            target="_blank"
            class="btn">
            Payment Follow-up
