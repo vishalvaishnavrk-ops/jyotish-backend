@@ -117,9 +117,9 @@ def generate_pdf_report(client_id):
 @page {{
 size:A4;
 margin-top:80px;   /* 🔥 top gap */
-margin-bottom:50px;
-margin-left:45px;
-margin-right:45px;
+margin-bottom:55px;
+margin-left:50px;
+margin-right:50px;
 border:2px solid #d4af37;
 }}
 
@@ -140,9 +140,10 @@ position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-font-size:150px;
-color:rgba(139,0,0,0.05);
+font-size:120px;
+color:rgba(139,0,0,0.06);
 z-index:-1;
+white-space:nowrap;
 }}
 
 .cover {{
@@ -168,12 +169,13 @@ font-size:18px;
 }}
 
 .client-box {{
-padding:20px;
-margin:30px 30px;   /* 🔥 side spacing */
-border:1px dashed #999;  /* dotted border */
+margin:30px 30px;
+padding:25px;
+border:1px dashed #999;
 border-radius:10px;
-font-size:15px;
-background:none;
+font-size:16px;
+line-height:1.8;
+background:#fffdf8;
 }}
 
 .section-title {{
@@ -207,11 +209,9 @@ font-size:15px;
 }}
 
 .antim-section {{
-background:#fff8e7;
-margin:60px 50px;
-padding:45px;
-border-radius:18px;
-border:2px solid #d4af37;
+margin:40px 20px;
+padding:20px;
+border:1px dashed #999;
 text-align:center;
 }}
 
@@ -246,7 +246,7 @@ color:#777;
 
 <body>
 
-<div class="watermark">ॐ</div>
+<div class="watermark">श्री राधे</div>
 
 <div class="cover">
 
@@ -279,6 +279,10 @@ style="width:220px;height:220px;border-radius:50%;border:5px solid #d4af37;">
 </div>
 
 <div class="client-box">
+
+<div style="font-weight:bold; font-size:18px; margin-bottom:10px; color:#8b0000;">
+Client Information
+</div>
 
 <b>Client Code:</b> {client_code}<br>
 <b>Name:</b> {name}<br>
