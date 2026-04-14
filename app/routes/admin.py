@@ -143,7 +143,7 @@ end_date: str = Query(None)
     c = conn.cursor()
 
     sql = """
-    SELECT id,client_code,name,phone,plan,source,status,created_at,payment_status,priority
+    SELECT id,client_code,name,phone,plan,source,status,created_at,payment_status,priority,details_sent
     FROM clients
     WHERE 1=1
     """
