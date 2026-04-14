@@ -193,8 +193,11 @@ Paid
 
     <!-- SEND DETAILS -->
     {% if c[8] != "Paid" and c[10] == 0 %}
-        <a href="/admin/client/{{c[0]}}/send-details" target="_blank" class="btn action-btn action-send">
-            Send Details
+        <a href="/admin/client/{{c[0]}}/send-details"
+           target="_blank"
+           class="btn action-btn action-send"
+           onclick="setTimeout(() => location.reload(), 1500);">
+           Send Details
         </a>
     {% endif %}
 
