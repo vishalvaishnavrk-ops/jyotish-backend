@@ -333,6 +333,13 @@ def client_detail(request: Request, client_id: int):
         "client_code": str(cdata[1]),
         "name": str(cdata[2]),
         "phone": str(cdata[3]),
+
+        # 🔥 NEW FIELDS
+        "dob": str(cdata[4]) if cdata[4] else "",
+        "tob": str(cdata[5]) if cdata[5] else "",
+        "place": str(cdata[6]) if cdata[6] else "",
+        "question": str(cdata[8]) if cdata[8] else "",
+
         "plan": str(cdata[7]),
         "status": str(cdata[11]),
         "payment_status": str(cdata[12]),
