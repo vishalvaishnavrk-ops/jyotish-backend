@@ -704,3 +704,83 @@ def reset_ai():
     conn.close()
 
     return {"status": "RESET DONE"}
+
+@router.get("/admin/client/{client_id}/send-details")
+def send_details(request: Request, client_id: int):
+
+    auth = check_admin(request)
+    if auth:
+        return auth
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT client_code, name, phone, plan, dob, tob, place, question
+        FROM clients WHERE id=%s
+    """, (client_id,))
+
+    data = c.fetchone()
+    conn.close()
+
+    if not data:
+        return HTMLResponse("Client not found")
+
+    client_code, name, phone, plan, dob, tob, place, question = data
+
+    # 🔥 FINAL PREMIUM MESSAGE
+    msg = f"""🙏 *जय श्री राधे* 🙏
+
+आपकी जानकारी *Acharya Vishal Vaishnav* को सफलतापूर्वक प्राप्त हो गई है।
+
+📌 *Client Details:*
+
+👤 नाम: {name}  
+📞 मोबाइल: {phone}  
+📅 जन्म तिथि: {dob}  
+⏰ जन्म समय: {tob}  
+📍 जन्म स्थान: {place}  
+🧾 प्लान: {plan}  
+
+प्रश्न:
+{question}
+
+🆔 *आपका Client Code:* {client_code}
+
+━━━━━━━━━━━━━━━
+
+💳 *Payment Details:*
+
+🔹 *Account 1:*  
+Name: Aarti Ramawat  
+A/C: 61266765065  
+IFSC: SBIN0031573  
+Bank: State Bank of India  
+
+🔹 *Account 2:*  
+Name: Vishal Vaishnav  
+A/C: 61040532921  
+IFSC: SBIN0031573  
+Bank: State Bank of India  
+
+📲 *UPI QR Code:*  
+https://aacharyavishalvaishnav.pages.dev/upi-qr.png  
+
+━━━━━━━━━━━━━━━
+
+📩 *आगे की प्रक्रिया:*
+
+✔ Payment करने के बाद  
+✔ Screenshot इसी WhatsApp नंबर पर भेजें  
+✔ साथ में *Client Code जरूर लिखें*
+
+⏳ आपकी रिपोर्ट 12–24 घंटे में तैयार कर दी जाएगी।
+
+━━━━━━━━━━━━━━━
+
+✨ धन्यवाद  
+*Acharya Vishal Vaishnav*"""
+
+    wa_link = f"https://wa.me/91{phone}?text={msg}"
+
+    return RedirectResponse(wa_link)
