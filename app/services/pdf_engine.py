@@ -116,7 +116,10 @@ def generate_pdf_report(client_id):
 
 @page {{
 size:A4;
-margin:45px;
+margin-top:80px;   /* 🔥 top gap */
+margin-bottom:50px;
+margin-left:45px;
+margin-right:45px;
 border:2px solid #d4af37;
 }}
 
@@ -165,13 +168,12 @@ font-size:18px;
 }}
 
 .client-box {{
-background:linear-gradient(to right,#fff8e7,#ffe7b5);
-padding:30px;
-margin-top:25px;
-border-left:6px solid #d4af37;
-border-radius:12px;
-box-shadow:0 6px 16px rgba(0,0,0,0.1);
-font-size:16px;
+padding:20px;
+margin:30px 30px;   /* 🔥 side spacing */
+border:1px dashed #999;  /* dotted border */
+border-radius:10px;
+font-size:15px;
+background:none;
 }}
 
 .section-title {{
@@ -186,9 +188,9 @@ padding-bottom:5px;
 }}
 
 .section-block {{
-margin:18px 25px;
+margin:20px 10px;
 padding-bottom:12px;
-border-bottom:1px dashed #999;
+border-bottom:1px dashed #aaa
 page-break-inside:avoid;
 }}
 
@@ -250,25 +252,25 @@ color:#777;
 
 <div class="header" style="background:none; color:#000;">
 
-<div style="text-align:center; font-size:26px; font-weight:bold;">
+<div style="text-align:center; font-size:38px; font-weight:bold; color:#8b0000; margin-bottom:15px;">
 VATS PALM REPORTS
 </div>
 
-<div style="text-align:center; font-size:12px; margin-bottom:15px;">
-Created by Acharya Vishal Vaishnav
+<div style="text-align:center; font-size:14px; margin-bottom:25px;">
+Created By
 </div>
 
-<div style="text-align:center; margin:20px 0;">
+<div style="text-align:center; margin:30px 0;">
 <img src="file://{ganesha_path}" 
-style="width:130px;height:130px;border-radius:50%;border:4px solid #d4af37;">
+style="width:220px;height:220px;border-radius:50%;border:5px solid #d4af37;">
 </div>
 
 <div style="text-align:center;">
-<div style="font-size:22px;font-weight:bold;">
+<div style=font-size:26px; color:#8b0000; font-weight:bold;">
 आचार्य विशाल वैष्णव
 </div>
 
-<div style="font-size:14px;">
+<div style="font-size:16px; color:#333;">
 हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ
 </div>
 </div>
