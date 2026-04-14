@@ -15,7 +15,8 @@ def generate_pdf_report(client_id):
     c = conn.cursor()
 
     c.execute(
-        "SELECT client_code,name,phone,plan,ai_draft,created_at FROM clients WHERE id=%s",
+        "SELECT client_code,name,phone,plan,ai_draft,created_at,
+        dob,tob,place,questions FROM clients WHERE id=%s",
         (client_id,)
     )
 
@@ -35,7 +36,7 @@ def generate_pdf_report(client_id):
     if not data:
         return None
 
-    client_code, name, phone, plan, ai_draft, created_at = data
+    client_code, name, phone, plan, ai_draft, created_at, dob, tob, place, question = data
 
     file_name = f"{client_code}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
@@ -175,21 +176,19 @@ font-size:16px;
 
 .section-title {{
 text-align:center;
-font-size:32px;
+font-size:28px;
 font-weight:bold;
-margin-top:40px;
-margin-bottom:35px;
+margin-top:30px;
+margin-bottom:25px;
 color:#8b0000;
-letter-spacing:1px;
+border-bottom:2px solid #8b0000;
+padding-bottom:5px;
 }}
 
 .section-block {{
-background:linear-gradient(to bottom,#fffdf9,#ffecc7);
-padding:28px;
-margin:22px 32px;
-border-left:6px solid #b8860b;
-border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
+margin:18px 25px;
+padding-bottom:12px;
+border-bottom:1px dashed #999;
 page-break-inside:avoid;
 }}
 
@@ -249,16 +248,32 @@ color:#777;
 
 <div class="cover">
 
-<div class="header">
+<div class="header" style="background:none; color:#000;">
 
-<img src="file://{ganesha_path}" style="width:100%;border-radius:10px;">
-
-<div class="title">आचार्य विशाल वैष्णव</div>
-
-<div class="subtitle">
-हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ
+<div style="text-align:center; font-size:26px; font-weight:bold;">
+VATS PALM REPORTS
 </div>
 
+<div style="text-align:center; font-size:12px; margin-bottom:15px;">
+Created by Acharya Vishal Vaishnav
+</div>
+
+<div style="text-align:center; margin:20px 0;">
+<img src="file://{ganesha_path}" 
+style="width:130px;height:130px;border-radius:50%;border:4px solid #d4af37;">
+</div>
+
+<div style="text-align:center;">
+<div style="font-size:22px;font-weight:bold;">
+आचार्य विशाल वैष्णव
+</div>
+
+<div style="font-size:14px;">
+हस्तरेखा विशेषज्ञ एवं वैदिक ज्योतिषज्ञ
+</div>
+</div>
+
+</div>
 </div>
 
 <div class="client-box">
@@ -267,6 +282,13 @@ color:#777;
 <b>Name:</b> {name}<br>
 <b>Mobile:</b> {phone}<br>
 <b>Plan:</b> {plan}<br>
+
+<b>Date of Birth:</b> {dob}<br>
+<b>Time of Birth:</b> {tob}<br>
+<b>Place:</b> {place}<br>
+
+<b>Main Question:</b> {question}<br>
+
 <b>Date:</b> {created_at}
 
 </div>
