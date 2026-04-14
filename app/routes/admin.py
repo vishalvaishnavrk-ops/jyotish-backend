@@ -781,6 +781,8 @@ https://aacharyavishalvaishnav.pages.dev/upi-qr.png
 ✨ धन्यवाद  
 *Acharya Vishal Vaishnav*"""
 
-    wa_link = f"https://wa.me/91{phone}?text={msg}"
+    encoded_msg = urllib.parse.quote(msg)
 
+    wa_link = f"https://wa.me/91{phone}?text={encoded_msg}"
+    
     return RedirectResponse(wa_link)
