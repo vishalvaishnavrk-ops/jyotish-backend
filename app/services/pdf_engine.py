@@ -14,11 +14,11 @@ def generate_pdf_report(client_id):
     conn = get_db()
     c = conn.cursor()
 
-    c.execute(
-        "SELECT client_code,name,phone,plan,ai_draft,created_at,
-        dob,tob,place,questions FROM clients WHERE id=%s",
-        (client_id,)
-    )
+    c.execute("""
+    SELECT client_code,name,phone,plan,ai_draft,created_at,
+    dob,tob,place,questions
+    FROM clients WHERE id=%s
+    """, (client_id,))
 
     data = c.fetchone()
     # 🔥 DUPLICATE CHECK
