@@ -70,17 +70,27 @@ def generate_pdf_report(client_id):
 
         content = content.replace("वर्ष", "<br><br>वर्ष")
 
-        formatted_blocks += f"""
-        <div class="section-block">
+        # 🔥 detect last AI section only
+        is_last_section = (i + 2 >= len(sections))
 
-        <div class="section-heading">{title}</div>
-
-        <div class="section-content">
-        {content.replace("\\n","<br>")}
-        </div>
-
-        </div>
-        """
+        if is_last_section:
+            formatted_blocks += f"""
+            <div class="section-block" style="margin-bottom:0;">
+                <div class="section-heading" style="margin-bottom:2px;">{title}</div>
+                <div class="section-content" style="margin-top:0; line-height:1.4;">
+                    {content.replace("\\n","<br>")}
+                </div>
+            </div>
+            """
+        else:
+            formatted_blocks += f"""
+            <div class="section-block">
+                <div class="section-heading">{title}</div>
+                <div class="section-content">
+                    {content.replace("\\n","<br>")}
+                </div>
+            </div>
+            """
 
     # antim page
     if antim_message:
@@ -126,22 +136,11 @@ letter-spacing: 1px;
 
 @page {{
 size:A4;
-margin-top:80px;   /* 🔥 top gap */
-margin-bottom:55px;
+margin-top:50px;   /* 🔥 top gap */
+margin-bottom:50px;
 margin-left:50px;
 margin-right:50px;
 border:3px double #d4af37;
-}}
-
-body::before {{
-content:"";
-position:fixed;
-top:15px;
-left:15px;
-right:15px;
-bottom:15px;
-border:1px solid rgba(212,175,55,0.5);
-pointer-events:none;
 }}
 
 @font-face {{
