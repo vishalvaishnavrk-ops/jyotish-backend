@@ -33,7 +33,7 @@ def upload_pdf(file_bytes, file_name):
         file_bytes,
         {
             "content-type": "application/pdf",
-            "upsert": True
+            "upsert": "true"   # 🔥 STRING (NOT bool)
         }
     )
 
