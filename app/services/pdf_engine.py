@@ -148,17 +148,8 @@ body {{
 font-family:'NotoDev';
 background:#faf6ef;
 margin:0;
-padding-top:10px;
+padding-top:20px;   /* 🔥 FINAL FIX */
 padding-bottom:90px;
-}}
-
-.page-content {{
-padding-top:25px;
-padding-bottom:20px;
-}}
-
-.page-content > *:first-child {{
-margin-top:20px;
 }}
 
 .watermark {{
@@ -220,36 +211,18 @@ padding-bottom:5px;
 margin:25px 25px;
 padding-bottom:10px;
 border-bottom:2px dashed #aaa;
-line-height:1.6;
-}}
-
-.section-block:last-child {{
-margin-bottom:0;
-padding-bottom:0;
-border-bottom:none;
-}}
-
-.section-block:last-child .section-heading {{
-margin-bottom:2px;
-}}
-
-.section-block:last-child .section-content {{
-margin-top:-3px;
-line-height:1.4;
 }}
 
 .section-heading {{
 font-size:18px;
 font-weight:bold;
 color:#7b0000;
-margin-bottom:4px;
+margin-bottom:5px;
 }}
 
 .section-content {{
-line-height: 1.5;
-margin-top: 2px;
-orphans: 3;
-widows: 3;
+line-height:1.6;
+margin-top:3px;
 }}
 
 .antim-section {{
