@@ -135,6 +135,10 @@ margin:0;
 padding-top:10px;
 }}
 
+.page-content {{
+padding-top:25px;
+}}
+
 .watermark {{
 position:fixed;
 top:50%;
@@ -182,18 +186,25 @@ background:#fffdf8;
 text-align:center;
 font-size:28px;
 font-weight:bold;
-margin-top:30px;
-margin-bottom:25px;
+margin-top:20px;
+margin-bottom:8px;
 color:#8b0000;
 border-bottom:2px solid #8b0000;
 padding-bottom:5px;
 }}
 
 .section-block {{
-margin:20px 10px;
-padding-bottom:12px;
+margin:10px 10px;
+padding-bottom:10px;
 border-bottom:1px dashed #aaa
 page-break-inside:avoid;
+line-height:1.6;
+}}
+
+.section-block:last-child {{
+margin-bottom:0;
+padding-bottom:0;
+border-bottom:none;
 }}
 
 .section-heading {{
@@ -247,6 +258,8 @@ color:#777;
 <body>
 
 <div class="watermark">श्री राधे</div>
+
+<div class="page-content">
 
 <div class="cover">
 
@@ -319,6 +332,7 @@ WhatsApp: +91-6000376976
 
 </div>
 
+</div>
 </body>
 </html>
 """
