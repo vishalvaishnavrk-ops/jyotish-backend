@@ -70,12 +70,11 @@ def generate_pdf_report(client_id):
 
         content = content.replace("वर्ष", "<br><br>वर्ष")
 
-        # 🔥 detect last AI section only
         is_last_section = (i + 2 >= len(sections))
 
         if is_last_section:
             formatted_blocks += f"""
-            <div class="section-block" style="margin-bottom:0;">
+            <div style="margin-bottom:0; padding-bottom:0;">
                 <div class="section-heading" style="margin-bottom:2px;">{title}</div>
                 <div class="section-content" style="margin-top:0; line-height:1.4;">
                     {content.replace("\\n","<br>")}
@@ -91,7 +90,7 @@ def generate_pdf_report(client_id):
                 </div>
             </div>
             """
-
+        
     # antim page
     if antim_message:
 
@@ -276,7 +275,8 @@ font-weight:bold;
 }}
 
 .footer {{
-margin-top:60px;
+margin-top:40px;
+padding-bottom:20px;   /* 🔥 add this */
 text-align:center;
 font-size:12px;
 color:#777;
@@ -298,10 +298,10 @@ color:#777;
 
 <div style="
 text-align:center;
-font-size:34px;
+font-size:36px;
 font-weight:bold;
 color:#7b0000;
-letter-spacing:2px;
+letter-spacing:1px;
 font-family: Georgia, 'Times New Roman', serif;
 ">
 VATS PALM REPORTS
