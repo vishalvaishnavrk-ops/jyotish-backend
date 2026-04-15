@@ -173,12 +173,12 @@ font-size:18px;
 }}
 
 .client-box {{
-margin:30px 30px;
-padding:25px;
+margin:15px 30px;   /* 🔥 top spacing कम */
+padding:20px;
 border:1px dashed #999;
 border-radius:10px;
-font-size:16px;
-line-height:1.8;
+font-size:15px;
+line-height:1.6;
 background:#fffdf8;
 }}
 
@@ -194,7 +194,7 @@ padding-bottom:5px;
 }}
 
 .section-block {{
-margin:10px 10px;
+margin:25px 25px;
 padding-bottom:10px;
 border-bottom:1px dashed #aaa
 page-break-inside:avoid;
@@ -202,6 +202,7 @@ line-height:1.6;
 }}
 
 .section-block:last-child {{
+margin-top:-5px;
 margin-bottom:0;
 padding-bottom:0;
 border-bottom:none;
@@ -211,12 +212,13 @@ border-bottom:none;
 font-size:18px;
 font-weight:bold;
 color:#7b0000;
-margin-bottom:10px;
+margin-bottom:3px;
 }}
 
 .section-content {{
-line-height:1.8;
+line-height:1.5;
 font-size:15px;
+margin-top:0;
 }}
 
 .antim-section {{
