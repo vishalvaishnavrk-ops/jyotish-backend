@@ -136,7 +136,7 @@ letter-spacing: 1px;
 @page {{
 size:A4;
 margin-top:50px;   /* 🔥 top gap */
-margin-bottom:50px;
+margin-bottom:70px;
 margin-left:50px;
 margin-right:50px;
 border:3px double #d4af37;
@@ -152,7 +152,7 @@ font-family:'NotoDev';
 background:#faf6ef;
 margin:0;
 padding-top:10px;
-padding-bottom:30px;
+padding-bottom:90px;
 }}
 
 .page-content {{
@@ -279,12 +279,13 @@ font-weight:bold;
 
 .footer {{
 position: fixed;
-bottom: 20px;
+bottom: 25px;   /* 🔥 border से distance */
 left: 0;
 right: 0;
 text-align: center;
 font-size: 12px;
 color: #777;
+line-height: 1.2;   /* 🔥 line-text gap control */
 }}
 
 </style>
@@ -368,13 +369,8 @@ Client Information
 {formatted_blocks}
 
 <div class="footer">
-
-<hr style="width:85%;margin:30px auto;opacity:0.4;">
-
-© 2026 आचार्य विशाल वैष्णव | All Rights Reserved<br>
-
-WhatsApp: +91-6000376976
-
+<div style="border-top:1px solid #999; margin-bottom:3px;"></div>
+<div>© 2026 Powered by VATS PALM REPORTS|All Rights Reserved</div>
 </div>
 
 </div>
