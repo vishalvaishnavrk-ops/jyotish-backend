@@ -157,9 +157,9 @@ padding-top:25px;
 padding-bottom:20px;
 }}
 
-.page-content > *:first-child {
+.page-content > *:first-child {{
 margin-top:20px;
-}
+}}
 
 .watermark {{
 position:fixed;
