@@ -135,10 +135,7 @@ letter-spacing: 1px;
 
 @page {{
 size:A4;
-margin-top:70px;   /* 🔥 top gap */
-margin-bottom:70px;
-margin-left:50px;
-margin-right:50px;
+margin:50px;   /* 🔥 equal border spacing */
 border:3px double #d4af37;
 }}
 
@@ -157,7 +154,12 @@ padding-bottom:90px;
 
 .page-content {{
 padding-top:25px;
+padding-bottom:20px;
 }}
+
+.page-content > *:first-child {
+margin-top:20px;
+}
 
 .watermark {{
 position:fixed;
@@ -218,7 +220,6 @@ padding-bottom:5px;
 margin:25px 25px;
 padding-bottom:10px;
 border-bottom:2px dashed #aaa;
-page-break-inside:avoid;
 line-height:1.6;
 }}
 
@@ -241,12 +242,12 @@ line-height:1.4;
 font-size:18px;
 font-weight:bold;
 color:#7b0000;
-margin-bottom:6px;
+margin-bottom:4px;
 }}
 
 .section-content {{
-line-height: 1.6;
-margin-top: 5px;
+line-height: 1.5;
+margin-top: 2px;
 orphans: 3;
 widows: 3;
 }}
