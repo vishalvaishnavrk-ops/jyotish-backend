@@ -114,13 +114,34 @@ def generate_pdf_report(client_id):
 
 <style>
 
+h1, .title {{
+font-family: "Georgia", "Times New Roman", serif;
+letter-spacing: 1px;
+}}
+
+.section-title {{
+font-family: "Georgia", "Times New Roman", serif;
+letter-spacing: 1px;
+}}
+
 @page {{
 size:A4;
 margin-top:80px;   /* 🔥 top gap */
 margin-bottom:55px;
 margin-left:50px;
 margin-right:50px;
-border:2px solid #d4af37;
+border:3px double #d4af37;
+}}
+
+body::before {{
+content:"";
+position:fixed;
+top:15px;
+left:15px;
+right:15px;
+bottom:15px;
+border:1px solid rgba(212,175,55,0.5);
+pointer-events:none;
 }}
 
 @font-face {{
@@ -184,13 +205,14 @@ background:#fffdf8;
 
 .section-title {{
 text-align:center;
-font-size:28px;
+font-size:30px;
 font-weight:bold;
 margin-top:20px;
-margin-bottom:8px;
-color:#8b0000;
-border-bottom:2px solid #8b0000;
-padding-bottom:5px;
+margin-bottom:10px;
+color:#7b0000;
+border-bottom:2px solid #7b0000;
+padding-bottom:6px;
+letter-spacing:1px;
 }}
 
 .section-block {{
@@ -202,10 +224,18 @@ line-height:1.6;
 }}
 
 .section-block:last-child {{
-margin-top:-5px;
 margin-bottom:0;
 padding-bottom:0;
 border-bottom:none;
+}}
+
+.section-block:last-child .section-heading {{
+margin-bottom:2px;
+}}
+
+.section-block:last-child .section-content {{
+margin-top:-3px;
+line-height:1.4;
 }}
 
 .section-heading {{
@@ -267,7 +297,7 @@ color:#777;
 
 <div class="header" style="background:none; color:#000;">
 
-<div style="text-align:center; font-size:38px; font-weight:bold; color:#8b0000; margin-bottom:15px;">
+<div style="text-align:center; font-size:38px; font-weight:bold; color:#7b0000; letter-spacing:2px;">
 VATS PALM REPORTS
 </div>
 
