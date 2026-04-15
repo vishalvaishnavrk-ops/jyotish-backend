@@ -210,9 +210,9 @@ font-weight:bold;
 margin-top:20px;
 margin-bottom:10px;
 color:#7b0000;
+display:inline-block;
 border-bottom:2px solid #7b0000;
-padding-bottom:6px;
-letter-spacing:1px;
+padding-bottom:5px;
 }}
 
 .section-block {{
@@ -297,7 +297,14 @@ color:#777;
 
 <div class="header" style="background:none; color:#000;">
 
-<div style="text-align:center; font-size:38px; font-weight:bold; color:#7b0000; letter-spacing:2px;">
+<div style="
+text-align:center;
+font-size:34px;
+font-weight:bold;
+color:#7b0000;
+letter-spacing:2px;
+font-family: Georgia, 'Times New Roman', serif;
+">
 VATS PALM REPORTS
 </div>
 
@@ -348,8 +355,10 @@ Client Information
 
 <div style="page-break-after:always;"></div>
 
-<div class="section-title">
-PALM READING DETAILED REPORT
+<div style="text-align:center;">
+    <div class="section-title">
+        PALM READING DETAILED REPORT
+    </div>
 </div>
 
 {formatted_blocks}
