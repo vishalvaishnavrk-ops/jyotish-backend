@@ -152,7 +152,7 @@ font-family:'NotoDev';
 background:#faf6ef;
 margin:0;
 padding-top:10px;
-padding-bottom: 60px;
+padding-bottom:30px;
 }}
 
 .page-content {{
@@ -219,6 +219,7 @@ margin:25px 25px;
 padding-bottom:10px;
 border-bottom:1px dashed #aaa
 page-break-inside:avoid;
+break-inside: avoid;
 line-height:1.6;
 }}
 
@@ -241,13 +242,14 @@ line-height:1.4;
 font-size:18px;
 font-weight:bold;
 color:#7b0000;
-margin-bottom:3px;
+margin-bottom:6px;
 }}
 
 .section-content {{
-line-height:1.5;
-font-size:15px;
-margin-top:0;
+line-height: 1.6;
+margin-top: 5px;
+orphans: 3;
+widows: 3;
 }}
 
 .antim-section {{
