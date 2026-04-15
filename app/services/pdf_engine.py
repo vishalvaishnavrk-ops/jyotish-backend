@@ -135,7 +135,7 @@ letter-spacing: 1px;
 
 @page {{
 size:A4;
-margin-top:50px;   /* 🔥 top gap */
+margin-top:70px;   /* 🔥 top gap */
 margin-bottom:70px;
 margin-left:50px;
 margin-right:50px;
@@ -195,7 +195,7 @@ font-size:18px;
 .client-box {{
 margin:15px 30px;   /* 🔥 top spacing कम */
 padding:20px;
-border:1px dashed #999;
+border:2px dashed #999;
 border-radius:10px;
 font-size:15px;
 line-height:1.6;
@@ -217,9 +217,8 @@ padding-bottom:5px;
 .section-block {{
 margin:25px 25px;
 padding-bottom:10px;
-border-bottom:1px dashed #aaa
+border-bottom:2px dashed #aaa;
 page-break-inside:avoid;
-break-inside: avoid;
 line-height:1.6;
 }}
 
@@ -255,7 +254,7 @@ widows: 3;
 .antim-section {{
 margin:40px 20px;
 padding:20px;
-border:1px dashed #999;
+border:2px dashed #999;
 text-align:center;
 }}
 
@@ -369,8 +368,8 @@ Client Information
 {formatted_blocks}
 
 <div class="footer">
-<div style="border-top:1px solid #999; margin-bottom:3px;"></div>
-<div>© 2026 Powered by VATS PALM REPORTS|All Rights Reserved</div>
+<div style="border-top:1px solid #ccc; margin:0 40px 3px 40px;"></div>
+<div>© 2026 All Rights Reserved & Powered by VATS PALM REPORTS</div>
 </div>
 
 </div>
