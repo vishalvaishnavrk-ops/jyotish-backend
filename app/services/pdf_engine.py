@@ -2,7 +2,7 @@ from weasyprint import HTML
 from weasyprint.text.fonts import FontConfiguration
 import os
 import re
-
+import time
 from app.database import get_db
 from app.services.supabase_storage import upload_pdf
 
@@ -74,9 +74,9 @@ def generate_pdf_report(client_id):
 
         if is_last_section:
             formatted_blocks += f"""
-            <div style="margin-bottom:0; padding-bottom:0;">
-                <div class="section-heading" style="margin-bottom:2px;">{title}</div>
-                <div class="section-content" style="margin-top:0; line-height:1.4;">
+            <div class="section-block">
+                <div class="section-heading">{title}</div>
+                <div class="section-content">
                     {content.replace("\\n","<br>")}
                 </div>
             </div>
@@ -152,6 +152,7 @@ font-family:'NotoDev';
 background:#faf6ef;
 margin:0;
 padding-top:10px;
+padding-bottom: 60px;
 }}
 
 .page-content {{
@@ -275,11 +276,13 @@ font-weight:bold;
 }}
 
 .footer {{
-margin-top:40px;
-padding-bottom:20px;   /* 🔥 add this */
-text-align:center;
-font-size:12px;
-color:#777;
+position: fixed;
+bottom: 20px;
+left: 0;
+right: 0;
+text-align: center;
+font-size: 12px;
+color: #777;
 }}
 
 </style>
@@ -400,6 +403,9 @@ WhatsApp: +91-6000376976
     conn.close()
 
     # OPTIONAL: local file delete (recommended)
-    os.remove(file_path)
+    time.sleep(1)
+    
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
     return pdf_url
