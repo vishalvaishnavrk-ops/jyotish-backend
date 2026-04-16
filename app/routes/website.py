@@ -8,30 +8,10 @@ from zoneinfo import ZoneInfo
 from app.database import get_db
 from app.utils.helpers import generate_client_code
 from app.services.supabase_storage import upload_palm_image
-from PIL import Image
-import io
 
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
-
-# 🔥 IMAGE VALIDATION FUNCTION
-def validate_palm_image_bytes(file_bytes):
-
-    try:
-        img = Image.open(io.BytesIO(file_bytes))
-        width, height = img.size
-
-        if width < 300 or height < 300:
-            return False, "कृपया स्पष्ट फोटो अपलोड करें"
-
-        if len(file_bytes) < 30 * 1024:
-            return False, "इमेज साफ नहीं है"
-
-        return True, "OK"
-
-    except:
-        return False, "Invalid image"
         
 @router.post("/api/website-submit")
 async def website_submit(
@@ -96,22 +76,10 @@ async def website_submit(
 
     for img in images:
 
-        # 🔥 STEP 3A — READ ONCE
         file_bytes = await img.read()
-
-        # 🔥 STEP 3B — VALIDATE
-        ok, msg = validate_palm_image_bytes(file_bytes)
-
-        if not ok:
-            conn.close()
-            return {
-                "success": False,
-                "error": msg
-            }
 
         unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
-        # 🔥 STEP 3C — UPLOAD
         file_url = upload_palm_image(file_bytes, unique_name, client_code)
 
         saved_files.append(file_url)
@@ -128,22 +96,4 @@ async def website_submit(
     return {
         "success": True,
         "client_code": client_code
-    }
-
-@router.post("/api/validate-images")
-async def validate_images(images: List[UploadFile] = File(...)):
-
-    for img in images:
-        file_bytes = await img.read()
-
-        ok, msg = validate_palm_image_bytes(file_bytes)
-
-        if not ok:
-            return {
-                "success": False,
-                "error": msg
-            }
-
-    return {
-        "success": True
     }
