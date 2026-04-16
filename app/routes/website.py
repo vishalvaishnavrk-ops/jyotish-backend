@@ -18,7 +18,7 @@ UPLOAD_DIR = "uploads"
 async def website_submit(
     name: str = Form(...),
     phone: str = Form(...),
-    dob: str = Form(...),
+    dob: str = Form(None),
     questions: str = Form(...),
     plan: str = Form(...),
     tob: Optional[str] = Form(None),
