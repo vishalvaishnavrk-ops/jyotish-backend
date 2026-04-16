@@ -22,36 +22,21 @@ def validate_palm_image_bytes(file_bytes):
         img = Image.open(io.BytesIO(file_bytes))
         width, height = img.size
 
-        # ✅ size check
         if width < 300 or height < 300:
-            return False, "Image too small"
+            return False, "कृपया स्पष्ट फोटो अपलोड करें"
 
-        # ✅ file size
-        if len(file_bytes) < 50 * 1024:
-            return False, "Image not clear"
+        if len(file_bytes) < 30 * 1024:
+            return False, "इमेज साफ नहीं है"
 
-        # ✅ aspect ratio (hand approx vertical)
         ratio = height / width
-        if ratio < 0.7 or ratio > 1.8:
-            return False, "Upload proper palm image"
-
-        # 🔥 NEW CHECK — COLOR VARIATION (palm skin tone detect)
-        pixels = img.convert("RGB").getdata()
-        sample = list(pixels)[::500]  # sample pixels
-
-        avg_r = sum(p[0] for p in sample) / len(sample)
-        avg_g = sum(p[1] for p in sample) / len(sample)
-        avg_b = sum(p[2] for p in sample) / len(sample)
-
-        # 👉 palm approx skin tone range
-        if not (80 < avg_r < 220 and 60 < avg_g < 200 and 50 < avg_b < 180):
-            return False, "Upload real palm image"
+        if ratio < 0.5 or ratio > 2.2:
+            return False, "कृपया सही हथेली की फोटो अपलोड करें"
 
         return True, "OK"
 
     except:
         return False, "Invalid image"
-
+        
 @router.post("/api/website-submit")
 async def website_submit(
     name: str = Form(...),
@@ -146,7 +131,6 @@ async def website_submit(
 async def validate_images(images: List[UploadFile] = File(...)):
 
     for img in images:
-
         file_bytes = await img.read()
 
         ok, msg = validate_palm_image_bytes(file_bytes)
