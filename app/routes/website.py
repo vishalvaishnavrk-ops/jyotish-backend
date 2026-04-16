@@ -141,3 +141,22 @@ async def website_submit(
         "success": True,
         "client_code": client_code
     }
+
+@router.post("/api/validate-images")
+async def validate_images(images: List[UploadFile] = File(...)):
+
+    for img in images:
+
+        file_bytes = await img.read()
+
+        ok, msg = validate_palm_image_bytes(file_bytes)
+
+        if not ok:
+            return {
+                "success": False,
+                "error": msg
+            }
+
+    return {
+        "success": True
+    }
