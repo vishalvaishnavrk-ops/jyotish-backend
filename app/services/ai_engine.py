@@ -8,7 +8,7 @@ def generate_ai_draft(client_id):
     c = conn.cursor()
 
     c.execute("""
-    SELECT name,questions,plan FROM clients WHERE id=%s
+    SELECT name,questions,plan,dob,tob,place FROM clients WHERE id=%s
     """,(client_id,))
 
     data = c.fetchone()
@@ -21,7 +21,13 @@ def generate_ai_draft(client_id):
         conn.close()
         return "AI already generated"
         
-    name,questions,plan = data
+    name,questions,plan,dob,tob,place = data
+
+    # ---------- MODE ----------
+    mode = "PALM_ONLY"
+
+    if dob and tob and place:
+        mode = "HYBRID"
 
     # ---------- PLAN BASED LENGTH ----------
 
@@ -75,6 +81,22 @@ def generate_ai_draft(client_id):
 * अनावश्यक दोहराव बिल्कुल न करें
 * हर सेक्शन में नई और अलग जानकारी दें
 * उत्तर संक्षिप्त लेकिन प्रभावशाली रखें
+
+👉 MODE LOGIC:
+
+IF Mode = HYBRID:
+- हस्तरेखा का गहराई से विश्लेषण करें
+- जन्म विवरण (DOB, TOB, Place) के आधार पर वैदिक ज्योतिष से cross-check करें
+- संयुक्त (Palm + Astrology) सटीक रिपोर्ट दें
+
+IF Mode = PALM_ONLY:
+- ज्योतिष को पूरी तरह ignore करें
+- केवल हस्तरेखा (Palm Reading) के आधार पर गहराई से विश्लेषण करें
+- हाथ की रेखाएं, पर्वत, बनावट, ऊर्जा पर focus करें
+
+👉 महत्वपूर्ण:
+* जन्म विवरण न होने का कोई उल्लेख न करें
+* रिपोर्ट की गुणवत्ता कम न करें
 
 रिपोर्ट लगभग {word_limit} शब्दों की होनी चाहिए
 
