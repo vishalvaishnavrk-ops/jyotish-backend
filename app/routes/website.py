@@ -51,6 +51,13 @@ async def website_submit(
     # ✅ STEP 1: GENERATE CLIENT CODE
     client_code = generate_client_code()
 
+    # 🔥 AUTO CAPITAL (SAFE)
+    name = name.strip().upper()
+    phone = phone.strip().upper() if phone else phone
+    place = place.strip().upper() if place else place
+    plan = plan.strip().upper() if plan else plan
+    tob = tob.strip().upper() if tob else tob
+
     # ✅ STEP 2: INSERT CLIENT (WITHOUT IMAGES)
     c.execute(
         """
