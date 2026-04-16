@@ -792,3 +792,7 @@ https://aacharyavishalvaishnav.pages.dev/upi-qr.png
     conn.close()
     
     return RedirectResponse(wa_link)
+
+@router.get("/ping")
+def ping():
+    return {"status": "ok"}
