@@ -54,6 +54,33 @@
 
 <h3>Payment Update</h3>
 
+<div style="
+    background:#f8f8f8;
+    padding:10px 12px;
+    border-radius:6px;
+    margin-bottom:12px;
+    font-size:14px;
+">
+
+    <b>Status:</b> 
+    <span style="color:
+        {% if client.payment_status == 'Paid' %}green{% else %}red{% endif %};
+        font-weight:bold;">
+        {{ client.payment_status }}
+    </span>
+
+    {% if client.payment_ref %}
+    <br>
+    <b>Ref:</b> {{ client.payment_ref }}
+    {% endif %}
+
+    {% if client.payment_date %}
+    <br>
+    <b>Updated:</b> {{ client.payment_date }}
+    {% endif %}
+
+</div>  
+  
 <form method="post" action="/admin/client/{{client.id}}/payment">
 
 <select name="payment_status">
