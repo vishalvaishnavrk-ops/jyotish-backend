@@ -351,8 +351,12 @@ Client Information
 </html>
 """
 
-    HTML(string=html).write_pdf(file_path, font_config=font_config)
-
+    HTML(string=html).write_pdf(
+        file_path,
+        font_config=font_config,
+        optimize_size=('fonts', 'images')
+    )
+    
     # 🔥 SUPABASE UPLOAD START
     with open(file_path, "rb") as f:
         pdf_bytes = f.read()
