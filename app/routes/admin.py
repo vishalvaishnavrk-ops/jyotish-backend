@@ -390,14 +390,24 @@ def update_payment(
     conn = get_db()
     c = conn.cursor()
 
-    c.execute("SELECT plan, ai_generated FROM clients WHERE id=%s",(client_id,))
+    # 🔥 GET EXISTING DATA (IMPORTANT FIX)
+    c.execute("""
+        SELECT plan, ai_generated, payment_ref, payment_date
+        FROM clients WHERE id=%s
+    """, (client_id,))
+    
     row = c.fetchone()
+
     plan = row[0]
     ai_generated = row[1] if row[1] is not None else 0
+    old_ref = row[2]
+    old_date = row[3]
 
-    payment_date = None
+    # ---------- DEFAULT VALUES ----------
+    payment_date = old_date   # 🔥 preserve old
     priority = 99
 
+    # ---------- WHEN PAID ----------
     if payment_status == "Paid":
 
         payment_date = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
@@ -411,6 +421,11 @@ def update_payment(
         else:
             priority = 4
 
+    # ---------- PAYMENT REF FIX ----------
+    if not payment_ref or payment_ref.strip() == "":
+        payment_ref = old_ref  # 🔥 preserve old
+
+    # ---------- UPDATE ----------
     c.execute("""
         UPDATE clients
         SET payment_status=%s,
@@ -418,16 +433,16 @@ def update_payment(
             payment_ref=%s,
             priority=%s
         WHERE id=%s
-    """,(payment_status,payment_date,payment_ref,priority,client_id))
+    """, (payment_status, payment_date, payment_ref, priority, client_id))
 
     conn.commit()
     conn.close()
 
-    # AI draft only first time
-    if payment_status == "Paid":
+    # ---------- AI TRIGGER (UNCHANGED) ----------
+    if payment_status == "Paid" and ai_generated == 0:
         trigger_ai_generation(client_id)
-    
-    return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
+
+    return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
     
 # ---------- UPDATE CLIENT ----------
 @router.post("/admin/client/{client_id}/update")
