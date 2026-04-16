@@ -8,11 +8,41 @@ from zoneinfo import ZoneInfo
 from app.database import get_db
 from app.utils.helpers import generate_client_code
 from app.services.supabase_storage import upload_palm_image
+from PIL import Image
+import io
 
 router = APIRouter()
 
 UPLOAD_DIR = "uploads"
 
+# 🔥 IMAGE VALIDATION FUNCTION
+def validate_palm_image(file: UploadFile):
+
+    try:
+        contents = file.file.read()
+        img = Image.open(io.BytesIO(contents))
+
+        width, height = img.size
+
+        # ✅ resolution check
+        if width < 300 or height < 300:
+            return False, "Image too small"
+
+        # ✅ aspect ratio (palm usually vertical)
+        ratio = height / width
+        if ratio < 0.8:
+            return False, "Upload proper palm image"
+
+        # ✅ file size check
+        if len(contents) < 50 * 1024:
+            return False, "Image not clear"
+
+        file.file.seek(0)  # 🔥 VERY IMPORTANT (reset pointer)
+
+        return True, "OK"
+
+    except:
+        return False, "Invalid image"
 
 @router.post("/api/website-submit")
 async def website_submit(
@@ -69,6 +99,17 @@ async def website_submit(
     saved_files = []
 
     for img in images:
+
+        # 🔥 STEP 3A — VALIDATE IMAGE
+        ok, msg = validate_palm_image(img)
+
+        if not ok:
+            conn.close()
+            return {
+                "success": False,
+                "error": msg
+            }
+
         unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
         file_bytes = await img.read()
@@ -76,7 +117,7 @@ async def website_submit(
         file_url = upload_palm_image(file_bytes, unique_name, client_code)
 
         saved_files.append(file_url)
-
+    
     # ✅ STEP 4: UPDATE DB WITH IMAGE URLS
     c.execute(
         "UPDATE clients SET images=%s WHERE client_code=%s",
