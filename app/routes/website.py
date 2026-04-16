@@ -16,28 +16,36 @@ router = APIRouter()
 UPLOAD_DIR = "uploads"
 
 # 🔥 IMAGE VALIDATION FUNCTION
-def validate_palm_image(file: UploadFile):
+def validate_palm_image_bytes(file_bytes):
 
     try:
-        contents = file.file.read()
-        img = Image.open(io.BytesIO(contents))
-
+        img = Image.open(io.BytesIO(file_bytes))
         width, height = img.size
 
-        # ✅ resolution check
+        # ✅ size check
         if width < 300 or height < 300:
             return False, "Image too small"
 
-        # ✅ aspect ratio (palm usually vertical)
-        ratio = height / width
-        if ratio < 0.8:
-            return False, "Upload proper palm image"
-
-        # ✅ file size check
-        if len(contents) < 50 * 1024:
+        # ✅ file size
+        if len(file_bytes) < 50 * 1024:
             return False, "Image not clear"
 
-        file.file.seek(0)  # 🔥 VERY IMPORTANT (reset pointer)
+        # ✅ aspect ratio (hand approx vertical)
+        ratio = height / width
+        if ratio < 0.7 or ratio > 1.8:
+            return False, "Upload proper palm image"
+
+        # 🔥 NEW CHECK — COLOR VARIATION (palm skin tone detect)
+        pixels = img.convert("RGB").getdata()
+        sample = list(pixels)[::500]  # sample pixels
+
+        avg_r = sum(p[0] for p in sample) / len(sample)
+        avg_g = sum(p[1] for p in sample) / len(sample)
+        avg_b = sum(p[2] for p in sample) / len(sample)
+
+        # 👉 palm approx skin tone range
+        if not (80 < avg_r < 220 and 60 < avg_g < 200 and 50 < avg_b < 180):
+            return False, "Upload real palm image"
 
         return True, "OK"
 
@@ -100,8 +108,11 @@ async def website_submit(
 
     for img in images:
 
-        # 🔥 STEP 3A — VALIDATE IMAGE
-        ok, msg = validate_palm_image(img)
+        # 🔥 STEP 3A — READ ONCE
+        file_bytes = await img.read()
+
+        # 🔥 STEP 3B — VALIDATE
+        ok, msg = validate_palm_image_bytes(file_bytes)
 
         if not ok:
             conn.close()
@@ -112,8 +123,7 @@ async def website_submit(
 
         unique_name = f"{uuid.uuid4().hex}_{img.filename}"
 
-        file_bytes = await img.read()
-
+        # 🔥 STEP 3C — UPLOAD
         file_url = upload_palm_image(file_bytes, unique_name, client_code)
 
         saved_files.append(file_url)
