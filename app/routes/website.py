@@ -28,10 +28,6 @@ def validate_palm_image_bytes(file_bytes):
         if len(file_bytes) < 30 * 1024:
             return False, "इमेज साफ नहीं है"
 
-        ratio = height / width
-        if ratio < 0.5 or ratio > 2.2:
-            return False, "कृपया सही हथेली की फोटो अपलोड करें"
-
         return True, "OK"
 
     except:
