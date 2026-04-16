@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 import uuid
 import os
 import urllib.parse
+import logging
 
 from app.database import get_db
 from app.utils.helpers import generate_client_code
@@ -59,8 +60,8 @@ def trigger_ai_generation(client_id):
         return
 
     try:
-        print(f"🔥 AI STARTED for {client_id}")
-
+        logging.info(f"AI STARTED for {client_id}")
+        
         generate_ai_draft(client_id)
 
         # ✅ mark success AFTER generation
@@ -70,10 +71,10 @@ def trigger_ai_generation(client_id):
         conn.commit()
         conn.close()
 
-        print(f"✅ AI SUCCESS for {client_id}")
+        logging.info(f"AI SUCCESS for {client_id}")
 
     except Exception as e:
-        print("❌ AI ERROR:", e)
+        logging.error(f"AI ERROR: {e}")
         
 # ---------- ADMIN LOGIN ----------
 @router.get("/admin")
@@ -358,9 +359,6 @@ def client_detail(request: Request, client_id: int):
     if isinstance(pdf_url, str):
         pdf_url = pdf_url.strip()
     
-    print("DEBUG PDF_URL RAW:", repr(client.get("pdf_url")))
-    print("DEBUG PDF_URL CLEAN:", repr(pdf_url))
-    
     pdf_ready = bool(pdf_url) and pdf_url.startswith("http")
 
     can_generate_pdf = (
@@ -486,7 +484,7 @@ def manual_ai_generate(request: Request, client_id: int):
     try:
         trigger_ai_generation(client_id)
     except Exception as e:
-        print("MANUAL ERROR:", e)
+        logging.error(f"MANUAL ERROR: {e}")
 
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
     
@@ -520,7 +518,12 @@ def create_pdf(request: Request, client_id: int):
             "<h3 style='color:red;text-align:center;margin-top:80px;'>Review required before PDF generation</h3>"
         )
 
-    generate_pdf_report(client_id)
+    try:
+        generate_pdf_report(client_id)
+    except Exception as e:
+        import logging
+        logging.error(f"PDF ERROR: {e}")
+        return HTMLResponse("PDF generation failed. Please try again.")
 
     return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
     
@@ -701,31 +704,6 @@ def ai_status(request: Request, client_id: int):
         "ready": bool(data[1]),
         "ai_draft": data[0] if data[0] else ""
     }
-
-# 🔥 TEMP DEBUG ROUTE (REMOVE AFTER TEST)
-@router.get("/debug/db")
-def debug_db():
-    conn = get_db()
-    c = conn.cursor()
-
-    c.execute("SELECT id, payment_status, ai_generated FROM clients ORDER BY id DESC LIMIT 10")
-    data = c.fetchall()
-
-    conn.close()
-
-    return {"data": data}
-
-@router.get("/debug/reset")
-def reset_ai():
-    conn = get_db()
-    c = conn.cursor()
-
-    c.execute("UPDATE clients SET ai_generated=0")
-    conn.commit()
-
-    conn.close()
-
-    return {"status": "RESET DONE"}
 
 @router.get("/admin/client/{client_id}/send-details")
 def send_details(request: Request, client_id: int):
