@@ -602,7 +602,7 @@ def add_client_form(request: Request):
 async def add_client(
     name: str = Form(...),
     phone: str = Form(...),
-    dob: str = Form(...),
+    dob: str = Form(None),
     tob: Optional[str] = Form(None),
     place: Optional[str] = Form(None),
     questions: str = Form(...),
