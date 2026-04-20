@@ -796,3 +796,7 @@ https://aacharyavishalvaishnav.pages.dev/upi-qr.png
 @router.get("/ping")
 def ping():
     return {"status": "ok"}
+
+@router.get("/")
+def root():
+    return {"status": "running"}
