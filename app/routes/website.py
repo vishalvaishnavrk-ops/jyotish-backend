@@ -15,6 +15,7 @@ UPLOAD_DIR = "uploads"
         
 @router.post("/api/website-submit")
 async def website_submit(
+    client_request_id: str = Form(...)    
     name: str = Form(...),
     phone: str = Form(...),
     dob: str = Form(None),
@@ -27,6 +28,20 @@ async def website_submit(
 
     conn = get_db()
     c = conn.cursor()
+
+    # 🔥 DUPLICATE CHECK (यहीं add करना है)
+    c.execute(
+        "SELECT client_code FROM clients WHERE client_request_id=%s",
+        (client_request_id,)
+    )
+    existing = c.fetchone()
+
+    if existing:
+        conn.close()
+        return {
+            "success": True,
+            "client_code": existing[0]
+        }
 
     # ✅ STEP 1: GENERATE CLIENT CODE
     client_code = generate_client_code()
@@ -42,13 +57,14 @@ async def website_submit(
     c.execute(
         """
         INSERT INTO clients
-        (client_code,name,phone,dob,tob,place,plan,questions,images,
+        (client_code,client_request_id,name,phone,dob,tob,place,plan,questions,images,
         source,status,payment_status,payment_date,payment_ref,
         ai_draft,created_at,priority,ai_generated)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """,
         (
             client_code,
+            client_request_id,
             name,
             phone,
             dob,
@@ -56,7 +72,7 @@ async def website_submit(
             place,
             plan,
             questions,
-            "",  # 🔥 EMPTY IMAGES
+            "",
             "Website",
             "Pending",
             "Pending",
@@ -64,7 +80,7 @@ async def website_submit(
             None,
             "AI draft pending",
             datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
-            99,
+            1,
             0
         )
     )
@@ -83,7 +99,15 @@ async def website_submit(
         file_url = upload_palm_image(file_bytes, unique_name, client_code)
 
         saved_files.append(file_url)
-    
+
+    # 🔥 STRICT: exactly 4 images required
+    if len(saved_files) != 4:
+        conn.close()
+        return {
+            "success": False,
+            "error": "4 valid images required"
+        }
+
     # ✅ STEP 4: UPDATE DB WITH IMAGE URLS
     c.execute(
         "UPDATE clients SET images=%s WHERE client_code=%s",
