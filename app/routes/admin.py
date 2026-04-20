@@ -793,10 +793,10 @@ https://aacharyavishalvaishnav.pages.dev/upi-qr.png
     
     return RedirectResponse(wa_link)
 
-@router.get("/ping")
+@router.api_route("/ping", methods=["GET", "HEAD"])
 def ping():
     return {"status": "ok"}
 
-@router.get("/")
+@router.api_route("/", methods=["GET", "HEAD"])
 def root():
     return {"status": "running"}
