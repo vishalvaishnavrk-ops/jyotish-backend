@@ -2,71 +2,60 @@ from openai import OpenAI
 import os
 from app.database import get_db, release_db
 
+
 def generate_ai_draft(client_id):
 
+    # ---------- DB FETCH ----------
     conn = get_db()
     try:
         c = conn.cursor()
-    
+
         c.execute("""
         SELECT name,questions,plan,dob,tob,place FROM clients WHERE id=%s
-        """,(client_id,))
+        """, (client_id,))
         data = c.fetchone()
-    
+
         if not data:
             return "No client found"
-    
-        # 🔥 DUPLICATE AI BLOCK
+
         c.execute("SELECT ai_generated FROM clients WHERE id=%s", (client_id,))
         row = c.fetchone()
         ai_flag = row[0] if row else 0
-    
+
         if ai_flag == 1:
             return "AI already generated"
-    
-        name,questions,plan,dob,tob,place = data
-    
+
+        name, questions, plan, dob, tob, place = data
+
     finally:
         release_db(conn)
-    
+
+
     # ---------- MODE ----------
     mode = "PALM_ONLY"
-
     if dob and tob and place:
         mode = "HYBRID"
-    
-    # ---------- PLAN BASED LENGTH ----------
 
+
+    # ---------- PLAN BASE ----------
     if "₹51" in plan:
         word_limit = 400
-
-    elif "₹151" in plan:
-        word_limit = 700
-
-    elif "₹251" in plan:
-        word_limit = 1000
-
-    else:
-        word_limit = 1500
-
-
-    # ---------- PLAN BASED FUTURE YEARS ----------
-
-    if "₹51" in plan:
         years_text = "केवल वर्ष 1 और वर्ष 2 का संक्षिप्त पूर्वानुमान दें"
 
     elif "₹151" in plan:
+        word_limit = 700
         years_text = "वर्ष 1, वर्ष 2 और वर्ष 3 का स्पष्ट पूर्वानुमान दें"
 
     elif "₹251" in plan:
+        word_limit = 1000
         years_text = "वर्ष 1 से वर्ष 4 तक का विस्तृत पूर्वानुमान दें"
 
     else:
+        word_limit = 1500
         years_text = "वर्ष 1 से वर्ष 5 तक का अत्यंत विस्तृत और गहराई वाला पूर्वानुमान दें"
 
 
-    # ---------- FINAL AI PROMPT ----------
-
+    # ---------- PROMPT ----------
     prompt = f"""
 
 आप एक अत्यंत अनुभवी (15+ वर्ष) हस्तरेखा विशेषज्ञ और वैदिक ज्योतिषाचार्य हैं।
@@ -170,17 +159,16 @@ Section 8 – आगामी वर्षों का पूर्वानु
 
 """
 
-    USE_REAL_AI = False   # बाद में True करेंगे
+    USE_REAL_AI = False
 
     if USE_REAL_AI:
-
         try:
             client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are a senior Vedic astrologer with 15+ years experience."},
+                    {"role": "system", "content": You are a senior Vedic astrologer with 15+ years experience."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.6,
@@ -191,11 +179,8 @@ Section 8 – आगामी वर्षों का पूर्वानु
 
         except Exception as e:
             draft = f"AI error: {str(e)}"
-    
-    # ---------- DUMMY DRAFT (TEST MODE) ----------
 
-    if not USE_REAL_AI:
-    
+    else:
         draft = f"""
 
 Section 1 – हस्त संरचना विश्लेषण
@@ -247,20 +232,21 @@ Section 8 – आगामी वर्ष
 
 """
 
+
+    # ---------- SAVE ----------
     conn = get_db()
     try:
         c = conn.cursor()
 
         c.execute("""
         UPDATE clients
-        SET ai_draft=%s,
-        ai_generated=1
+        SET ai_draft=%s, ai_generated=1
         WHERE id=%s
-        """,(draft,client_id))
+        """, (draft, client_id))
 
         conn.commit()
 
     finally:
         release_db(conn)
-    
+
     return draft
