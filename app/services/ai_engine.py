@@ -1,28 +1,27 @@
 from openai import OpenAI
 import os
-from app.database import get_db
+from app.database import get_db, release_db
 
 def generate_ai_draft(client_id):
 
     conn = get_db()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    c.execute("""
-    SELECT name,questions,plan,dob,tob,place FROM clients WHERE id=%s
-    """,(client_id,))
+        c.execute("""
+        SELECT name,questions,plan,dob,tob,place FROM clients WHERE id=%s
+        """,(client_id,))
+        data = c.fetchone()
 
-    data = c.fetchone()
+        # 🔥 DUPLICATE AI BLOCK
+        c.execute("SELECT ai_generated FROM clients WHERE id=%s", (client_id,))
+        ai_flag = c.fetchone()[0]
 
-    # 🔥 DUPLICATE AI BLOCK
-    c.execute("SELECT ai_generated FROM clients WHERE id=%s", (client_id,))
-    ai_flag = c.fetchone()[0]
+        if ai_flag == 1:
+            return "AI already generated"
 
-    if ai_flag == 1:
-        conn.close()
-        return "AI already generated"
-        
-    name,questions,plan,dob,tob,place = data
-
+        name,questions,plan,dob,tob,place = data
+    
     # ---------- MODE ----------
     mode = "PALM_ONLY"
 
@@ -248,8 +247,9 @@ Section 8 – आगामी वर्ष
     WHERE id=%s
     """,(draft,client_id))
 
-
     conn.commit()
-    conn.close()
 
+finally:
+    release_db(conn)
+    
     return draft
