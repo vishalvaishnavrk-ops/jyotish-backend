@@ -13,9 +13,13 @@ def generate_ai_draft(client_id):
         """,(client_id,))
         data = c.fetchone()
 
+        if not data:
+            return "No client found"
+
         # 🔥 DUPLICATE AI BLOCK
         c.execute("SELECT ai_generated FROM clients WHERE id=%s", (client_id,))
-        ai_flag = c.fetchone()[0]
+        row = c.fetchone()
+        ai_flag = row[0] if row else 0
 
         if ai_flag == 1:
             return "AI already generated"
@@ -24,13 +28,14 @@ def generate_ai_draft(client_id):
 
     finally:
         release_db(conn)
-    
+
+
     # ---------- MODE ----------
     mode = "PALM_ONLY"
 
     if dob and tob and place:
         mode = "HYBRID"
-
+    
     # ---------- PLAN BASED LENGTH ----------
 
     if "₹51" in plan:
