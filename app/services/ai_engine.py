@@ -249,7 +249,7 @@ Section 8 – आगामी वर्ष
 
     conn.commit()
 
-finally:
-    release_db(conn)
+    finally:
+        release_db(conn)
     
     return draft
