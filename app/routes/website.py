@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Form, UploadFile, File
+from fastapi import APIRouter, Form, UploadFile, File, BackgroundTasks
 from typing import List, Optional
 import uuid
-import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -11,10 +10,38 @@ from app.services.supabase_storage import upload_palm_image
 
 router = APIRouter()
 
-UPLOAD_DIR = "uploads"
-        
+
+# 🔥 BACKGROUND IMAGE PROCESS FUNCTION
+def process_images(images: List[UploadFile], client_code: str):
+
+    saved_files = []
+
+    for img in images:
+        try:
+            file_bytes = img.file.read()
+            unique_name = f"{uuid.uuid4().hex}_{img.filename}"
+            file_url = upload_palm_image(file_bytes, unique_name, client_code)
+            saved_files.append(file_url)
+        except:
+            continue
+
+    # DB UPDATE AFTER UPLOAD
+    if len(saved_files) == 4:
+        conn = get_db()
+        c = conn.cursor()
+
+        c.execute(
+            "UPDATE clients SET images=%s WHERE client_code=%s",
+            (",".join(saved_files), client_code)
+        )
+
+        conn.commit()
+        conn.close()
+
+
 @router.post("/api/website-submit")
 async def website_submit(
+    background_tasks: BackgroundTasks,   # 🔥 ADD
     client_request_id: str = Form(...),    
     name: str = Form(...),
     phone: str = Form(...),
@@ -29,7 +56,7 @@ async def website_submit(
     conn = get_db()
     c = conn.cursor()
 
-    # 🔥 DUPLICATE CHECK (यहीं add करना है)
+    # 🔥 DUPLICATE CHECK
     c.execute(
         "SELECT client_code FROM clients WHERE client_request_id=%s",
         (client_request_id,)
@@ -43,17 +70,17 @@ async def website_submit(
             "client_code": existing[0]
         }
 
-    # ✅ STEP 1: GENERATE CLIENT CODE
+    # ✅ GENERATE CLIENT CODE
     client_code = generate_client_code()
 
-    # 🔥 AUTO CAPITAL (SAFE)
+    # 🔥 CLEAN DATA
     name = name.strip().upper()
     phone = phone.strip().upper() if phone else phone
     place = place.strip().upper() if place else place
     plan = plan.strip().upper() if plan else plan
     tob = tob.strip().upper() if tob else tob
 
-    # ✅ STEP 2: INSERT CLIENT (WITHOUT IMAGES)
+    # ✅ INSERT CLIENT (FAST)
     c.execute(
         """
         INSERT INTO clients
@@ -72,7 +99,7 @@ async def website_submit(
             place,
             plan,
             questions,
-            "",
+            "",  # images blank initially
             "Website",
             "Pending",
             "Pending",
@@ -86,36 +113,10 @@ async def website_submit(
     )
 
     conn.commit()
-
-    # ✅ STEP 3: UPLOAD IMAGES (AFTER DB INSERT)
-    saved_files = []
-
-    for img in images:
-
-        file_bytes = await img.read()
-
-        unique_name = f"{uuid.uuid4().hex}_{img.filename}"
-
-        file_url = upload_palm_image(file_bytes, unique_name, client_code)
-
-        saved_files.append(file_url)
-
-    # 🔥 STRICT: exactly 4 images required
-    if len(saved_files) != 4:
-        conn.close()
-        return {
-            "success": False,
-            "error": "4 valid images required"
-        }
-
-    # ✅ STEP 4: UPDATE DB WITH IMAGE URLS
-    c.execute(
-        "UPDATE clients SET images=%s WHERE client_code=%s",
-        (",".join(saved_files), client_code)
-    )
-
-    conn.commit()
     conn.close()
+
+    # 🔥 BACKGROUND IMAGE UPLOAD (NON-BLOCKING)
+    background_tasks.add_task(process_images, images, client_code)
 
     return {
         "success": True,
