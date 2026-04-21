@@ -3,7 +3,7 @@ from weasyprint.text.fonts import FontConfiguration
 import os
 import re
 import time
-from app.database import get_db
+from app.database import get_db, release_db
 from app.services.supabase_storage import upload_pdf
 
 REPORT_DIR = "reports"
@@ -12,27 +12,26 @@ REPORT_DIR = "reports"
 def generate_pdf_report(client_id):
 
     conn = get_db()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    c.execute("""
-    SELECT client_code,name,phone,plan,ai_draft,created_at,
-    dob,tob,place,questions
-    FROM clients WHERE id=%s
-    """, (client_id,))
+        c.execute("""
+        SELECT client_code,name,phone,plan,ai_draft,created_at,
+        dob,tob,place,questions
+        FROM clients WHERE id=%s
+        """, (client_id,))
+        data = c.fetchone()
 
-    data = c.fetchone()
-    # 🔥 DUPLICATE CHECK
-    conn = get_db()
-    c = conn.cursor()
+        # 🔥 DUPLICATE CHECK (same connection use)
+        c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
+        row = c.fetchone()
 
-    c.execute("SELECT pdf_url FROM clients WHERE id=%s", (client_id,))
-    row = c.fetchone()
+        if row and row[0]:
+            return row[0]
 
-    if row and row[0]:
-        return row[0]   # already generated → stop
-
-    conn.close()
-
+    finally:
+        release_db(conn)
+    
     if not data:
         return None
 
@@ -369,14 +368,17 @@ Client Information
 
     # 🔥 SAVE IN DB
     conn = get_db()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    if pdf_url:
-        c.execute("UPDATE clients SET pdf_url=%s WHERE id=%s", (pdf_url, client_id))
+        if pdf_url:
+            c.execute("UPDATE clients SET pdf_url=%s WHERE id=%s", (pdf_url, client_id))
 
-    conn.commit()
-    conn.close()
+        conn.commit()
 
+    finally:
+        release_db(conn)
+    
     # OPTIONAL: local file delete (recommended)
     time.sleep(1)
     
