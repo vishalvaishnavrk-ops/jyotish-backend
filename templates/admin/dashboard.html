@@ -227,9 +227,19 @@ Paid
 <div style="margin-top:20px; text-align:center; font-size:14px;">
 
   {% if page > 1 %}
-    <a href="?page={{ page-1 }}&q={{ q }}&plan={{ plan }}&source={{ source }}&status={{ status }}&payment={{ payment }}&start_date={{ start_date }}&end_date={{ end_date }}"
-       style="padding:6px 12px; background:#ddd; border-radius:4px; text-decoration:none;"onclick="document.getElementById('loadingMsg').style.display='block'">
-       ⬅ Prev
+    <a href="?page={{ page-1 }}
+    {% if q %}&q={{ q }}{% endif %}
+    {% if plan %}&plan={{ plan }}{% endif %}
+    {% if source %}&source={{ source }}{% endif %}
+    {% if status %}&status={{ status }}{% endif %}
+    {% if payment %}&payment={{ payment }}{% endif %}
+    {% if start_date %}&start_date={{ start_date }}{% endif %}
+    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+    
+    style="padding:6px 12px; background:#ddd; border-radius:4px; text-decoration:none;"
+    onclick="document.getElementById('loadingMsg').style.display='block'">
+    
+    ⬅ Prev
     </a>
   {% endif %}
 
@@ -238,9 +248,19 @@ Paid
   </span>
 
   {% if has_next %}
-    <a href="?page={{ page+1 }}&q={{ q }}&plan={{ plan }}&source={{ source }}&status={{ status }}&payment={{ payment }}&start_date={{ start_date }}&end_date={{ end_date }}"
-       style="padding:6px 12px; background:#ddd; border-radius:4px; text-decoration:none;"onclick="document.getElementById('loadingMsg').style.display='block'">
-       Next ➡
+    <a href="?page={{ page+1 }}
+    {% if q %}&q={{ q }}{% endif %}
+    {% if plan %}&plan={{ plan }}{% endif %}
+    {% if source %}&source={{ source }}{% endif %}
+    {% if status %}&status={{ status }}{% endif %}
+    {% if payment %}&payment={{ payment }}{% endif %}
+    {% if start_date %}&start_date={{ start_date }}{% endif %}
+    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+    
+    style="padding:6px 12px; background:#ddd; border-radius:4px; text-decoration:none;"
+    onclick="document.getElementById('loadingMsg').style.display='block'">
+    
+    Next ➡
     </a>
   {% endif %}
 
