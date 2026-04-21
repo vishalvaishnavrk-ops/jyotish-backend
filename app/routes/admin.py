@@ -134,129 +134,118 @@ def logout(request: Request):
 # ---------- DASHBOARD ----------
 @router.get("/admin/dashboard")
 def dashboard(request: Request,
-q: str = Query(None),
-plan: str = Query(None),
-source: str = Query(None),
-status: str = Query(None),
-payment: str = Query(None),
-start_date: str = Query(None),
-end_date: str = Query(None)
+    page: int = Query(1),
+    q: str = Query(None),
+    plan: str = Query(None),
+    source: str = Query(None),
+    status: str = Query(None),
+    payment: str = Query(None),
+    start_date: str = Query(None),
+    end_date: str = Query(None)
 ):
     auth = check_admin(request)
     if auth:
         return auth
-        
+
     conn = get_db()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    sql = """
-    SELECT id,client_code,name,phone,plan,source,status,created_at,payment_status,priority,details_sent
-    FROM clients
-    WHERE 1=1
-    """
+        # 🔥 BASE QUERY
+        sql = """
+        SELECT id,client_code,name,phone,plan,source,status,created_at,payment_status,priority,details_sent
+        FROM clients
+        WHERE 1=1
+        """
 
-    params=[]
+        params = []
 
-    if q:
-        sql+=" AND (name ILIKE %s OR client_code ILIKE %s OR phone ILIKE %s)"
-        params.extend([f"%{q}%",f"%{q}%",f"%{q}%"])
+        # 🔍 FILTERS
+        if q:
+            sql += " AND (name ILIKE %s OR client_code ILIKE %s OR phone ILIKE %s)"
+            params.extend([f"%{q}%", f"%{q}%", f"%{q}%"])
 
-    if plan:
-        sql+=" AND plan=%s"
-        params.append(plan)
+        if plan:
+            sql += " AND plan=%s"
+            params.append(plan)
 
-    if source:
-        sql+=" AND source=%s"
-        params.append(source)
+        if source:
+            sql += " AND source=%s"
+            params.append(source)
 
-    if status:
-        sql+=" AND status=%s"
-        params.append(status)
+        if status:
+            sql += " AND status=%s"
+            params.append(status)
 
-    if payment:
-        sql+=" AND payment_status=%s"
-        params.append(payment)
+        if payment:
+            sql += " AND payment_status=%s"
+            params.append(payment)
 
-    if start_date:
-        sql+=" AND created_at >= %s"
-        params.append(start_date+" 00:00:00")
+        if start_date:
+            sql += " AND created_at >= %s"
+            params.append(start_date + " 00:00:00")
 
-    if end_date:
-        sql+=" AND created_at <= %s"
-        params.append(end_date+" 23:59:59")
+        if end_date:
+            sql += " AND created_at <= %s"
+            params.append(end_date + " 23:59:59")
 
-    sql += """
-    ORDER BY
-    CASE
-    WHEN payment_status='Paid' AND status='Reviewed' THEN 1
-    WHEN payment_status='Paid' AND status='Pending' THEN 2
-    WHEN payment_status='Pending' THEN 3
-    WHEN status='Completed' THEN 4
-    ELSE 5
-    END,
-    priority ASC,
-    created_at DESC
-    """
+        # 🔥 SORTING (same as yours)
+        sql += """
+        ORDER BY
+        CASE
+        WHEN payment_status='Paid' AND status='Reviewed' THEN 1
+        WHEN payment_status='Paid' AND status='Pending' THEN 2
+        WHEN payment_status='Pending' THEN 3
+        WHEN status='Completed' THEN 4
+        ELSE 5
+        END,
+        priority ASC,
+        created_at DESC
+        """
 
-    c.execute(sql,params)
-    rows_db=c.fetchall()
-    release_db(conn)
+        # 🔥 PAGINATION
+        limit = 50
+        offset = (page - 1) * limit
 
+        sql += " LIMIT %s OFFSET %s"
+        params.extend([limit, offset])
 
-    rows=""
+        # 🔥 MAIN QUERY
+        c.execute(sql, params)
+        rows_db = c.fetchall()
 
-    for r in rows_db:
+        # 🔥 STATS QUERY (FAST + GLOBAL)
+        c.execute("""
+        SELECT
+        COUNT(*),
+        SUM(CASE WHEN payment_status!='Paid' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN status='Completed' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN status='Reviewed' THEN 1 ELSE 0 END),
+        SUM(CASE WHEN payment_status='Paid' AND status='Pending' THEN 1 ELSE 0 END)
+        FROM clients
+        """)
+        stats = c.fetchone()
 
-        dt=datetime.strptime(str(r[7])[:19],"%Y-%m-%d %H:%M:%S")
-        formatted_date=dt.strftime("%d-%m-%Y %I:%M %p")
+    finally:
+        release_db(conn)
 
-        if r[8]=="Paid":
-            payment_badge="🟢 Paid"
-        else:
-            payment_badge=f"""
-🔴 Pending
-<form method="post" action="/admin/mark-paid/{r[0]}" style="display:inline;">
-<button style="background:#28a745;color:white;border:none;padding:4px 8px;border-radius:4px">
-Mark Paid
-</button>
-</form>
-"""
-
-        rows+=f"""
-<tr>
-<td>{r[1]}</td>
-<td>{r[2]}</td>
-<td>{r[4]}</td>
-<td>{r[5]}</td>
-<td>{r[6]}</td>
-<td>{r[3]}</td>
-<td>{payment_badge}</td>
-<td>{formatted_date}</td>
-<td><a href="/admin/client/{r[0]}">View</a></td>
-</tr>
-"""
-
+    # 🔥 RETURN
     return render_template_safe(request, "admin/dashboard.html",
         {
             "clients": rows_db,
-            "total_clients": len(rows_db),
-            "pending_payment": sum(1 for r in rows_db if r[8] != "Paid"),
-            "completed_reports": sum(1 for r in rows_db if r[6] == "Completed"),
-            "reviewed_reports": sum(1 for r in rows_db if r[6] == "Reviewed"),
-            "pending_reports": sum(
-                1 for r in rows_db
-                if r[8] == "Paid" and r[6] == "Pending"
-            ),
 
-            "total_revenue": sum(
-                501 if "501" in r[4] else
-                251 if "251" in r[4] else
-                151 if "151" in r[4] else
-                51
-                for r in rows_db if r[8] == "Paid"
-            ),
+            # ✅ GLOBAL STATS (correct)
+            "total_clients": stats[0] or 0,
+            "pending_payment": stats[1] or 0,
+            "completed_reports": stats[2] or 0,
+            "reviewed_reports": stats[3] or 0,
+            "pending_reports": stats[4] or 0,
 
-            # FILTER VALUES RETURN
+            # 🔥 PAGINATION
+            "page": page,
+            "has_next": len(rows_db) == 50,
+
+            # 🔍 FILTER VALUES
             "q": q,
             "plan": plan,
             "source": source,
@@ -266,7 +255,6 @@ Mark Paid
             "end_date": end_date,
         },
     )
-
 
 # ---------- MARK PAID ----------
 @router.post("/admin/mark-paid/{client_id}")
