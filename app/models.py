@@ -1,4 +1,4 @@
-from app.database import get_db
+from app.database import get_db, release_db
 
 
 # ---------- CREATE TABLE ----------
@@ -6,43 +6,46 @@ from app.database import get_db
 def init_db():
 
     conn = get_db()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS clients (
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS clients (
 
-        id SERIAL PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
 
-        client_code TEXT,
-        name TEXT,
-        phone TEXT,
+            client_code TEXT,
+            name TEXT,
+            phone TEXT,
 
-        dob TEXT,
-        tob TEXT,
-        place TEXT,
+            dob TEXT,
+            tob TEXT,
+            place TEXT,
 
-        plan TEXT,
-        questions TEXT,
-        images TEXT,
+            plan TEXT,
+            questions TEXT,
+            images TEXT,
 
-        source TEXT,
-        status TEXT,
+            source TEXT,
+            status TEXT,
 
-        payment_status TEXT DEFAULT 'Pending',
-        payment_date TEXT,
-        payment_ref TEXT,
+            payment_status TEXT DEFAULT 'Pending',
+            payment_date TEXT,
+            payment_ref TEXT,
 
-        ai_draft TEXT,
+            ai_draft TEXT,
 
-        created_at TEXT,
+            created_at TEXT,
 
-        priority INTEGER DEFAULT 99,
-        ai_generated INTEGER DEFAULT 0
-    )
-    """)
+            priority INTEGER DEFAULT 99,
+            ai_generated INTEGER DEFAULT 0
+        )
+        """)
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+
+    finally:
+        release_db(conn)
 
 
 # ---------- CREATE CLIENT ----------
@@ -63,26 +66,29 @@ def create_client(
 ):
 
     conn = get_db()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    c.execute("""
-    INSERT INTO clients
-    (client_code,name,phone,dob,tob,place,plan,questions,images,source,status,created_at)
-    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-    """,(
-        client_code,
-        name,
-        phone,
-        dob,
-        tob,
-        place,
-        plan,
-        questions,
-        images,
-        source,
-        status,
-        created_at
-    ))
+        c.execute("""
+        INSERT INTO clients
+        (client_code,name,phone,dob,tob,place,plan,questions,images,source,status,created_at)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        """,(
+            client_code,
+            name,
+            phone,
+            dob,
+            tob,
+            place,
+            plan,
+            questions,
+            images,
+            source,
+            status,
+            created_at
+        ))
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+
+    finally:
+        release_db(conn)
