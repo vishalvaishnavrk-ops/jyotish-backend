@@ -168,7 +168,7 @@ Section 8 – आगामी वर्षों का पूर्वानु
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": You are a senior Vedic astrologer with 15+ years experience."},
+                    {"role": "system", "content": "You are a senior Vedic astrologer with 15+ years experience."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.6,
