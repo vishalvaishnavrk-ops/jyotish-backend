@@ -1,14 +1,15 @@
-import os
 import psycopg2
+import os
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# 🔥 GLOBAL CONNECTION (REUSE)
+conn = None
 
 def get_db():
+    global conn
 
-    database_url = os.environ.get("DATABASE_URL")
-
-    if not database_url:
-        raise Exception("DATABASE_URL not set")
-
-    conn = psycopg2.connect(database_url, sslmode="require")
+    if conn is None or conn.closed != 0:
+        conn = psycopg2.connect(DATABASE_URL, sslmode="require")
 
     return conn
