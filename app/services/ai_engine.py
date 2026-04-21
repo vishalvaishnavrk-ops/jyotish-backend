@@ -7,29 +7,28 @@ def generate_ai_draft(client_id):
     conn = get_db()
     try:
         c = conn.cursor()
-
+    
         c.execute("""
         SELECT name,questions,plan,dob,tob,place FROM clients WHERE id=%s
         """,(client_id,))
         data = c.fetchone()
-
+    
         if not data:
             return "No client found"
-
+    
         # 🔥 DUPLICATE AI BLOCK
         c.execute("SELECT ai_generated FROM clients WHERE id=%s", (client_id,))
         row = c.fetchone()
         ai_flag = row[0] if row else 0
-
+    
         if ai_flag == 1:
             return "AI already generated"
-
+    
         name,questions,plan,dob,tob,place = data
-
+    
     finally:
         release_db(conn)
-
-
+    
     # ---------- MODE ----------
     mode = "PALM_ONLY"
 
