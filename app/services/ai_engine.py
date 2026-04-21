@@ -21,6 +21,9 @@ def generate_ai_draft(client_id):
             return "AI already generated"
 
         name,questions,plan,dob,tob,place = data
+
+    finally:
+        release_db(conn)
     
     # ---------- MODE ----------
     mode = "PALM_ONLY"
