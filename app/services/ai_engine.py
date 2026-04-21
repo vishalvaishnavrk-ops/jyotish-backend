@@ -248,14 +248,18 @@ Section 8 – आगामी वर्ष
 
 """
 
-    c.execute("""
-    UPDATE clients
-    SET ai_draft=%s,
-    ai_generated=1
-    WHERE id=%s
-    """,(draft,client_id))
+    conn = get_db()
+    try:
+        c = conn.cursor()
 
-    conn.commit()
+        c.execute("""
+        UPDATE clients
+        SET ai_draft=%s,
+        ai_generated=1
+        WHERE id=%s
+        """,(draft,client_id))
+
+        conn.commit()
 
     finally:
         release_db(conn)
