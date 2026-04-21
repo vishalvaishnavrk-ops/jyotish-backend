@@ -2,16 +2,22 @@ from openai import OpenAI
 import os
 from app.database import get_db, release_db
 
+# 🔥 SWITCH (VERY IMPORTANT)
+USE_REAL_AI = True   # 👉 False = dummy | True = real AI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 def generate_ai_draft(client_id):
 
-    # ---------- DB FETCH ----------
+    # ---------- FETCH DATA ----------
     conn = get_db()
     try:
         c = conn.cursor()
 
         c.execute("""
-        SELECT name,questions,plan,dob,tob,place FROM clients WHERE id=%s
+        SELECT name,questions,plan,dob,tob,place,images 
+        FROM clients WHERE id=%s
         """, (client_id,))
         data = c.fetchone()
 
@@ -19,120 +25,140 @@ def generate_ai_draft(client_id):
             return "No client found"
 
         c.execute("SELECT ai_generated FROM clients WHERE id=%s", (client_id,))
-        row = c.fetchone()
-        ai_flag = row[0] if row else 0
+        ai_flag = c.fetchone()[0]
 
         if ai_flag == 1:
             return "AI already generated"
 
-        name, questions, plan, dob, tob, place = data
+        name, questions, plan, dob, tob, place, images = data
 
     finally:
         release_db(conn)
 
+    # ---------- IMAGE PARSE ----------
+    image_urls = []
+    if images:
+        image_urls = [img.strip() for img in images.split(",") if img.strip()]
 
     # ---------- MODE ----------
     mode = "PALM_ONLY"
     if dob and tob and place:
         mode = "HYBRID"
 
-
-    # ---------- PLAN BASE ----------
+    # ---------- PLAN DEPTH ----------
     if "₹51" in plan:
         word_limit = 400
-        years_text = "केवल वर्ष 1 और वर्ष 2 का संक्षिप्त पूर्वानुमान दें"
-
+        years_text = "केवल वर्ष 1 और 2 का संक्षिप्त पूर्वानुमान दें"
+        max_tokens = 500
     elif "₹151" in plan:
         word_limit = 700
-        years_text = "वर्ष 1, वर्ष 2 और वर्ष 3 का स्पष्ट पूर्वानुमान दें"
-
+        years_text = "वर्ष 1 से 3 तक स्पष्ट पूर्वानुमान दें"
+        max_tokens = 800
     elif "₹251" in plan:
         word_limit = 1000
-        years_text = "वर्ष 1 से वर्ष 4 तक का विस्तृत पूर्वानुमान दें"
-
+        years_text = "वर्ष 1 से 4 तक विस्तृत पूर्वानुमान दें"
+        max_tokens = 1000
     else:
-        word_limit = 1500
-        years_text = "वर्ष 1 से वर्ष 5 तक का अत्यंत विस्तृत और गहराई वाला पूर्वानुमान दें"
+        word_limit = 1300
+        years_text = "वर्ष 1 से 5 तक अत्यंत गहराई वाला पूर्वानुमान दें"
+        max_tokens = 1500   # 🔥 TOP PLAN (IMPORTANT)
 
-
-    # ---------- PROMPT ----------
+    # ---------- FINAL STRICT PROMPT ----------
     prompt = f"""
+आप एक 15+ वर्षों के अनुभव वाले हस्तरेखा विशेषज्ञ और वैदिक ज्योतिषाचार्य हैं।
 
-आप एक अत्यंत अनुभवी (15+ वर्ष) हस्तरेखा विशेषज्ञ और वैदिक ज्योतिषाचार्य हैं।
+यह रिपोर्ट किसी beginner द्वारा नहीं बल्कि एक अनुभवी गुरु द्वारा तैयार की गई गहराई वाली व्यक्तिगत रीडिंग होनी चाहिए।
 
-आपकी भाषा पूर्णतः मानवीय, गहरी और अनुभवी होनी चाहिए — ऐसा लगे कि यह रिपोर्ट किसी अनुभवी गुरु ने व्यक्तिगत रूप से बनाई है।
+========================
 
-क्लाइंट का नाम: {name}
+👤 क्लाइंट:
+नाम: {name}
 
-क्लाइंट का प्रश्न:
+प्रश्न:
 {questions}
 
-👉 निर्देश:
+Mode: {mode}
 
-* रिपोर्ट पूरी तरह स्पष्ट और सरल हिंदी में हो
-* कोई भी सामान्य या घिसे-पिटे वाक्य न लिखें
-* हर विश्लेषण व्यक्तिगत और गहराई वाला हो
-* जहां संभव हो कारण भी बताएं
-* अनावश्यक दोहराव बिल्कुल न करें
-* हर सेक्शन में नई और अलग जानकारी दें
-* उत्तर संक्षिप्त लेकिन प्रभावशाली रखें
+DOB: {dob}
+Time: {tob}
+Place: {place}
 
-👉 MODE LOGIC:
+========================
 
-IF Mode = HYBRID:
-- हस्तरेखा का गहराई से विश्लेषण करें
-- जन्म विवरण (DOB, TOB, Place) के आधार पर वैदिक ज्योतिष से cross-check करें
-- संयुक्त (Palm + Astrology) सटीक रिपोर्ट दें
+⚠️ STRICT RULES (FOLLOW 100%):
 
-IF Mode = PALM_ONLY:
+- आपको हाथ की वास्तविक images दी गई हैं
+- केवल उन्हीं images के आधार पर reading करनी है
+- कोई भी generic theory नहीं लिखनी है
+- "अगर", "यदि", "हो सकता है", "संभव है" जैसे शब्द बिल्कुल नहीं लिखने हैं
+- हर लाइन direct observation होनी चाहिए
+
+❌ गलत:
+"यदि आपकी जीवन रेखा गहरी है..."
+
+✅ सही:
+"आपकी जीवन रेखा गहरी और स्पष्ट है, जो मजबूत जीवन ऊर्जा दर्शाती है"
+
+========================
+
+PLAN DEPTH:
+
+₹51 → basic लेकिन सटीक  
+₹151 → थोड़ा explanation  
+₹251 → detailed + guidance  
+₹501 → deep expert level life guidance  
+
+👉 ₹501 में:
+- हर section गहराई से लिखें
+- reasoning दें
+- जीवन की दिशा स्पष्ट करें
+- ऐसा लगे गुरु मार्गदर्शन दे रहा है
+
+========================
+
+MODE LOGIC:
+
+PALM_ONLY → केवल हाथ देखकर
 - ज्योतिष को पूरी तरह ignore करें
 - केवल हस्तरेखा (Palm Reading) के आधार पर गहराई से विश्लेषण करें
 - हाथ की रेखाएं, पर्वत, बनावट, ऊर्जा पर focus करें
+
+HYBRID → palm + astrology combine
+- हस्तरेखा का गहराई से विश्लेषण करें
+- जन्म विवरण (DOB, TOB, Place) के आधार पर वैदिक ज्योतिष से cross-check करें
+- संयुक्त (Palm + Astrology) सटीक रिपोर्ट दें
 
 👉 महत्वपूर्ण:
 * जन्म विवरण न होने का कोई उल्लेख न करें
 * रिपोर्ट की गुणवत्ता कम न करें
 
-रिपोर्ट लगभग {word_limit} शब्दों की होनी चाहिए
+========================
 
----
+📊 REPORT STRUCTURE (ALL MANDATORY):
 
-Section 1 – हस्त संरचना विश्लेषण
+Section 1 – हस्त संरचना
 हाथ की आकृति, अंगुलियों की बनावट और ऊर्जा का विश्लेषण करें
-
----
 
 Section 2 – पर्वत विश्लेषण
 शुक्र, बृहस्पति, शनि, सूर्य और बुध पर्वत का विश्लेषण करें
 
----
-
-Section 3 – मुख्य रेखाओं का विश्लेषण
+Section 3 – मुख्य रेखाएं
 जीवन रेखा
 मस्तिष्क रेखा
 हृदय रेखा
 भाग्य रेखा
 सूर्य रेखा
 
----
-
 Section 4 – विशेष चिह्न
 त्रिकोण, क्रॉस, तारा, वर्ग आदि का विश्लेषण
 
----
-
-Section 5 – कर्म और भाग्य
+Section 5 – जीवन दिशा
 जीवन की दिशा और कर्मफल
 
----
-
-Section 6 – प्रश्नों के उत्तर
+Section 6 – प्रश्न का स्पष्ट उत्तर
 क्लाइंट के प्रश्न का स्पष्ट उत्तर दें
 
----
-
-Section 7 – उपाय (सबसे महत्वपूर्ण भाग)
-
+Section 7 – उपाय (practical, low cost)
 * केवल सरल और प्रभावी उपाय दें
 * बिना खर्च या बहुत कम खर्च वाले उपाय दें
 * कोई रत्न (stone) या महंगे उपाय न सुझाएं
@@ -141,97 +167,99 @@ Section 7 – उपाय (सबसे महत्वपूर्ण भा�
 👉 यदि योजना उच्च (₹251 या ₹501) हो:
 अतिरिक्त मार्गदर्शन और गहराई जोड़ें
 
----
+Section 8 – भविष्य ({years_text})  
 
-Section 8 – आगामी वर्षों का पूर्वानुमान
+========================
 
-👉 {years_text}
+🌟 Section 9 – अंतिम संदेश (VERY IMPORTANT):
 
----
+- पूरी रिपोर्ट का सार दें  
+- client को स्पष्ट दिशा दें  
+- 3–5 lines strong guidance  
+- एक powerful Pro Tip दें  
+- tone गुरु जैसा हो  
 
-अंतिम संदेश:
+========================
 
-* क्लाइंट के जीवन का सार दें
-* 3–5 लाइन में स्पष्ट दिशा दें
-* संदेश व्यक्तिगत और प्रभावशाली हो
+⚠️ IMPORTANT:
 
-रिपोर्ट पूरी तरह मानवीय और विश्वसनीय लगे
+- सभी 9 sections लिखना अनिवार्य है  
+- कोई भी section skip नहीं करना है  
+- report अधूरी नहीं छोड़नी है
+- कोई भी सामान्य या घिसे-पिटे वाक्य न लिखें
+- हर विश्लेषण व्यक्तिगत और गहराई वाला हो
+- जहां संभव हो कारण भी बताएं
+- हर सेक्शन में नई और अलग जानकारी दें
 
+========================
+
+भाषा:
+सरल, स्पष्ट, प्रभावशाली हिंदी  
+कोई repetition नहीं  
+
+शब्द सीमा:
+लगभग {word_limit} शब्द  
 """
 
-    USE_REAL_AI = True
+    # ---------- DUMMY MODE ----------
+    if not USE_REAL_AI:
+        draft = f"""
+Section 1 – हस्त संरचना
+यह टेस्ट रिपोर्ट है।
 
-    if USE_REAL_AI:
+Section 2 – पर्वत
+संतुलन दिखाई देता है।
+
+Section 3 – रेखाएं
+जीवन रेखा स्पष्ट है।
+
+Section 4 – संकेत
+सकारात्मक संकेत हैं।
+
+Section 5 – जीवन दिशा
+स्थिरता आएगी।
+
+Section 6 – उत्तर
+आपको focus बढ़ाना होगा।
+
+Section 7 – उपाय
+सुबह सूर्य को जल दें।
+
+Section 8 – भविष्य
+वर्ष 1: सुधार
+वर्ष 2: स्थिरता
+
+Section 9 – अंतिम संदेश
+आप सही दिशा में हैं।
+👉 Pro Tip: एक ही लक्ष्य पर लगातार काम करें।
+"""
+    else:
+        # ---------- REAL AI ----------
+        content = [{"type": "text", "text": prompt}]
+
+        for img in image_urls[:4]:
+            content.append({
+                "type": "image_url",
+                "image_url": {"url": img}
+            })
+
         try:
-            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "You are a senior Vedic astrologer with 15+ years experience."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "user",
+                        "content": content
+                    }
                 ],
                 temperature=0.6,
-                max_tokens=1200
+                max_tokens=max_tokens
             )
 
             draft = response.choices[0].message.content
 
         except Exception as e:
-            draft = f"AI error: {str(e)}"
-
-    else:
-        draft = f"""
-
-Section 1 – हस्त संरचना विश्लेषण
-यह एक टेस्ट AI रिपोर्ट है।
-
-क्लाइंट: {name}
-
-मुख्य प्रश्न:
-{questions}
-
-यह रिपोर्ट अभी सिस्टम टेस्टिंग के लिए बनाई गई है।
-
-Section 2 – पर्वत विश्लेषण
-शुक्र पर्वत मजबूत है और जीवन में आकर्षण तथा संबंधों में सफलता दर्शाता है।
-
-Section 3 – मुख्य रेखाओं का विश्लेषण
-जीवन रेखा स्थिरता और दीर्घायु का संकेत देती है।
-मस्तिष्क रेखा निर्णय क्षमता को दर्शाती है।
-
-Section 4 – विशेष संकेत
-हथेली में सकारात्मक ऊर्जा दिखाई देती है।
-
-Section 5 – कर्म और भाग्य
-आने वाले समय में प्रयासों से सफलता मिलेगी।
-
-Section 6 – प्रश्न विश्लेषण
-आपके प्रश्न का उत्तर सकारात्मक दिशा में जाता है।
-
-Section 7 – उपाय
-प्रतिदिन सूर्य को जल अर्पित करें।
-मंगलवार को हनुमान चालीसा पढ़ें।
-
-Section 8 – आगामी वर्ष
-
-वर्ष 1
-नए अवसर मिलेंगे।
-
-वर्ष 2
-आर्थिक स्थिति मजबूत होगी।
-
-वर्ष 3
-परिवार में सुखद घटनाएँ।
-
-वर्ष 4
-नई योजनाओं में सफलता।
-
-अंतिम संदेश
-धैर्य और सकारात्मक सोच से जीवन में उन्नति होगी।
-
-"""
-
+            draft = f"AI Error: {str(e)}"
 
     # ---------- SAVE ----------
     conn = get_db()
