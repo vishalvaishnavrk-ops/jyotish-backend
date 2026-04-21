@@ -226,6 +226,25 @@ def dashboard(request: Request,
         """)
         stats = c.fetchone()
 
+        # 🔥 TOTAL REVENUE CALCULATION (FAST)
+        c.execute("""
+        SELECT COALESCE(SUM(
+            CASE 
+                WHEN payment_status='Paid' THEN
+                    CASE 
+                        WHEN plan ILIKE '%501%' THEN 501
+                        WHEN plan ILIKE '%251%' THEN 251
+                        WHEN plan ILIKE '%151%' THEN 151
+                        ELSE 51
+                    END
+                ELSE 0
+            END
+        ),0)
+        FROM clients
+        """)
+
+        total_revenue = c.fetchone()[0]
+
     finally:
         release_db(conn)
 
@@ -240,6 +259,7 @@ def dashboard(request: Request,
             "completed_reports": stats[2] or 0,
             "reviewed_reports": stats[3] or 0,
             "pending_reports": stats[4] or 0,
+            "total_revenue": total_revenue,
 
             # 🔥 PAGINATION
             "page": page,
