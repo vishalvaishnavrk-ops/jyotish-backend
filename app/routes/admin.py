@@ -9,7 +9,7 @@ import os
 import urllib.parse
 import logging
 
-from app.database import get_db
+from app.database import get_db, release_db
 from app.utils.helpers import generate_client_code
 from app.services.ai_engine import generate_ai_draft
 from app.services.pdf_engine import generate_pdf_report
@@ -43,13 +43,15 @@ REPORT_DIR = "reports"
 def trigger_ai_generation(client_id):
 
     conn = get_db()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    c.execute("SELECT payment_status FROM clients WHERE id=%s", (client_id,))
-    data = c.fetchone()
+        c.execute("SELECT payment_status FROM clients WHERE id=%s", (client_id,))
+        data = c.fetchone()
 
-    conn.close()
-
+    finally:
+        release_db(conn)
+    
     if not data:
         return
 
@@ -66,11 +68,15 @@ def trigger_ai_generation(client_id):
 
         # ✅ mark success AFTER generation
         conn = get_db()
-        c = conn.cursor()
-        c.execute("UPDATE clients SET ai_generated=1 WHERE id=%s", (client_id,))
-        conn.commit()
-        conn.close()
+        try:
+            c = conn.cursor()
 
+            c.execute("UPDATE clients SET ai_generated=1 WHERE id=%s", (client_id,))
+            conn.commit()
+
+        finally:
+            release_db(conn)
+            
         logging.info(f"AI SUCCESS for {client_id}")
 
     except Exception as e:
@@ -194,7 +200,7 @@ end_date: str = Query(None)
 
     c.execute(sql,params)
     rows_db=c.fetchall()
-    conn.close()
+    release_db(conn)
 
 
     rows=""
@@ -294,8 +300,8 @@ def mark_paid(request: Request, client_id: int):
     """,(payment_date,priority,client_id))
 
     conn.commit()
-    conn.close()
-
+    release_db(conn)
+    
     trigger_ai_generation(client_id)
     
     return RedirectResponse("/admin/dashboard",status_code=302)
@@ -312,7 +318,7 @@ def client_detail(request: Request, client_id: int):
 
     c.execute("SELECT * FROM clients WHERE id=%s", (client_id,))
     cdata = c.fetchone()
-    conn.close()
+    release_db(conn)
 
     if not cdata:
         return HTMLResponse("Client not found")
@@ -434,7 +440,7 @@ def update_payment(
     """, (payment_status, payment_date, payment_ref, priority, client_id))
 
     conn.commit()
-    conn.close()
+    release_db(conn)
 
     # ---------- AI TRIGGER (UNCHANGED) ----------
     if payment_status == "Paid" and ai_generated == 0:
@@ -455,8 +461,8 @@ def update_client(client_id:int, ai_draft:str=Form(...), status:str=Form(...)):
     )
 
     conn.commit()
-    conn.close()
-
+    release_db(conn)
+    
     return RedirectResponse(f"/admin/client/{client_id}",status_code=302)
 
 
@@ -474,8 +480,8 @@ def manual_ai_generate(request: Request, client_id: int):
     c.execute("SELECT payment_status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
 
-    conn.close()
-
+    release_db(conn)
+    
     payment_status = data[0]
 
     if payment_status != "Paid":
@@ -508,11 +514,11 @@ def create_pdf(request: Request, client_id: int):
     existing = c.fetchone()
 
     if existing and existing[0]:
-        conn.close()
+        release_db(conn)
         return RedirectResponse(f"/admin/client/{client_id}", status_code=302)
 
-    conn.close()
-
+    release_db(conn)
+    
     if data[0] not in ["Reviewed", "Completed"]:
         return HTMLResponse(
             "<h3 style='color:red;text-align:center;margin-top:80px;'>Review required before PDF generation</h3>"
@@ -541,8 +547,8 @@ def download_pdf(request: Request, client_id: int):
     c.execute("SELECT pdf_url, status FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
 
-    conn.close()
-
+    release_db(conn)
+    
     if not data or not data[0]:
         return HTMLResponse("PDF not generated yet")
 
@@ -565,14 +571,14 @@ def send_whatsapp(request: Request, client_id: int):
     data = c.fetchone()
 
     if not data:
-        conn.close()
+        release_db(conn)
         return HTMLResponse("Client not found")
 
     name, phone_number, client_code, status = data
 
     # ❌ Block if not reviewed/completed
     if status not in ["Reviewed", "Completed"]:
-        conn.close()
+        release_db(conn)
         return HTMLResponse("<h3 style='color:red;text-align:center;'>Complete review before sending</h3>")
 
     file_name = f"{client_code}.pdf"
@@ -581,15 +587,15 @@ def send_whatsapp(request: Request, client_id: int):
     pdf_data = c.fetchone()
 
     if not pdf_data or not pdf_data[0]:
-        conn.close()
+        release_db(conn)
         return HTMLResponse("<h3 style='color:red;text-align:center;'>Generate PDF first</h3>")
 
     pdf_url = pdf_data[0]
 
     c.execute("UPDATE clients SET status='Completed' WHERE id=%s", (client_id,))
     conn.commit()
-    conn.close()
-
+    release_db(conn)
+    
     message = f"""नमस्ते {name},
 
 आपकी हस्तरेखा रिपोर्ट तैयार है 🙏
@@ -681,8 +687,8 @@ async def add_client(
     )
 
     conn.commit()
-    conn.close()
-
+    release_db(conn)
+    
     return RedirectResponse("/admin/dashboard", status_code=302)
 
 @router.get("/admin/client/{client_id}/ai-status")
@@ -698,8 +704,8 @@ def ai_status(request: Request, client_id: int):
     c.execute("SELECT ai_draft, ai_generated FROM clients WHERE id=%s", (client_id,))
     data = c.fetchone()
 
-    conn.close()
-
+    release_db(conn)
+    
     return {
         "ready": bool(data[1]),
         "ai_draft": data[0] if data[0] else ""
@@ -721,8 +727,8 @@ def send_details(request: Request, client_id: int):
     """, (client_id,))
 
     data = c.fetchone()
-    conn.close()
-
+    release_db(conn)
+    
     if not data:
         return HTMLResponse("Client not found")
 
@@ -789,7 +795,7 @@ https://aacharyavishalvaishnav.pages.dev/upi-qr.png
     c = conn.cursor()
     c.execute("UPDATE clients SET details_sent=1 WHERE id=%s", (client_id,))
     conn.commit()
-    conn.close()
+    release_db(conn)
     
     return RedirectResponse(wa_link)
 
