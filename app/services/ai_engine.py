@@ -159,7 +159,7 @@ Section 8 – आगामी वर्षों का पूर्वानु
 
 """
 
-    USE_REAL_AI = False
+    USE_REAL_AI = True
 
     if USE_REAL_AI:
         try:
@@ -172,7 +172,7 @@ Section 8 – आगामी वर्षों का पूर्वानु
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.6,
-                max_tokens=word_limit + 200
+                max_tokens=1200
             )
 
             draft = response.choices[0].message.content
