@@ -136,6 +136,11 @@ Paid
 
 
 <div class="table-wrapper">
+
+<div id="loadingMsg" style="display:none; text-align:center; padding:10px;">
+  Loading...
+</div>  
+  
 <table>
 
 <thead>  
@@ -218,6 +223,29 @@ Paid
 
 <tbody>  
 </table>
+
+<div style="margin-top:20px; text-align:center; font-size:14px;">
+
+  {% if page > 1 %}
+    <a href="?page={{ page-1 }}&q={{ q }}&plan={{ plan }}&source={{ source }}&status={{ status }}&payment={{ payment }}&start_date={{ start_date }}&end_date={{ end_date }}"
+       style="padding:6px 12px; background:#ddd; border-radius:4px; text-decoration:none;"onclick="document.getElementById('loadingMsg').style.display='block'">
+       ⬅ Prev
+    </a>
+  {% endif %}
+
+  <span style="margin: 0 12px; font-weight:bold;">
+    Page {{ page }}
+  </span>
+
+  {% if has_next %}
+    <a href="?page={{ page+1 }}&q={{ q }}&plan={{ plan }}&source={{ source }}&status={{ status }}&payment={{ payment }}&start_date={{ start_date }}&end_date={{ end_date }}"
+       style="padding:6px 12px; background:#ddd; border-radius:4px; text-decoration:none;"onclick="document.getElementById('loadingMsg').style.display='block'">
+       Next ➡
+    </a>
+  {% endif %}
+
+</div>
+  
 </div>
 
 {% endblock %}
