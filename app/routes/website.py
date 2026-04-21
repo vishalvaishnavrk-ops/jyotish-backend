@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Form, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, Form, UploadFile, File
 from typing import List, Optional
 import uuid
 from datetime import datetime
@@ -11,38 +11,8 @@ from app.services.supabase_storage import upload_palm_image
 router = APIRouter()
 
 
-# 🔥 BACKGROUND IMAGE PROCESS FUNCTION
-def process_images(images: List[UploadFile], client_code: str):
-
-    saved_files = []
-
-    for img in images:
-        try:
-            file_bytes = img.file.read()
-            unique_name = f"{uuid.uuid4().hex}_{img.filename}"
-            file_url = upload_palm_image(file_bytes, unique_name, client_code)
-            saved_files.append(file_url)
-        except:
-            continue
-
-    # DB UPDATE AFTER UPLOAD
-    if len(saved_files) == 4:
-        conn = get_db()
-        c = conn.cursor()
-
-        c.execute(
-            "UPDATE clients SET images=%s WHERE client_code=%s",
-            (",".join(saved_files), client_code)
-        )
-
-        conn.commit()
-        conn.close()
-
-
 @router.post("/api/website-submit")
 async def website_submit(
-    background_tasks: BackgroundTasks,   # 🔥 ADD
-    client_request_id: str = Form(...),    
     name: str = Form(...),
     phone: str = Form(...),
     dob: str = Form(None),
@@ -53,45 +23,36 @@ async def website_submit(
     images: List[UploadFile] = File(...)
 ):
 
+    # 🔥 STEP 1 — STRICT IMAGE CHECK (सबसे पहले)
+    if len(images) != 4:
+        return {
+            "success": False,
+            "error": "4 images required"
+        }
+
     conn = get_db()
     c = conn.cursor()
 
-    # 🔥 DUPLICATE CHECK
-    c.execute(
-        "SELECT client_code FROM clients WHERE client_request_id=%s",
-        (client_request_id,)
-    )
-    existing = c.fetchone()
-
-    if existing:
-        conn.close()
-        return {
-            "success": True,
-            "client_code": existing[0]
-        }
-
-    # ✅ GENERATE CLIENT CODE
+    # 🔥 STEP 2 — GENERATE CLIENT CODE
     client_code = generate_client_code()
 
-    # 🔥 CLEAN DATA
+    # 🔥 STEP 3 — CLEAN DATA
     name = name.strip().upper()
-    phone = phone.strip().upper() if phone else phone
+    phone = phone.strip()
     place = place.strip().upper() if place else place
-    plan = plan.strip().upper() if plan else plan
-    tob = tob.strip().upper() if tob else tob
+    plan = plan.strip().upper()
+    tob = tob.strip() if tob else tob
 
-    # ✅ INSERT CLIENT (FAST)
+    # 🔥 STEP 4 — FAST DB INSERT (NO IMAGE WAIT)
     c.execute(
         """
         INSERT INTO clients
-        (client_code,client_request_id,name,phone,dob,tob,place,plan,questions,images,
-        source,status,payment_status,payment_date,payment_ref,
-        ai_draft,created_at,priority,ai_generated)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        (client_code,name,phone,dob,tob,place,plan,questions,images,
+        source,status,payment_status,created_at)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """,
         (
             client_code,
-            client_request_id,
             name,
             phone,
             dob,
@@ -99,24 +60,40 @@ async def website_submit(
             place,
             plan,
             questions,
-            "",  # images blank initially
+            "",
             "Website",
             "Pending",
             "Pending",
-            None,
-            None,
-            "AI draft pending",
-            datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S"),
-            1,
-            0
+            datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
         )
     )
 
     conn.commit()
-    conn.close()
 
-    # 🔥 BACKGROUND IMAGE UPLOAD (NON-BLOCKING)
-    background_tasks.add_task(process_images, images, client_code)
+    # 🔥 STEP 5 — IMAGE UPLOAD (NON-BLOCKING SAFE)
+    saved_files = []
+
+    for img in images:
+        try:
+            content = await img.read()
+            unique_name = f"{uuid.uuid4().hex}_{img.filename}"
+
+            file_url = upload_palm_image(content, unique_name, client_code)
+            saved_files.append(file_url)
+
+        except Exception as e:
+            print("Image upload error:", e)
+            continue
+
+    # 🔥 STEP 6 — UPDATE IMAGES (ONLY IF ALL 4 SUCCESS)
+    if len(saved_files) == 4:
+        c.execute(
+            "UPDATE clients SET images=%s WHERE client_code=%s",
+            (",".join(saved_files), client_code)
+        )
+        conn.commit()
+
+    conn.close()
 
     return {
         "success": True,
