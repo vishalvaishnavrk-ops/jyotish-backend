@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from app.database import get_db
+from app.database import get_db, release_db
 from app.utils.helpers import generate_client_code
 from app.services.supabase_storage import upload_palm_image
 
@@ -27,6 +27,7 @@ async def website_submit(
 
     conn = get_db()
     c = conn.cursor()
+    conn.autocommit = True    
 
     # ✅ STEP 1: GENERATE CLIENT CODE
     client_code = generate_client_code()
@@ -91,7 +92,7 @@ async def website_submit(
     )
 
     conn.commit()
-    conn.close()
+    release_db(conn)
 
     return {
         "success": True,
