@@ -51,45 +51,47 @@ def generate_pdf_report(client_id):
     # split antim message
     antim_message = ""
 
-    if "Section 9 – अंतिम संदेश" in ai_draft:
-        parts = ai_draft.split("अंतिम संदेश:")
-        main_content = parts[0]
-        antim_message = parts[1].strip()
+    match = re.search(r'Section\s*9\s*–\s*अंतिम संदेश', ai_draft)
+
+    if match:
+        split_index = match.start()
+        main_content = ai_draft[:split_index]
+        antim_message = ai_draft[match.end():].strip()
     else:
         main_content = ai_draft
 
-    sections = re.split(r'(Section\s+\d+\s*–.*?)\n', main_content)
+    # ---------- SECTION SPLIT ----------
+    sections = re.split(r'(Section\s*\d+\s*–[^\n]*)', main_content)
 
     formatted_blocks = ""
 
+    # ---------- SAFE LOOP ----------
     for i in range(1, len(sections), 2):
 
         title = sections[i].strip()
-        content = sections[i + 1].strip()
+
+        content = ""
+        if i + 1 < len(sections):
+            content = sections[i + 1].strip()
+
+        if not content:
+            continue
 
         content = content.replace("वर्ष", "<br><br>वर्ष")
 
-        is_last_section = (i + 2 >= len(sections))
+        formatted_blocks += f"""
+        <div class="section-block">
+            <div class="section-heading">{title}</div>
+            <div class="section-content">
+                {content.replace("\\n","<br>")}
+            </div>
+        </div>
+        """
 
-        if is_last_section:
-            formatted_blocks += f"""
-            <div class="section-block">
-                <div class="section-heading">{title}</div>
-                <div class="section-content">
-                    {content.replace("\\n","<br>")}
-                </div>
-            </div>
-            """
-        else:
-            formatted_blocks += f"""
-            <div class="section-block">
-                <div class="section-heading">{title}</div>
-                <div class="section-content">
-                    {content.replace("\\n","<br>")}
-                </div>
-            </div>
-            """
-        
+    # ---------- FALLBACK (OUTSIDE LOOP) ----------
+    if not formatted_blocks:
+        formatted_blocks = ai_draft.replace("\n", "<br>")
+
     # antim page
     if antim_message:
 
