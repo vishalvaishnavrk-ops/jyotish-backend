@@ -136,6 +136,10 @@ Section 7 – उपाय
 Section 8 – भविष्य ({years_text})  
 Section 9 – अंतिम संदेश  
 
+1. रिपोर्ट सीधे "Section 1 – हस्त संरचना" से शुरू करें (कोई header नहीं)
+2. हर section heading EXACT इस format में हो: Section X – ...
+3. कोई markdown (###, ** आदि) उपयोग न करें
+
 ---
 
 🔷 SECTION GUIDELINES:
