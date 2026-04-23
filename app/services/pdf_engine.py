@@ -8,6 +8,32 @@ from app.services.supabase_storage import upload_pdf
 
 REPORT_DIR = "reports"
 
+def format_ai_text(ai_text):
+
+    # numbering new line
+    ai_text = re.sub(r'(\d+\.)\s*', r'\n\1 ', ai_text)
+
+    # bullet dash
+    ai_text = re.sub(r'[-•]\s*', r'\n• ', ai_text)
+
+    # lines
+    ai_text = re.sub(
+        r'(जीवन रेखा:|मस्तिष्क रेखा:|हृदय रेखा:|भाग्य रेखा:)',
+        r'\n\1',
+        ai_text
+    )
+
+    # पर्वत
+    ai_text = re.sub(
+        r'(शुक्र|बुध|शनि|सूर्य|चंद्र) पर्वत',
+        r'\n\1 पर्वत',
+        ai_text
+    )
+
+    # Pro Tip
+    ai_text = re.sub(r'(Pro Tip:)', r'\n\n\1', ai_text)
+
+    return ai_text
 
 def generate_pdf_report(client_id):
 
@@ -37,6 +63,9 @@ def generate_pdf_report(client_id):
 
     client_code, name, phone, plan, ai_draft, created_at, dob, tob, place, question = data
 
+    # 🔥 ADD THIS LINE HERE
+    ai_draft = format_ai_text(ai_draft)
+    
     file_name = f"{client_code}.pdf"
     file_path = os.path.join(REPORT_DIR, file_name)
 
