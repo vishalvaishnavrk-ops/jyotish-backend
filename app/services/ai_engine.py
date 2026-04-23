@@ -188,7 +188,7 @@ Section 9 – अंतिम संदेश:
                     {
                         "role": "user",
                         "content": [
-                            {"type": "text", "text": prompt},
+                            {"type": "input_text", "text": prompt},
                             *[
                                 {"type": "input_image", "image_url": img}
                                 for img in selected_images
