@@ -182,15 +182,26 @@ Section 9 – अंतिम संदेश:
             })
 
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o",   # 🔥 FINAL MODEL
-                messages=[{"role": "user", "content": content}],
+            response = client.responses.create(
+                model="gpt-4o",
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt},
+                            *[
+                                {"type": "input_image", "image_url": img}
+                                for img in selected_images
+                            ]
+                        ]
+                    }
+                ],
                 temperature=0.7,
-                max_tokens=max_tokens
+                max_output_tokens=max_tokens
             )
 
-            draft = response.choices[0].message.content
-
+            draft = response.output_text
+            
         except Exception as e:
             draft = f"AI Error: {str(e)}"
 
