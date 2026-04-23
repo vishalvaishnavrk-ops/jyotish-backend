@@ -51,7 +51,7 @@ def generate_pdf_report(client_id):
     # split antim message
     antim_message = ""
 
-    if "अंतिम संदेश:" in ai_draft:
+    if "Section 9 – अंतिम संदेश" in ai_draft:
         parts = ai_draft.split("अंतिम संदेश:")
         main_content = parts[0]
         antim_message = parts[1].strip()
