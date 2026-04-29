@@ -42,7 +42,7 @@ def generate_ai_draft(client_id):
 
     # ---------- PLAN CONFIG ----------
     if "₹51" in plan:
-        max_tokens = 700
+        max_tokens = 900
         years_text = "अगले 1–2 वर्ष"
         depth_note = """
 - केवल मुख्य रेखाओं पर फोकस करें
@@ -51,7 +51,7 @@ def generate_ai_draft(client_id):
 """
 
     elif "₹151" in plan:
-        max_tokens = 1000
+        max_tokens = 1200
         years_text = "अगले 1–3 वर्ष"
         depth_note = """
 - हर observation के साथ छोटा कारण दें
@@ -59,7 +59,7 @@ def generate_ai_draft(client_id):
 """
 
     elif "₹251" in plan:
-        max_tokens = 1400
+        max_tokens = 1600
         years_text = "अगले 1–4 वर्ष"
         depth_note = """
 - सभी मुख्य रेखाएं और पर्वत cover करें
@@ -68,7 +68,7 @@ def generate_ai_draft(client_id):
 """
 
     else:  # ₹501
-        max_tokens = 2200
+        max_tokens = 3800
         years_text = "2026 से अगले 5 वर्ष"
         depth_note = """
 - हर section में कम से कम 6–8 bullet points
@@ -89,7 +89,7 @@ def generate_ai_draft(client_id):
 
     # ---------- FINAL PROMPT ----------
     prompt = f"""
-You are an experienced Palm Reading Analyst with knowledge of traditional Vedic practices.
+You are a professional Palm Reading Analyst with knowledge of traditional Vedic practices.
 
 Your goal is to generate a deeply personalized, practical, and insight-rich report.
 
@@ -110,24 +110,34 @@ ANALYSIS APPROACH:
 
 ---
 
-CORE ANALYSIS RULE (STRICT):
+REALISM RULE (VERY IMPORTANT):
 
-Each bullet point MUST follow:
+If exact visual detail is not clearly visible, do NOT assume fake details.
 
-Observation → Meaning → Life Impact
+Instead say:
+"हाथ की रेखाओं के सामान्य संकेतों के आधार पर..."
 
-If this is not followed, the answer is incomplete.
+Avoid making very specific claims unless clearly supported.
 
 ---
 
-PERSONALIZATION RULE:
+CORE ANALYSIS RULE (STRICT):
 
-- Report must feel specific to the person
-- Avoid generic statements
-- Use relatable lines:
+Each bullet MUST follow:
+
+Observation → Meaning → Life Impact
+
+---
+
+PERSONALIZATION + HUMAN TOUCH:
+
+- Report must feel personal
+- Use relatable lines like:
   "आपने कई बार महसूस किया होगा कि..."
   "जीवन में बार-बार यह स्थिति बनती है कि..."
-  "निर्णय लेते समय अंदर द्वंद्व रहता है..."
+
+- Occasionally address directly:
+  "{name}, आपकी स्थिति में..."
 
 ---
 
@@ -144,7 +154,7 @@ Section 2 – हस्त संरचना
 Section 3 – मुख्य रेखाएं  
 Section 4 – पर्वत विश्लेषण  
 Section 5 – करियर और धन  
-Section 6 – प्रश्न का वास्तविक कारण और समाधान  
+Section 6 – समस्या का कारण और समाधान  
 Section 7 – संबंध जीवन  
 Section 8 – स्वास्थ्य संकेत  
 Section 9 – समय संकेत ({years_text})  
@@ -153,78 +163,73 @@ Section 11 – अंतिम संदेश
 
 ---
 
-SPECIAL INSTRUCTIONS:
+SECTION 6 (VERY IMPORTANT - DIAGNOSIS MODE):
 
-### Section 6 (MOST IMPORTANT)
+- First identify root cause (based on palm संकेत)
+- Then explain why problem repeats
+- Then give clear direction
 
-- User के प्रश्न का deep analysis करो
-- Palm reading से कारण निकालो
-- Direct logical explanation दो
-- फिर समाधान दो:
+Structure:
+1. समस्या का मूल कारण
+2. यह बार-बार क्यों हो रहा है
+3. क्या बदलना जरूरी है
+4. किन गलतियों से बचना है
 
-Solutions may include:
-- practical steps
-- habit changes
-- traditional remedies (like mantra, daan, routine practices)
-- mindset correction
-
-Use safe phrasing like:
-"परंपरागत मान्यताओं के अनुसार..."
-"अनुभव के आधार पर यह उपाय सहायक माने जाते हैं..."
+No generic advice.
 
 ---
 
-### Section 9 (Timeline)
+SECTION 9 (TIMELINE):
 
-- Time-based संकेत दो
-- Example style:
-  "2026 के दौरान..."
+- Give time-based संकेत:
+  "2026 में..."
   "2027–2029 के बीच..."
-  "इस अवधि में परिवर्तन के संकेत दिखते हैं..."
+  "इस समय बदलाव के संकेत दिखते हैं..."
 
-- Palm + astrology (if available) alignment दिखाओ
+- Keep realistic and probability-based
 
 ---
 
-### Section 10 (Remedies)
+SECTION 10 (REMEDIES):
 
-- Personalized remedies based on analysis
-- Can include:
-  - simple mantra (no extreme claims)
+- Give practical + traditional remedies
+- Use safe phrasing:
+  "परंपरागत रूप से यह उपाय सहायक माने जाते हैं"
+
+- Include:
+  - simple mantra (short)
   - daily discipline
-  - behavioral correction
-  - focus practices
+  - behavior correction
 
-- Avoid fear-based language
+- Avoid extreme or guaranteed claims
 
 ---
 
-### WRITING STYLE:
+WRITING STYLE:
 
 - Bullet format only (•)
 - Each bullet new line
-- Each point 3–4 lines minimum
+- Each point minimum 3 lines
 - No paragraphs
-- Clear spacing (PDF friendly)
+- No repetition
 
 ---
 
-### DEPTH FORCE:
+DEPTH FORCE:
 
 {depth_note}
 
 Additionally:
 - Minimum 6–8 bullet points per section
-- Detailed explanation required
-- Especially Section 5, 6, 9 must be very deep
+- Section 5, 6, 9 must be most detailed
 
 ---
 
-FINAL NOTE:
+FINAL QUALITY CHECK:
 
-- Do not write generic advice
-- Do not repeat lines
-- Make report feel like expert personal consultation
+- No generic lines
+- No repetition
+- Must feel like real expert consultation
 
 ---
 
