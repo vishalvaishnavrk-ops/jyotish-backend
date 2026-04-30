@@ -42,7 +42,7 @@ def generate_ai_draft(client_id):
 
     # ---------- PLAN CONFIG ----------
     if "₹51" in plan:
-        max_tokens = 900
+        max_tokens = 800
         years_text = "अगले 1–2 वर्ष"
         depth_note = """
 - केवल मुख्य रेखाओं पर फोकस करें
@@ -51,7 +51,7 @@ def generate_ai_draft(client_id):
 """
 
     elif "₹151" in plan:
-        max_tokens = 1200
+        max_tokens = 1000
         years_text = "अगले 1–3 वर्ष"
         depth_note = """
 - हर observation के साथ छोटा कारण दें
@@ -59,7 +59,7 @@ def generate_ai_draft(client_id):
 """
 
     elif "₹251" in plan:
-        max_tokens = 1600
+        max_tokens = 1400
         years_text = "अगले 1–4 वर्ष"
         depth_note = """
 - सभी मुख्य रेखाएं और पर्वत cover करें
@@ -68,7 +68,7 @@ def generate_ai_draft(client_id):
 """
 
     else:  # ₹501
-        max_tokens = 3800
+        max_tokens = 2800
         years_text = "2026 से अगले 5 वर्ष"
         depth_note = """
 - हर section में कम से कम 6–8 bullet points
@@ -232,6 +232,13 @@ FINAL QUALITY CHECK:
 - Must feel like real expert consultation
 
 ---
+Limit output to structured detailed response within token constraints.
+
+Do not assume exact palm visuals from images.
+
+Focus on realistic, experience-based insights.
+
+In key sections, speak directly to the user.
 
 Only output final report.
 """
@@ -248,7 +255,7 @@ Only output final report.
                     "content": [
                         {"type": "input_text", "text": prompt},
                         *[
-                            {"type": "input_image", "image_url": img}
+                            {"type": "input_image", "image_url": {"url": img}}
                             for img in selected_images
                         ]
                     ]
