@@ -255,7 +255,7 @@ Only output final report.
                     "content": [
                         {"type": "input_text", "text": prompt},
                         *[
-                            {"type": "input_image", "image_url": {"url": img}}
+                            {"type": "input_image", "image_url": img}
                             for img in selected_images
                         ]
                     ]
