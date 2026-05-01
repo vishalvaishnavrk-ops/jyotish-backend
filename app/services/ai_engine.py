@@ -71,34 +71,35 @@ def generate_ai_draft(client_id):
         max_tokens = 3200
         years_text = "2026 से अगले 5 वर्ष"
         depth_note = """
-- हर section में 5–7 high quality bullet points हों (बेकार repetition न हो)
-- हर point में 3 layer होनी चाहिए:
-  1. Observation (क्या pattern दिखता है)
-  2. Reason (यह pattern क्यों बनता है)
-  3. Life Impact (इसका असली जीवन पर असर क्या है)
+- हर section में लगभग 5–7 meaningful bullet points हों (repetition से बचें)
 
-- हर point minimum 3–5 lines में explain हो (जल्दी-जल्दी summary न हो)
+- हर point में natural flow में ये चीजें शामिल हों:
+  - Observation (क्या pattern दिखता है)
+  - Reason (यह pattern आमतौर पर क्यों बनता है)
+  - Life Impact (इसका वास्तविक जीवन पर क्या असर पड़ता है)
 
-- Section 6 (problem diagnosis) में कम से कम 6–8 deep points हों
+- हर point को 3–5 lines में explain करें, लेकिन unnecessary लंबा न करें
+
+- Section 6 (problem diagnosis) में थोड़ी ज्यादा गहराई रखें:
+  - कम से कम 5–7 strong points
   - हर point root cause explain करे
-  - surface level explanation न हो
+  - surface level explanation से बचें
 
-- Section 9 (remedy) सबसे practical और powerful होना चाहिए
-  - हर remedy में WHY + HOW + DURATION (21/40/90 days) शामिल हो
-  - remedy problem से directly जुड़ा हो
+- Section 9 (remedy) practical और result-oriented होना चाहिए:
+  - हर remedy में WHY + HOW + DURATION (21 / 40 / 90 days) शामिल हो
+  - remedy को problem से logically जोड़ें
 
-- Section 8 (timeline) में year-wise clear explanation हो:
+- Section 8 (timeline) clear और structured हो:
   - 2026 → क्या और क्यों
   - 2027–2028 → transition
   - 2029–2030 → growth
 
-- Report structured और readable हो:
+- Report readable और structured रहे:
   - हर point अलग line में
   - sections clear हों
-  - unnecessary repetition न हो
 
 - Language simple लेकिन expert-level हो
-- Report ऐसा लगे कि किसी experienced consultant ने बनाया है, ना कि AI ने
+- Report ऐसा लगे कि किसी experienced consultant ने समझाकर लिखा है
 """
 
     # ---------- IMAGE SELECTION ----------
@@ -113,20 +114,32 @@ def generate_ai_draft(client_id):
     prompt = f"""
 You are an expert Palm Reading Consultant who analyzes patterns deeply and gives real-life guidance.
 
-Your goal is NOT to describe personality — but to detect patterns, explain root causes, and give clear direction.
+Your goal is to understand patterns, explain root causes, and give clear practical direction.
 
 ---
 
-CORE THINKING PROCESS (VERY IMPORTANT):
+CORE THINKING APPROACH:
 
-For every point follow:
+For most points, try to include:
 
-1. What pattern is seen (line / mount / structure / sign)
-2. Why this pattern forms
-3. How it affects real life decisions
-4. What problem it creates
+1. What pattern is observed (line / mount / structure / sign)
+2. Why this pattern generally forms
+3. How it affects real-life decisions
+4. What problem it creates over time
 
-Do not skip reasoning.
+Keep reasoning natural and human-like.
+
+---
+
+MODE:
+
+- If birth details (DOB, TOB, Place) are available:
+  Use palm reading as primary and support it with basic astrology insight.
+
+- If only palm data is available:
+  Base the full analysis on palm patterns.
+
+Do not overuse astrology — use it only as support.
 
 ---
 
@@ -143,10 +156,10 @@ Section 2 – पर्वत विश्लेषण
 Section 3 – मुख्य रेखाएं  
 Section 4 – विशेष संकेत  
 Section 5 – जीवन और करियर पैटर्न  
-Section 6 – समस्या का वास्तविक कारण (MOST IMPORTANT)  
+Section 6 – समस्या का वास्तविक कारण (focus more detail here)  
 Section 7 – सही दिशा और निर्णय  
 Section 8 – समय संकेत ({years_text})  
-Section 9 – उपाय (MOST IMPORTANT)  
+Section 9 – उपाय (focus more detail here)  
 Section 10 – अंतिम मार्गदर्शन  
 
 ---
@@ -157,8 +170,8 @@ SECTION 1 (HAND STRUCTURE):
 - Fingers, thumb, flexibility
 
 Explain:
-- why this structure formed
-- how it affects behavior
+- what it suggests
+- how it influences behavior
 
 ---
 
@@ -166,7 +179,7 @@ SECTION 2 (MOUNTS):
 
 Explain clearly:
 
-- Venus → attachment / comfort  
+- Venus → comfort / attachment  
 - Saturn → discipline / delay  
 - Mercury → business / communication  
 - Sun → recognition  
@@ -175,7 +188,7 @@ Explain clearly:
 For each:
 - what is seen
 - why it matters
-- how it affects income or decisions
+- how it affects decisions or income
 
 ---
 
@@ -188,15 +201,15 @@ Analyze:
 - Heart line → emotional pattern  
 - Fate line → career flow  
 
-Explain deeply:
-- breaks / depth / direction
-- why instability happens
+Explain:
+- depth / breaks / direction
+- how instability or consistency develops
 
 ---
 
 SECTION 4 (SPECIAL SIGNS):
 
-Check patterns:
+Check patterns like:
 
 - Cross → confusion  
 - Triangle → skill  
@@ -205,43 +218,42 @@ Check patterns:
 - Breaks → instability  
 
 Explain:
-- what it indicates
-- where it impacts life
+- possible meaning
+- where it may affect life
 
-If unclear, say:
+If unclear, you may say:
 "कुछ संकेत ऐसे दिखते हैं जो..."
 
 ---
 
 SECTION 5 (LIFE PATTERN):
 
-- How person operates in life
-- Why growth is stuck or delayed
-- Pattern of success / failure
+- How the person generally operates in life
+- Why growth may be slow or delayed
+- Pattern of success vs struggle
 
 ---
 
-SECTION 6 (REAL ROOT CAUSE — MOST IMPORTANT):
+SECTION 6 (REAL ROOT CAUSE):
 
-Speak directly:
+Speak clearly and directly:
 
 "सीधे शब्दों में आपकी असली समस्या यह है कि..."
 
-Explain deeply:
+Explain:
 
-- why income unstable
+- why income instability may happen
 - why confusion repeats
 - why consistency breaks
 
-Add 5–7 points minimum
+Try to give 5–7 meaningful points.
 
-Also include:
-
-"If this continues for next 1–2 years..."
+You may also include:
+"If this pattern continues for the next 1–2 years..."
 
 ---
 
-SECTION 7 (CLEAR DECISION SYSTEM):
+SECTION 7 (DECISION SYSTEM):
 
 Give:
 
@@ -250,77 +262,75 @@ Give:
 - business option  
 
 Explain:
-- why suitable / why not
+- when each works
+- when it may not
 
-End with ONE clear final direction
+End with one clear practical direction.
 
 ---
 
 SECTION 8 (YEAR-WISE TIMELINE):
 
-Give structured timeline:
+Provide structured flow:
 
-- 2026 → what will happen + why  
+- 2026 → what may happen + why  
 - 2027–2028 → transition phase  
 - 2029–2030 → growth phase  
 
 Include:
 - reason
-- impact
+- possible impact
 - caution
 
----
-
-SECTION 9 (ADVANCED REMEDY SYSTEM):
-
-Each remedy must follow:
-
-1. Problem pattern  
-2. Why remedy works  
-3. Exact steps  
-4. Duration (21 / 40 / 90 days)  
-5. Expected result  
+Use probability-based language (not certainty).
 
 ---
 
-Include:
+SECTION 9 (REMEDY SYSTEM):
 
-1. Practical System
+For each remedy, try to include:
+
+- Problem pattern  
+- Why this remedy may help  
+- How to do it  
+- Suggested duration (21 / 40 / 90 days)  
+- Expected improvement  
+
+---
+
+Include mix of:
+
+1. Practical system
 - daily routine
 - income discipline
 
-2. Decision System
-- thinking correction
+2. Decision improvement
+- thinking pattern correction
 
-3. Targeted Traditional Remedy
+3. Traditional remedies (optional but relevant)
 
 - Budh → clarity  
 - Shani → stability  
 - Chandra → emotional balance  
 
-Use:
+Use safe phrasing:
 "परंपरागत अनुभव के अनुसार..."
 
----
-
-IMPORTANT:
-
-- No random mantra
-- No generic advice
-- Each remedy must connect with problem
+Avoid random or unrelated remedies.
 
 ---
 
 WRITING STYLE:
 
-- Bullet format
-- Each point 3–5 lines
-- Mix tone (not repetitive)
+- Bullet format preferred
+- Each point explained in 3–5 lines
+- Natural conversational tone
+- Avoid repeating same sentence structure
 
-Use lines like:
+You may use lines like:
 "सीधे शब्दों में..."
-"यह सिर्फ एक संकेत नहीं है..."
 "आपके केस में खास बात यह है कि..."
+"यह पैटर्न आमतौर पर तब बनता है जब..."
 
 ---
 
@@ -328,24 +338,22 @@ DEPTH:
 
 {depth_note}
 
-- Section 6 and 9 must be longest
-- Minimum 6–8 deep points
+- Section 6 and 9 should be more detailed
+- Focus on meaningful depth instead of unnecessary repetition
 
 ---
 
 FINAL MESSAGE:
 
-- Strong guidance
-- No motivation talk
-- Clear actionable direction
+- Give clear guidance
+- Keep it practical and grounded
 
-End with:
-
-"अगले 90 दिन आपके लिए निर्णायक हैं..."
+You may end with a strong actionable line such as:
+"अगले 90 दिन आपके लिए निर्णायक हो सकते हैं..."
 
 ---
 
-Only output final report.
+Generate a complete and structured report in Hindi.
 """
 
     # ---------- AI CALL ----------
