@@ -256,11 +256,7 @@ Only output final report.
                 input=[{
                     "role": "user",
                     "content": [
-                        {"type": "input_text", "text": prompt},
-                        *[
-                            {"type": "input_image", "image_url": img}
-                            for img in selected_images
-                        ]
+                        {"type": "input_text", "text": prompt}
                     ]
                 }],
                 temperature=0.75,
@@ -268,7 +264,7 @@ Only output final report.
             )
 
             draft = response.output_text.strip()
-
+             
             # ---------- FORMAT FIX ----------
             draft = draft.replace("• ", "\n• ")
 
