@@ -71,12 +71,34 @@ def generate_ai_draft(client_id):
         max_tokens = 3200
         years_text = "2026 से अगले 5 वर्ष"
         depth_note = """
-- हर section में कम से कम 6–8 bullet points
-- हर point में Observation → Meaning → Impact
-- हर point minimum 3–4 lines
-- Section 5, 6, 9 सबसे detailed हों
-- Solutions practical + traditional दोनों हों
-- Report detailed और multi-page होनी चाहिए
+- हर section में 5–7 high quality bullet points हों (बेकार repetition न हो)
+- हर point में 3 layer होनी चाहिए:
+  1. Observation (क्या pattern दिखता है)
+  2. Reason (यह pattern क्यों बनता है)
+  3. Life Impact (इसका असली जीवन पर असर क्या है)
+
+- हर point minimum 3–5 lines में explain हो (जल्दी-जल्दी summary न हो)
+
+- Section 6 (problem diagnosis) में कम से कम 6–8 deep points हों
+  - हर point root cause explain करे
+  - surface level explanation न हो
+
+- Section 9 (remedy) सबसे practical और powerful होना चाहिए
+  - हर remedy में WHY + HOW + DURATION (21/40/90 days) शामिल हो
+  - remedy problem से directly जुड़ा हो
+
+- Section 8 (timeline) में year-wise clear explanation हो:
+  - 2026 → क्या और क्यों
+  - 2027–2028 → transition
+  - 2029–2030 → growth
+
+- Report structured और readable हो:
+  - हर point अलग line में
+  - sections clear हों
+  - unnecessary repetition न हो
+
+- Language simple लेकिन expert-level हो
+- Report ऐसा लगे कि किसी experienced consultant ने बनाया है, ना कि AI ने
 """
 
     # ---------- IMAGE SELECTION ----------
@@ -89,27 +111,22 @@ def generate_ai_draft(client_id):
 
     # ---------- FINAL PROMPT ----------
     prompt = f"""
-You are an expert Palm Reading Consultant who gives practical and experience-based guidance.
+You are an expert Palm Reading Consultant who analyzes patterns deeply and gives real-life guidance.
 
-Your goal is NOT to describe — but to detect patterns, diagnose problems, and give clear direction.
-
----
-
-IMPORTANT:
-
-- Do NOT give generic statements
-- Do NOT repeat common lines like "आप मेहनती हैं"
-- Every point must feel specific and logical
+Your goal is NOT to describe personality — but to detect patterns, explain root causes, and give clear direction.
 
 ---
 
-CORE ANALYSIS SYSTEM:
+CORE THINKING PROCESS (VERY IMPORTANT):
 
-Every insight must follow:
+For every point follow:
 
-1. What pattern is seen (line / mount / sign)
-2. What it means
-3. How it affects real life
+1. What pattern is seen (line / mount / structure / sign)
+2. Why this pattern forms
+3. How it affects real life decisions
+4. What problem it creates
+
+Do not skip reasoning.
 
 ---
 
@@ -119,148 +136,191 @@ Question: {questions}
 
 ---
 
-OUTPUT FORMAT:
+OUTPUT STRUCTURE:
 
-Section 1 – व्यक्तित्व और मानसिक पैटर्न  
-Section 2 – हस्त संरचना  
-Section 3 – मुख्य रेखाएं विश्लेषण  
-Section 4 – पर्वत विश्लेषण  
-Section 5 – विशेष चिन्ह (IMPORTANT)  
-Section 6 – करियर और धन  
-Section 7 – समस्या का वास्तविक कारण (MOST IMPORTANT)  
-Section 8 – सही दिशा और निर्णय  
-Section 9 – समय संकेत ({years_text})  
-Section 10 – उपाय (MOST IMPORTANT)  
-Section 11 – अंतिम मार्गदर्शन  
-
----
-
-SECTION 3 (LINES):
-
-Explain based on:
-
-- Life line → stability & energy pattern  
-- Head line → thinking & decision pattern  
-- Heart line → emotional behavior  
-- Fate line → career flow  
-
-Avoid vague lines — connect with real life.
+Section 1 – हस्त संरचना  
+Section 2 – पर्वत विश्लेषण  
+Section 3 – मुख्य रेखाएं  
+Section 4 – विशेष संकेत  
+Section 5 – जीवन और करियर पैटर्न  
+Section 6 – समस्या का वास्तविक कारण (MOST IMPORTANT)  
+Section 7 – सही दिशा और निर्णय  
+Section 8 – समय संकेत ({years_text})  
+Section 9 – उपाय (MOST IMPORTANT)  
+Section 10 – अंतिम मार्गदर्शन  
 
 ---
 
-SECTION 4 (MOUNTS):
+SECTION 1 (HAND STRUCTURE):
 
-- Venus → comfort / attraction  
+- Hand type (earth / fire / air / water mix)
+- Fingers, thumb, flexibility
+
+Explain:
+- why this structure formed
+- how it affects behavior
+
+---
+
+SECTION 2 (MOUNTS):
+
+Explain clearly:
+
+- Venus → attachment / comfort  
 - Saturn → discipline / delay  
 - Mercury → business / communication  
 - Sun → recognition  
 - Moon → imagination  
 
-Explain how these influence decisions and income.
+For each:
+- what is seen
+- why it matters
+- how it affects income or decisions
 
 ---
 
-SECTION 5 (SPECIAL SIGNS – VERY IMPORTANT):
+SECTION 3 (LINES):
 
-Analyze if patterns like these appear:
+Analyze:
 
-- Cross → confusion / obstacles  
-- Triangle → skill / intelligence  
-- Square → protection / recovery  
-- Star → sudden events  
-- Cuts / breaks → instability  
-- Shankh / special marks → rare tendencies  
+- Life line → stability pattern  
+- Head line → thinking pattern  
+- Heart line → emotional pattern  
+- Fate line → career flow  
+
+Explain deeply:
+- breaks / depth / direction
+- why instability happens
+
+---
+
+SECTION 4 (SPECIAL SIGNS):
+
+Check patterns:
+
+- Cross → confusion  
+- Triangle → skill  
+- Square → protection  
+- Star → sudden change  
+- Breaks → instability  
 
 Explain:
-- What it means
-- Where it affects life
+- what it indicates
+- where it impacts life
 
-If not clearly visible, use:
+If unclear, say:
 "कुछ संकेत ऐसे दिखते हैं जो..."
 
 ---
 
-SECTION 7 (REAL PROBLEM DIAGNOSIS):
+SECTION 5 (LIFE PATTERN):
 
-❗ MOST IMPORTANT
+- How person operates in life
+- Why growth is stuck or delayed
+- Pattern of success / failure
+
+---
+
+SECTION 6 (REAL ROOT CAUSE — MOST IMPORTANT):
 
 Speak directly:
 
 "सीधे शब्दों में आपकी असली समस्या यह है कि..."
 
-- Identify root cause (not surface)
-- Explain why it repeats
-- Connect with palm patterns
+Explain deeply:
+
+- why income unstable
+- why confusion repeats
+- why consistency breaks
+
+Add 5–7 points minimum
+
+Also include:
+
+"If this continues for next 1–2 years..."
 
 ---
 
-SECTION 8 (DECISION):
+SECTION 7 (CLEAR DECISION SYSTEM):
 
-- Give 2–3 paths:
-  job / business / freelance
+Give:
 
-- Explain clearly:
-  why suitable / why not
+- job option  
+- freelance option  
+- business option  
 
-- END with ONE FINAL direction
+Explain:
+- why suitable / why not
+
+End with ONE clear final direction
 
 ---
 
-SECTION 10 (ADVANCED REMEDY SYSTEM):
+SECTION 8 (YEAR-WISE TIMELINE):
 
-❗ THIS DEFINES QUALITY
+Give structured timeline:
+
+- 2026 → what will happen + why  
+- 2027–2028 → transition phase  
+- 2029–2030 → growth phase  
+
+Include:
+- reason
+- impact
+- caution
+
+---
+
+SECTION 9 (ADVANCED REMEDY SYSTEM):
 
 Each remedy must follow:
 
-• Problem pattern  
-• Why this remedy is needed  
-• Exact remedy  
+1. Problem pattern  
+2. Why remedy works  
+3. Exact steps  
+4. Duration (21 / 40 / 90 days)  
+5. Expected result  
 
 ---
 
 Include:
 
-1. Practical Fix (MOST IMPORTANT)
-   - exact daily action
-   - income strategy
+1. Practical System
+- daily routine
+- income discipline
 
-2. Mental Fix
-   - decision correction
+2. Decision System
+- thinking correction
 
 3. Targeted Traditional Remedy
 
-   - confusion → Budh  
-   - instability → Shani  
-   - emotional → Chandra  
+- Budh → clarity  
+- Shani → stability  
+- Chandra → emotional balance  
 
 Use:
-
 "परंपरागत अनुभव के अनुसार..."
 
-Example:
-"आपके केस में निर्णय अस्थिरता दिखती है, इसलिए बुध से जुड़े उपाय clarity बढ़ाने में सहायक माने जाते हैं"
+---
 
-Give:
-- simple mantra
-- specific day action
-- small practical step
+IMPORTANT:
 
-❌ No generic remedies  
-❌ No random suggestions  
+- No random mantra
+- No generic advice
+- Each remedy must connect with problem
 
 ---
 
 WRITING STYLE:
 
-- Bullet format (•)
-- Each point 3–4 lines
+- Bullet format
+- Each point 3–5 lines
 - Mix tone (not repetitive)
-- Speak like real consultant
 
 Use lines like:
 "सीधे शब्दों में..."
-"आपके केस में..."
-"यह पैटर्न आमतौर पर तब बनता है जब..."
+"यह सिर्फ एक संकेत नहीं है..."
+"आपके केस में खास बात यह है कि..."
 
 ---
 
@@ -268,15 +328,20 @@ DEPTH:
 
 {depth_note}
 
-- Section 6, 7, 10 must be deepest
-- Minimum 6–8 points in key sections
+- Section 6 and 9 must be longest
+- Minimum 6–8 deep points
 
 ---
 
-FINAL RULE:
+FINAL MESSAGE:
 
-- Must feel like real human expert
-- Must not feel like template
+- Strong guidance
+- No motivation talk
+- Clear actionable direction
+
+End with:
+
+"अगले 90 दिन आपके लिए निर्णायक हैं..."
 
 ---
 
