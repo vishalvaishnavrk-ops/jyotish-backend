@@ -68,7 +68,7 @@ def generate_ai_draft(client_id):
 """
 
     else:  # ₹501
-        max_tokens = 2800
+        max_tokens = 3200
         years_text = "2026 से अगले 5 वर्ष"
         depth_note = """
 - हर section में कम से कम 6–8 bullet points
@@ -162,6 +162,16 @@ Example:
 
 Make it feel like direct guidance, not a report.
 
+Section 11 – अंतिम संदेश:
+
+Make final message impactful:
+
+- Problem acknowledge करो
+- Confidence दो
+- Clear direction reinforce करो
+
+Avoid generic positivity.
+
 ---    
     
 CLIENT DETAILS:
@@ -203,6 +213,12 @@ Then give:
 
 This section must feel like real paid consultation, not general advice.
 
+End Section 6 with a clear conclusion:
+
+- Final recommendation (job / business / freelance)
+- One main path choose करके बताओ
+- Confusion खत्म करो
+
 ---
 
 SECTION 9 (TIMELINE):
@@ -241,6 +257,14 @@ Use safe phrasing:
 Each remedy must directly connect to user's problem.
 Avoid random or generic advice.
 
+After remedies, add a short explanation:
+
+- Why these remedies will help THIS specific person
+- Connect remedy with problem
+
+Example:
+"ये उपाय इसलिए आपके लिए प्रभावी रहेंगे क्योंकि..."
+
 ---
 
 WRITING STYLE:
@@ -250,6 +274,20 @@ WRITING STYLE:
 - Each point minimum 3 lines
 - No paragraphs
 - No repetition
+
+---
+
+Tone Enhancement:
+
+- हर point में थोड़ा variation रखें
+- हर line same pattern में शुरू न करें
+
+Use mix style:
+- कभी सीधे observation से शुरू करें
+- कभी explanation से
+- कभी direct guidance से
+
+Make it feel like a real human explaining, not listing.
 
 ---
 
@@ -290,6 +328,8 @@ FINAL INSTRUCTION:
 - Always provide complete report
 
 ---
+
+Ensure the response is complete and does not cut off mid-section.
 
 Only output final report.
 """
