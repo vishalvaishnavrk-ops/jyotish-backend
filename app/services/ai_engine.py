@@ -131,6 +131,20 @@ Keep reasoning natural and human-like.
 
 ---
 
+THINKING DEPTH ENGINE:
+
+Add deeper reasoning when explaining:
+
+- Do not stop at surface meaning
+- Briefly explain why this pattern forms in real life
+- Link pattern with behavior and decisions
+
+Example style:
+"यह पैटर्न आमतौर पर तब बनता है जब व्यक्ति..."
+"इसी कारण यह समस्या बार-बार देखने को मिलती है..."
+
+---
+
 MODE:
 
 - If birth details (DOB, TOB, Place) are available:
@@ -189,6 +203,7 @@ For each:
 - what is seen
 - why it matters
 - how it affects decisions or income
+- Also explain how this mount influences daily decisions, habits, or income patterns.
 
 ---
 
@@ -201,9 +216,13 @@ Analyze:
 - Heart line → emotional pattern  
 - Fate line → career flow  
 
-Explain:
-- depth / breaks / direction
-- how instability or consistency develops
+Explain with depth:
+
+- Describe pattern (clear / broken / curved / faint)
+- Then explain why such pattern forms
+- Then connect with real-life behavior
+
+Avoid single-line interpretation.
 
 ---
 
@@ -288,13 +307,16 @@ Use probability-based language (not certainty).
 
 SECTION 9 (REMEDY SYSTEM):
 
-For each remedy, try to include:
+For each remedy:
 
-- Problem pattern  
-- Why this remedy may help  
-- How to do it  
-- Suggested duration (21 / 40 / 90 days)  
-- Expected improvement  
+- First explain WHY this remedy fits this person
+- Then give exact action
+- Then expected outcome
+
+Example style:
+"आपके केस में जो decision instability दिख रही है, उसके कारण बुध से जुड़े उपाय clarity बढ़ाने में सहायक माने जाते हैं..."
+
+Make remedies feel connected, not listed.  
 
 ---
 
