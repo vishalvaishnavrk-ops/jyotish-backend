@@ -130,6 +130,18 @@ Observation → Meaning → Life Impact
 
 ---
 
+Write like a real experienced consultant, not like a textbook.
+
+- Avoid repeating "यह दर्शाता है" in every point
+- Use natural explanation style
+- Mix observation with reasoning naturally
+
+Example style:
+"यह संकेत इस बात की ओर इशारा करता है कि..."
+"यहां जो पैटर्न दिखता है, वह आमतौर पर तब बनता है जब..."
+
+---
+
 PERSONALIZATION + HUMAN TOUCH:
 
 - Report must feel personal
@@ -142,6 +154,16 @@ PERSONALIZATION + HUMAN TOUCH:
 
 ---
 
+In important sections (especially Section 6 and 11), speak directly like a mentor.
+
+Example:
+"आपके केस में सबसे बड़ी समस्या यह दिखती है कि..."
+"अगर आप यही pattern continue रखते हैं तो..."
+
+Make it feel like direct guidance, not a report.
+
+---    
+    
 CLIENT DETAILS:
 Name: {name}
 Question: {questions}
@@ -164,19 +186,22 @@ Section 11 – अंतिम संदेश
 
 ---
 
-SECTION 6 (DIAGNOSIS MODE - MOST IMPORTANT):
+SECTION 6 (ADVANCED DIAGNOSIS MODE - MOST IMPORTANT):
 
-- User के प्रश्न पर deep focus करें
-- Palm संकेत से कारण निकालें
-- Explain why problem repeats
-- Give clear direction (job vs freelance)
-- Avoid general advice
+- Surface level explanation नहीं, root pattern identify करें
+- Palm संकेत से समझाएं कि समस्या बार-बार क्यों बन रही है
 
-Structure:
-1. समस्या का मूल कारण
-2. यह बार-बार क्यों हो रहा है
-3. क्या बदलना जरूरी है
-4. किन गलतियों से बचना है
+Think deeply:
+- क्यों income stable नहीं हो रही?
+- क्यों सही काम decide नहीं हो पा रहा?
+
+Then give:
+
+- Clear direction (job vs freelance vs business)
+- 2–3 practical options
+- हर option का reason explain करें (क्यों suitable है)
+
+This section must feel like real paid consultation, not general advice.
 
 ---
 
@@ -191,18 +216,30 @@ SECTION 9 (TIMELINE):
 
 ---
 
-SECTION 10 (REMEDIES):
+SECTION 10 (PERSONALIZED REMEDIES):
 
-- Give practical + traditional remedies
-- Use safe phrasing:
-  "परंपरागत रूप से यह उपाय सहायक माने जाते हैं"
+Remedies must be personalized, not generic.
 
-- Include:
-  - simple mantra
-  - daily discipline
-  - behavioral correction
+Give 3 layers:
 
-- Remedies must connect with user's problem
+1. Practical (MOST IMPORTANT)
+   - daily routine change
+   - financial discipline
+   - work strategy
+
+2. Mental pattern correction
+   - decision making सुधार
+   - consistency build करना
+
+3. Traditional remedies (limited but relevant)
+   - simple mantra
+   - small rituals
+
+Use safe phrasing:
+"परंपरागत रूप से यह उपाय सहायक माने जाते हैं"
+
+Each remedy must directly connect to user's problem.
+Avoid random or generic advice.
 
 ---
 
@@ -232,6 +269,17 @@ QUALITY RULES:
 - No repeated lines
 - Must feel like real expert consultation
 - Each section must be different
+
+---
+
+Avoid repeating same explanation pattern in every section.
+
+- Personality = descriptive
+- Career = analytical
+- Question = diagnostic
+- Remedies = actionable
+
+Each section must feel unique and different.
 
 ---
 
