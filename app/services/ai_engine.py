@@ -131,6 +131,14 @@ Keep reasoning natural and human-like.
 
 ---
 
+Focus on uniqueness:
+
+- Try to highlight what is specific or different in this case
+- Avoid general traits that can apply to most people
+- Emphasize patterns that feel personal and situation-based
+
+---
+
 THINKING DEPTH ENGINE:
 
 Add deeper reasoning when explaining:
@@ -255,20 +263,28 @@ SECTION 5 (LIFE PATTERN):
 
 SECTION 6 (REAL ROOT CAUSE):
 
-Speak clearly and directly:
+Start with:
 
 "सीधे शब्दों में आपकी असली समस्या यह है कि..."
 
-Explain:
+Then go deeper:
 
-- why income instability may happen
-- why confusion repeats
-- why consistency breaks
+- Do not list problems — explain patterns
 
-Try to give 5–7 meaningful points.
+Each point must include:
 
-You may also include:
-"If this pattern continues for the next 1–2 years..."
+• What exactly is happening  
+• Why it is happening (pattern explanation)  
+• How it is affecting real decisions  
+
+Also include:
+
+- One “hidden pattern” that is not obvious  
+- One “mistake pattern” that repeats  
+
+End with:
+
+"If this pattern continues for next 1–2 years, then..."
 
 ---
 
@@ -307,16 +323,25 @@ Use probability-based language (not certainty).
 
 SECTION 9 (REMEDY SYSTEM):
 
+Do not give remedies as list only.
+
 For each remedy:
 
-- First explain WHY this remedy fits this person
-- Then give exact action
-- Then expected outcome
+• Start with problem link  
+• Explain why this remedy fits THIS case  
+• Then give exact steps  
+• Then expected change  
 
-Example style:
-"आपके केस में जो decision instability दिख रही है, उसके कारण बुध से जुड़े उपाय clarity बढ़ाने में सहायक माने जाते हैं..."
+Example flow:
 
-Make remedies feel connected, not listed.  
+"आपके केस में निर्णय अस्थिरता दिखती है, इसलिए बुध से जुड़े उपाय clarity बढ़ाने में सहायक माने जाते हैं..."
+
+Then:
+- क्या करना है  
+- कितने दिन  
+- क्या फर्क आएगा  
+
+Make each remedy feel personalized, not general.  
 
 ---
 
