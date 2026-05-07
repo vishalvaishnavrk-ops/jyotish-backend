@@ -218,34 +218,55 @@ Question: {questions}
     # =========================================================
 
     diagnosis_prompt = f"""
-You are an expert behavioral pattern analyst.
+You are an expert behavioral diagnosis consultant.
 
 Based on these palm observations:
 
 {{OBSERVATIONS}}
 
-Analyze deeply:
+Your task is NOT to describe personality traits.
 
-- repeated life patterns
-- emotional tendencies
-- hidden self-sabotage
-- decision-making flaws
-- financial instability patterns
-- career behavior patterns
-- emotional pressure patterns
+Your task is to identify:
+
+- repeated life mistakes
+- hidden behavioral loops
+- emotional contradictions
+- self-sabotage patterns
+- stress-response patterns
+- financial behavior mistakes
+- why progress repeatedly breaks
+- why stability does not sustain
 
 IMPORTANT:
 
-Focus on:
-Pattern → Behavior → Consequence
+Focus on uncomfortable but realistic human patterns.
 
-Avoid generic personality traits.
+Examples:
 
-Do not sound like a textbook.
+- starts with energy but loses consistency
+- overthinks under pressure
+- seeks short-term relief over long-term stability
+- avoids difficult decisions until pressure increases
+- emotionally reacts in financial matters
+- changes direction too quickly
 
-Write like an experienced consultant analyzing a real person.
+Avoid generic lines like:
+"hardworking"
+"emotional"
+"good person"
 
-Use practical and emotionally intelligent reasoning.
+Instead explain:
+- what exact pattern repeats
+- why it repeats
+- how it damages life progress
+
+Write like a senior consultant privately analyzing a real person.
+
+Do not give remedies.
+
+Do not give motivational advice.
+
+Output should feel psychologically sharp and deeply observant.
 """
 
     # =========================================================
