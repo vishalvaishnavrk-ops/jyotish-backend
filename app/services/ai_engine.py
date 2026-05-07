@@ -146,6 +146,12 @@ def generate_ai_draft(client_id):
 - Year-wise timeline with reasoning
 - Report should feel premium and deeply personal
 - Avoid generic advice or repeated lines
+- Remedies must feel deeply personalized
+- Section 6 and 9 should feel like direct consultation
+- Explain WHY the same problems repeat
+- Explain WHY each remedy suits the person's pattern
+- Consultation tone should feel emotionally realistic
+- Report should feel like a private paid consultation
 """
 
     # =========================================================
@@ -360,26 +366,85 @@ Use human-style lines like:
 
 ---
 
-SECTION 9:
+SECTION 9 – उपाय और सुधार प्रणाली
+
+This section must feel like:
+a real experienced Indian palm reader + spiritual consultant personally guiding the client.
+
+IMPORTANT:
+
+Do NOT give generic wellness advice.
+
+Every remedy must connect directly with:
+- behavioral pattern
+- emotional imbalance
+- financial instability
+- planetary weakness pattern
+- palm indications
 
 Remedies should feel:
-- practical
-- connected
-- personalized
+specific
+traditional
+practical
+experience-based
 
-Avoid random remedies.
+Use combinations of:
 
-Each remedy should connect:
+1. Practical correction
+2. Behavioral discipline
+3. Vedic remedy
+4. Simple spiritual correction
+5. Energy-balancing routine
 
-Problem → Correction → Expected Change
+Examples of remedy styles:
 
-Include:
-- practical discipline
-- behavior correction
-- traditional remedies if relevant
+- Budh imbalance → clarity, communication, business instability
+- Shani imbalance → delay, pressure, inconsistency
+- Mangal imbalance → anger, impulsive decisions
+- Chandra imbalance → emotional confusion
+- Surya weakness → confidence collapse
 
-Use safe wording like:
+IMPORTANT:
+
+Do not claim magical guaranteed results.
+
+Use wording like:
 "परंपरागत अनुभव के अनुसार..."
+"ज्योतिषीय परंपराओं में इसे सहायक माना जाता है..."
+
+Each remedy must include:
+
+- why this remedy suits the person's pattern
+- exact method
+- duration (21 / 43 / 90 days)
+- expected behavioral improvement
+
+Mix:
+- mantra
+- daan
+- discipline
+- practical correction
+- mental reset
+- satvik lifestyle guidance
+
+Examples:
+
+- specific mantra jap
+- specific weekday discipline
+- daan
+- morning rituals
+- financial discipline routines
+- speech control practice
+- focus rituals
+- grounding routines
+
+Avoid:
+- generic motivation
+- random positivity
+- vague spiritual advice
+
+This section should feel:
+"अब मुझे समझ आया कि मेरे case में क्या करना चाहिए"
 
 ---
 
