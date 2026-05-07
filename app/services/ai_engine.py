@@ -196,7 +196,7 @@ You are an expert behavioral pattern analyst.
 
 Based on these palm observations:
 
-{OBSERVATIONS}
+{{OBSERVATIONS}}
 
 Analyze deeply:
 
