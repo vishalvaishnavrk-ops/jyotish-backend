@@ -286,13 +286,15 @@ Then go deeper:
 
 - Do not list problems — explain patterns
 
-Each point must include:
+Each point should try to include:
 
 • What exactly is happening  
 • Why it is happening (pattern explanation)  
 • How it is affecting real decisions  
 
-Also include:
+(Explain naturally, avoid making it feel forced or repetitive)
+
+You may also include:
 
 - One “hidden pattern” that is not obvious  
 - One “mistake pattern” that repeats  
@@ -338,14 +340,14 @@ Use probability-based language (not certainty).
 
 SECTION 9 (REMEDY SYSTEM):
 
-Do not give remedies as list only.
+Try to avoid giving remedies as a plain list.
 
-For each remedy:
+For each remedy, you can explain:
 
 • Start with problem link  
-• Explain why this remedy fits THIS case  
-• Then give exact steps  
-• Then expected change  
+• Explain why this remedy fits this case  
+• Then suggest simple steps  
+• Then mention expected improvement  
 
 Example flow:
 
@@ -357,6 +359,9 @@ Then:
 - क्या फर्क आएगा  
 
 Make each remedy feel personalized, not general.  
+
+Keep remedies practical, simple, and based on commonly known traditional practices.
+Avoid making extreme or guaranteed claims.
 
 ---
 
@@ -415,7 +420,7 @@ You may end with a strong actionable line such as:
 
 ---
 
-Generate a complete and structured report in Hindi.
+Generate a structured and detailed report in Hindi, keeping the tone practical, balanced, and experience-based.
 """
 
     # ---------- AI CALL ----------
