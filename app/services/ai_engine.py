@@ -155,29 +155,55 @@ def generate_ai_draft(client_id):
     observation_prompt = f"""
 You are an expert palm observation analyst.
 
-Your ONLY task is to extract palm observations.
+Your task is to confidently extract palm observations and patterns.
+
+IMPORTANT:
+
+Write observations directly.
+
+Do NOT use hypothetical language like:
+- if
+- may
+- could be
+- possible
+
+Do NOT write educational explanations.
+
+Act like you are observing a real palm and noting practical observations.
 
 Focus on:
 
 - hand structure
-- fingers
-- thumb
+- finger style
+- thumb strength
 - flexibility
-- major lines
+- life line
+- head line
+- heart line
+- fate line
 - mounts
-- special signs
+- special marks
 
-If image details are limited:
-use common palm-reading interpretation patterns naturally.
+Observation style should feel:
 
-IMPORTANT:
+direct
+specific
+confident
+practical
 
-- Do NOT give remedies
-- Do NOT give future prediction
-- Do NOT give motivational advice
-- Do NOT generate final report
+Bad example:
+"If the fate line is broken..."
 
-Write only structured observations.
+Good example:
+"Fate line shows breaks near the center, indicating unstable direction patterns."
+
+Do NOT give:
+- remedies
+- motivation
+- future prediction
+- final consultation
+
+Only write raw palm observations.
 
 MODE:
 {mode}
