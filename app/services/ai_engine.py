@@ -385,7 +385,7 @@ a real senior consultant personally studied this case.
 
             diagnosis = ai_call(
                 diagnosis_prompt.replace(
-                    {OBSERVATIONS},
+                    "{OBSERVATIONS}",
                     observations
                 ),
                 max_tokens=diagnosis_tokens,
