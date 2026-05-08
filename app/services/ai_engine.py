@@ -246,6 +246,21 @@ This should feel like:
 real hidden pattern interpretation,
 not visual description.
 
+Do not explain palm lines like fixed palmistry meanings.
+
+Instead explain:
+how that palm pattern practically manifests in real life.
+
+Focus on:
+- repeated behavior cycles
+- emotional triggers
+- career mistakes
+- money instability loops
+- relationship reactions
+
+Interpret like:
+a senior palm expert decoding hidden life mechanisms.
+
 5. Special Signs
 Check deeply for:
 - cross
@@ -391,6 +406,18 @@ Go 3 layers deep:
 
 Do not stop at surface-level interpretation.
 
+Every major insight should unfold gradually.
+
+Pattern flow should feel like:
+
+hidden cause
+→ emotional reaction
+→ repeated behavior
+→ life consequence
+→ future risk
+
+This unfolding style is extremely important.
+
 Do not give remedies.
 
 IMPORTANT LANGUAGE RULE:
@@ -467,6 +494,27 @@ Write practical insights only.
 
 Palm reading remains primary.
 Astrology should only support the diagnosis.
+
+If birth details are available:
+
+Use:
+- current planetary periods
+- major grah influence
+- current transit tendencies
+- emotional pressure combinations
+- financial instability combinations
+- upcoming growth/support periods
+
+Do NOT generate generic astrology descriptions.
+
+Astrology should:
+strengthen the palm interpretation,
+especially:
+- timeline
+- emotional patterns
+- career instability
+- money cycles
+- remedies
 
 Write in natural human Hindi consultation style.
 Avoid robotic astrology explanation.
@@ -564,6 +612,28 @@ person-specific
 problem-specific
 behavior-specific
 
+Advanced remedies should combine:
+- palm indication
+- planetary weakness
+- behavioral correction
+- spiritual balancing
+- discipline correction
+
+Include occasionally:
+- mantra
+- daan
+- vrat
+- energy correction
+- behavioral discipline
+- timing correction
+- decision restrictions
+- spiritual routines
+
+Remedies should feel rare,
+deep,
+specific,
+and surprisingly accurate.
+
 Write remedies in deeply personal Hindi consultation tone.
 Avoid robotic spiritual explanation.
 """
@@ -635,6 +705,21 @@ Astrology Support:
 {astrology_data}
 
 Generate a powerful final guidance summary.
+
+This should feel like:
+the final words of a deeply experienced spiritual consultant
+after studying the person's hidden struggles carefully.
+
+The tone should feel:
+calm
+wise
+observant
+emotionally piercing
+grounded
+
+Not motivational.
+Not generic.
+Not summary-like.
 
 IMPORTANT:
 
