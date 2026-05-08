@@ -7,19 +7,38 @@ USE_REAL_AI = True
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def ai_call(prompt, max_tokens=1200, temperature=0.7):
+# =========================================================
+# UNIVERSAL AI CALL
+# =========================================================
+
+def ai_call(prompt, max_tokens=1200, temperature=0.7, images=None):
+
+    content = [
+        {
+            "type": "input_text",
+            "text": prompt
+        }
+    ]
+
+    # ============================================
+    # ADD IMAGES IF AVAILABLE
+    # ============================================
+
+    if images:
+
+        for img in images:
+
+            content.append({
+                "type": "input_image",
+                "image_url": img
+            })
 
     response = client.responses.create(
         model="gpt-4o",
         input=[
             {
                 "role": "user",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": prompt
-                    }
-                ]
+                "content": content
             }
         ],
         temperature=temperature,
@@ -29,15 +48,20 @@ def ai_call(prompt, max_tokens=1200, temperature=0.7):
     return response.output_text.strip()
 
 
+# =========================================================
+# MAIN ENGINE
+# =========================================================
+
 def generate_ai_draft(client_id):
 
-    # =========================================================
+    # =====================================================
     # FETCH CLIENT
-    # =========================================================
+    # =====================================================
 
     conn = get_db()
 
     try:
+
         c = conn.cursor()
 
         c.execute("""
@@ -63,11 +87,12 @@ def generate_ai_draft(client_id):
         name, questions, plan, dob, tob, place, images = data
 
     finally:
+
         release_db(conn)
 
-    # =========================================================
+    # =====================================================
     # IMAGE LOGIC
-    # =========================================================
+    # =====================================================
 
     image_urls = []
 
@@ -78,449 +103,466 @@ def generate_ai_draft(client_id):
             if img.strip()
         ]
 
-    # =========================================================
+    # =====================================================
     # MODE
-    # =========================================================
+    # =====================================================
 
     mode = "HYBRID" if dob and tob and place else "PALM_ONLY"
 
-    # =========================================================
+    # =====================================================
     # PLAN CONFIG
-    # =========================================================
+    # =====================================================
 
     if "₹51" in plan:
 
         observation_tokens = 500
         diagnosis_tokens = 700
-        final_tokens = 1200
-
-        years_text = "अगले 1–2 वर्ष"
-
-        depth_note = """
-- Short and direct report
-- Focus only on major observations
-- Simple practical guidance
-"""
+        astrology_tokens = 500
+        remedy_tokens = 700
+        timeline_tokens = 600
 
     elif "₹151" in plan:
 
-        observation_tokens = 700
-        diagnosis_tokens = 900
-        final_tokens = 1800
-
-        years_text = "अगले 1–3 वर्ष"
-
-        depth_note = """
-- Add reasoning with observations
-- Slightly deeper practical analysis
-- More personal consultation tone
-"""
+        observation_tokens = 800
+        diagnosis_tokens = 1000
+        astrology_tokens = 700
+        remedy_tokens = 1000
+        timeline_tokens = 900
 
     elif "₹251" in plan:
 
-        observation_tokens = 900
-        diagnosis_tokens = 1200
-        final_tokens = 2600
-
-        years_text = "अगले 1–4 वर्ष"
-
-        depth_note = """
-- Deep analysis of lines and mounts
-- Strong life-pattern diagnosis
-- Personalized remedies and timeline
-"""
+        observation_tokens = 1200
+        diagnosis_tokens = 1400
+        astrology_tokens = 900
+        remedy_tokens = 1500
+        timeline_tokens = 1200
 
     else:  # ₹501
 
-        observation_tokens = 1200
-        diagnosis_tokens = 1600
-        final_tokens = 4200
-
-        years_text = "2026 से अगले 5 वर्ष"
-
-        depth_note = """
-- Deep expert-level consultation feel
-- Human-like explanation and emotional realism
-- Strong behavioral diagnosis
-- Detailed practical + traditional remedies
-- Year-wise timeline with reasoning
-- Report should feel premium and deeply personal
-- Avoid generic advice or repeated lines
-- Remedies must feel deeply personalized
-- Section 6 and 9 should feel like direct consultation
-- Explain WHY the same problems repeat
-- Explain WHY each remedy suits the person's pattern
-- Consultation tone should feel emotionally realistic
-- Report should feel like a private paid consultation
-"""
-
-    # =========================================================
-    # STEP 1 — OBSERVATION ENGINE
-    # =========================================================
-
-    observation_prompt = f"""
-You are an expert palm observation analyst.
-
-Your task is to confidently extract palm observations and patterns.
-
-IMPORTANT:
-
-Write observations directly.
-
-Do NOT use hypothetical language like:
-- if
-- may
-- could be
-- possible
-
-Do NOT write educational explanations.
-
-Act like you are observing a real palm and noting practical observations.
-
-Focus on:
-
-- hand structure
-- finger style
-- thumb strength
-- flexibility
-- life line
-- head line
-- heart line
-- fate line
-- mounts
-- special marks
-
-Observation style should feel:
-
-direct
-specific
-confident
-practical
-
-Bad example:
-"If the fate line is broken..."
-
-Good example:
-"Fate line shows breaks near the center, indicating unstable direction patterns."
-
-Do NOT give:
-- remedies
-- motivation
-- future prediction
-- final consultation
-
-Only write raw palm observations.
-
-MODE:
-{mode}
-
-CLIENT:
-Name: {name}
-Question: {questions}
-"""
-
-    # =========================================================
-    # STEP 2 — DIAGNOSIS ENGINE
-    # =========================================================
-
-    diagnosis_prompt = f"""
-You are an expert behavioral diagnosis consultant.
-
-Based on these palm observations:
-
-{{OBSERVATIONS}}
-
-Your task is NOT to describe personality traits.
-
-Your task is to identify:
-
-- repeated life mistakes
-- hidden behavioral loops
-- emotional contradictions
-- self-sabotage patterns
-- stress-response patterns
-- financial behavior mistakes
-- why progress repeatedly breaks
-- why stability does not sustain
-
-IMPORTANT:
-
-Focus on uncomfortable but realistic human patterns.
-
-Examples:
-
-- starts with energy but loses consistency
-- overthinks under pressure
-- seeks short-term relief over long-term stability
-- avoids difficult decisions until pressure increases
-- emotionally reacts in financial matters
-- changes direction too quickly
-
-Avoid generic lines like:
-"hardworking"
-"emotional"
-"good person"
-
-Instead explain:
-- what exact pattern repeats
-- why it repeats
-- how it damages life progress
-
-Write like a senior consultant privately analyzing a real person.
-
-Do not give remedies.
-
-Do not give motivational advice.
-
-Output should feel psychologically sharp and deeply observant.
-"""
-
-    # =========================================================
-    # STEP 3 — FINAL CONSULTATION ENGINE
-    # =========================================================
-
-    consultation_prompt = f"""
-You are a highly experienced senior palm reading consultant.
-
-You are directly consulting a real client.
-
-Use these palm observations:
-
-{{OBSERVATIONS}}
-
-Use these behavioral diagnosis insights:
-
-{{DIAGNOSIS}}
-
-Generate a premium Hindi consultation report.
-
-IMPORTANT:
-
-The report should feel:
-- deeply personal
-- emotionally accurate
-- practical
-- human
-- experience-based
-
-Do NOT sound like:
-- textbook
-- astrology article
-- AI template
-- generic self-help content
-
-Write like a real senior consultant explaining:
-
-- recurring life patterns
-- emotional loops
-- hidden mistakes
-- financial struggles
-- behavioral contradictions
-- real root causes
-
-The reader should feel:
-"यह रिपोर्ट मेरे लिए ही बनाई गई है"
-
-Use natural conversational Hindi.
-
----
-
-MODE:
-
-- If birth details are available:
-  use astrology only as supporting insight
-
-- Palm reading should remain primary
-
----
-
-OUTPUT STRUCTURE:
-
-Section 1 – हस्त संरचना  
-Section 2 – पर्वत विश्लेषण  
-Section 3 – मुख्य रेखाएं  
-Section 4 – विशेष संकेत  
-Section 5 – जीवन और करियर पैटर्न  
-Section 6 – समस्या का वास्तविक कारण  
-Section 7 – सही दिशा और निर्णय  
-Section 8 – समय संकेत ({years_text})  
-Section 9 – उपाय और सुधार प्रणाली  
-Section 10 – अंतिम मार्गदर्शन  
-
----
-
-SECTION 6 SHOULD BE MOST POWERFUL.
-
-Focus on:
-- repeated mistakes
-- mindset loops
-- hidden emotional pressure
-- why the same problems repeat
-
-Use human-style lines like:
-
-"असल समस्या यहीं से शुरू होती है..."
-"आप मेहनती हैं, लेकिन..."
-"यहीं पर बार-बार गलती हो रही है..."
-"आप बाहर से मजबूत दिखते हैं, लेकिन अंदर लगातार pressure चलता रहता है..."
-
----
-
-SECTION 9 – उपाय और सुधार प्रणाली
-
-This section must feel like:
-a real experienced Indian palm reader + spiritual consultant personally guiding the client.
-
-IMPORTANT:
-
-Do NOT give generic wellness advice.
-
-Every remedy must connect directly with:
-- behavioral pattern
-- emotional imbalance
-- financial instability
-- planetary weakness pattern
-- palm indications
-
-Remedies should feel:
-specific
-traditional
-practical
-experience-based
-
-Use combinations of:
-
-1. Practical correction
-2. Behavioral discipline
-3. Vedic remedy
-4. Simple spiritual correction
-5. Energy-balancing routine
-
-Examples of remedy styles:
-
-- Budh imbalance → clarity, communication, business instability
-- Shani imbalance → delay, pressure, inconsistency
-- Mangal imbalance → anger, impulsive decisions
-- Chandra imbalance → emotional confusion
-- Surya weakness → confidence collapse
-
-IMPORTANT:
-
-Do not claim magical guaranteed results.
-
-Use wording like:
-"परंपरागत अनुभव के अनुसार..."
-"ज्योतिषीय परंपराओं में इसे सहायक माना जाता है..."
-
-Each remedy must include:
-
-- why this remedy suits the person's pattern
-- exact method
-- duration (21 / 43 / 90 days)
-- expected behavioral improvement
-
-Mix:
-- mantra
-- daan
-- discipline
-- practical correction
-- mental reset
-- satvik lifestyle guidance
-
-Examples:
-
-- specific mantra jap
-- specific weekday discipline
-- daan
-- morning rituals
-- financial discipline routines
-- speech control practice
-- focus rituals
-- grounding routines
-
-Avoid:
-- generic motivation
-- random positivity
-- vague spiritual advice
-
-This section should feel:
-"अब मुझे समझ आया कि मेरे case में क्या करना चाहिए"
-
----
-
-WRITING STYLE:
-
-- conversational Hindi
-- readable formatting
-- every point separate line
-- avoid repetition
-- avoid generic statements
-
----
-
-DEPTH:
-
-{depth_note}
-
----
-
-FINAL TONE:
-
-The report should feel like:
-a real senior consultant personally studied this case.
-"""
-
-    # =========================================================
+        observation_tokens = 1800
+        diagnosis_tokens = 2200
+        astrology_tokens = 1400
+        remedy_tokens = 2200
+        timeline_tokens = 1600
+
+    # =====================================================
     # AI EXECUTION
-    # =========================================================
+    # =====================================================
 
     if not USE_REAL_AI:
+
         final_report = "Dummy report"
 
     else:
 
         try:
 
-            # ---------------------------------------------
-            # STEP 1
-            # ---------------------------------------------
+            # =================================================
+            # STEP 1 — PALM OBSERVATION ENGINE
+            # =================================================
+
+            observation_prompt = f"""
+You are a highly experienced palm observation expert.
+
+Your task is to deeply observe palm structure and extract practical life-related patterns.
+
+IMPORTANT:
+
+Do NOT write generic palmistry theory.
+
+Act like you are observing a real person's hand and extracting meaningful patterns.
+
+Focus deeply on:
+
+1. Hand Structure
+- earth / fire / air / water tendencies
+- palm texture
+- flexibility
+- hardness / softness
+
+2. Fingers & Thumb
+- finger balance
+- thumb strength
+- flexibility
+- control tendency
+- stubbornness vs adaptability
+
+3. Major Lines
+- life line
+- head line
+- heart line
+- fate line
+- sun line
+- mercury line
+
+Observe:
+- breaks
+- chains
+- forks
+- islands
+- depth
+- curve
+- direction
+- overlaps
+
+4. Mount Analysis
+- Jupiter
+- Saturn
+- Sun
+- Mercury
+- Venus
+- Moon
+- Mars
+
+Explain:
+- emotional impact
+- decision impact
+- financial behavior impact
+- career impact
+
+5. Special Signs
+Check deeply for:
+- cross
+- star
+- triangle
+- square
+- grill
+- fish
+- trident
+- cuts
+- chained patterns
+
+IMPORTANT:
+
+Do NOT use:
+- maybe
+- if
+- possible
+
+Write confident observations directly.
+
+Good style:
+"Fate line shows repeated breaks near the center, indicating instability in long-term direction and repeated restart patterns."
+
+Avoid:
+generic textbook explanations.
+
+Do NOT give:
+- remedies
+- predictions
+- motivational advice
+- final consultation
+
+CLIENT:
+{name}
+
+QUESTION:
+{questions}
+
+MODE:
+{mode}
+
+If MODE is HYBRID:
+subtly align observations with possible astrology-supported behavioral tendencies.
+"""
 
             observations = ai_call(
                 observation_prompt,
                 max_tokens=observation_tokens,
-                temperature=0.5
+                temperature=0.5,
+                images=image_urls
             )
 
-            # ---------------------------------------------
-            # STEP 2
-            # ---------------------------------------------
+            # =================================================
+            # STEP 2 — BEHAVIORAL DIAGNOSIS ENGINE
+            # =================================================
+
+            diagnosis_prompt = f"""
+You are an expert behavioral diagnosis consultant.
+
+Based on these palm observations:
+
+{observations}
+
+Identify:
+
+- repeated life mistakes
+- emotional contradictions
+- self-sabotage patterns
+- stress-response patterns
+- financial instability patterns
+- hidden behavioral loops
+- why stability repeatedly breaks
+
+IMPORTANT:
+
+Avoid generic personality descriptions.
+
+Do NOT say:
+- hardworking
+- emotional
+- good person
+
+Instead explain:
+- what exact pattern repeats
+- why it repeats
+- how it damages progress
+
+Write like a senior consultant privately analyzing a real person.
+
+Do not give remedies.
+"""
 
             diagnosis = ai_call(
-                diagnosis_prompt.replace(
-                    "{OBSERVATIONS}",
-                    observations
-                ),
+                diagnosis_prompt,
                 max_tokens=diagnosis_tokens,
                 temperature=0.7
             )
 
-            # ---------------------------------------------
-            # STEP 3
-            # ---------------------------------------------
+            # =================================================
+            # STEP 3 — ASTROLOGY SUPPORT ENGINE
+            # =================================================
 
-            final_prompt = consultation_prompt \
-                .replace("{OBSERVATIONS}", observations) \
-                .replace("{DIAGNOSIS}", diagnosis)
+            astrology_data = ""
 
-            final_report = ai_call(
-                final_prompt,
-                max_tokens=final_tokens,
-                temperature=0.85
+            if mode == "HYBRID":
+
+                astrology_prompt = f"""
+You are a Vedic astrology insight analyst.
+
+Client Details:
+
+DOB: {dob}
+TOB: {tob}
+POB: {place}
+
+Analyze only:
+
+- career tendencies
+- financial pressure patterns
+- emotional instability tendencies
+- mental patterns
+- timing tendencies
+
+IMPORTANT:
+
+Do NOT generate full kundli explanation.
+
+Do NOT use difficult astrology jargon.
+
+Write practical insights only.
+
+Palm reading remains primary.
+Astrology should only support the diagnosis.
+"""
+
+                astrology_data = ai_call(
+                    astrology_prompt,
+                    max_tokens=astrology_tokens,
+                    temperature=0.6
+                )
+
+            # =================================================
+            # STEP 4 — REMEDY ENGINE
+            # =================================================
+
+            remedy_prompt = f"""
+You are an experienced Indian spiritual consultant.
+
+Palm Diagnosis:
+{diagnosis}
+
+Astrology Support:
+{astrology_data}
+
+Generate highly personalized remedies.
+
+IMPORTANT:
+
+Avoid generic advice.
+
+Every remedy must connect with:
+- emotional imbalance
+- behavioral instability
+- financial pressure
+- planetary weakness tendencies
+
+Allowed:
+- mantra
+- daan
+- discipline
+- vrat
+- satvik routines
+- speech discipline
+- focus correction
+- behavioral correction
+
+Avoid:
+- magical promises
+- fear-based advice
+- unrealistic tantra claims
+
+For every remedy explain:
+
+- why this remedy suits the person
+- what issue it targets
+- expected practical improvement
+- duration
+
+Use traditional Indian consultation tone.
+
+Use practical + spiritual balance.
+"""
+
+            remedies = ai_call(
+                remedy_prompt,
+                max_tokens=remedy_tokens,
+                temperature=0.7
             )
 
-            # ---------------------------------------------
+            # =================================================
+            # STEP 5 — TIMELINE ENGINE
+            # =================================================
+
+            timeline_prompt = f"""
+You are a life-pattern timeline analyst.
+
+Palm Diagnosis:
+{diagnosis}
+
+Astrology Support:
+{astrology_data}
+
+Generate realistic year-wise insights.
+
+Focus on:
+- career direction
+- financial stability
+- emotional growth
+- pressure periods
+- transition phases
+
+Use realistic language.
+
+Structure:
+
+2026:
+2027–2028:
+2029–2030:
+
+Avoid generic positivity.
+"""
+
+            timeline = ai_call(
+                timeline_prompt,
+                max_tokens=timeline_tokens,
+                temperature=0.7
+            )
+
+            # =================================================
+            # STEP 6 — CLOSING SUMMARY ENGINE
+            # =================================================
+
+            closing_prompt = f"""
+You are a senior spiritual and behavioral consultant.
+
+Based on:
+
+Palm Observations:
+{observations}
+
+Diagnosis:
+{diagnosis}
+
+Astrology Support:
+{astrology_data}
+
+Generate a powerful final guidance summary.
+
+IMPORTANT:
+
+This should feel like:
+a real consultant giving final personal advice after deeply studying the case.
+
+Focus on:
+- biggest hidden challenge
+- biggest strength
+- what must change
+- what should be avoided
+- what can improve life direction
+
+Avoid:
+- generic motivation
+- repeated lines
+- fake positivity
+
+Tone should feel:
+calm
+deep
+human
+emotionally observant
+
+Length:
+5–10 meaningful lines.
+"""
+
+            closing_summary = ai_call(
+                closing_prompt,
+                max_tokens=900,
+                temperature=0.75
+            )
+            
+            # =================================================
+            # STEP 6 — FINAL REPORT COMPOSER
+            # =================================================
+
+            final_report = f"""
+Section 1 – हस्त संरचना और मुख्य संकेत
+
+{observations}
+
+--------------------------------------------------
+
+Section 2 – जीवन और व्यवहार पैटर्न
+
+{diagnosis}
+"""
+
+            if astrology_data:
+
+                final_report += f"""
+
+--------------------------------------------------
+
+Section 3 – ज्योतिषीय समर्थन संकेत
+
+{astrology_data}
+"""
+
+            final_report += f"""
+
+--------------------------------------------------
+
+Section 4 – समय संकेत
+
+{timeline}
+
+--------------------------------------------------
+
+Section 5 – उपाय और सुधार प्रणाली
+
+{remedies}
+
+--------------------------------------------------
+
+Section 6 – अंतिम मार्गदर्शन
+
+{closing_summary}
+"""
+            
+            # =================================================
             # FORMAT FIX
-            # ---------------------------------------------
+            # =================================================
 
             final_report = final_report.replace("• ", "\n• ")
 
@@ -528,9 +570,9 @@ a real senior consultant personally studied this case.
 
             final_report = f"AI Error: {str(e)}"
 
-    # =========================================================
+    # =====================================================
     # SAVE
-    # =========================================================
+    # =====================================================
 
     conn = get_db()
 
