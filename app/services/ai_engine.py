@@ -222,6 +222,13 @@ Decode:
 - financial self-sabotage loops
 - relationship reaction patterns
 
+Keep palm observations concise.
+
+Do not over-explain signs.
+
+The real depth should come later
+through behavioral diagnosis.
+
 Do not describe palm features separately like a textbook.
 
 Always connect observations with:
@@ -232,21 +239,6 @@ Always connect observations with:
 - career struggles
 
 Every observation must feel connected to life experience.
-
-Do not stop at visual observation.
-
-For every major line or sign:
-explain the hidden behavioral consequence behind it.
-
-Connect:
-- palm pattern
-- emotional behavior
-- decision style
-- life consequence
-
-This should feel like:
-real hidden pattern interpretation,
-not visual description.
 
 Do not explain palm lines like fixed palmistry meanings.
 
@@ -396,20 +388,16 @@ This should be the deepest and most emotionally accurate section of the report.
 
 Write like a senior consultant privately analyzing a real person.
 
-Avoid repeating the same emotional phrases multiple times.
-
-Use varied natural consultation language.
-
-Do not repeatedly use:
-- "असल समस्या यहीं से शुरू होती है"
-- "बार-बार यही पैटर्न बनता है"
-- "आपके हाथ में जो संकेत दिखते हैं"
-
-Use emotionally varied expressions naturally.
-
 Do not force emotional phrases in every paragraph.
 
 Use emotional observations naturally and only where meaningful.
+
+Do not soften every observation.
+
+Some lines should feel direct,
+honest,
+and emotionally piercing,
+like a real senior consultant speaking truthfully.
 
 For every important pattern:
 
@@ -466,8 +454,13 @@ Write like:
 an experienced Indian consultant
 speaking naturally to a real person.
 
-Do NOT write like:
-an AI analyst or psychology article.
+Do NOT sound like a psychology article or spiritual blog.
+
+Speak like:
+someone who has quietly observed hundreds of real people
+and is directly explaining the hidden pattern to the client.
+
+Sentences should feel spoken, not written.
 """
 
             diagnosis = ai_call(
@@ -559,6 +552,16 @@ Astrology Support:
 
 Generate highly personalized remedies.
 
+Include:
+- unusual but believable micro-disciplines
+- behavioral corrections
+- timing-based corrections
+- environment-based remedies
+- speech-control remedies
+- decision-control rituals
+
+These should feel deeply personalized.
+
 This should feel like the most valuable and surprising part of the consultation.
 
 IMPORTANT:
@@ -582,6 +585,18 @@ Allowed:
 - behavioral correction
 
 Remedies should NOT feel commonly known.
+
+Avoid giving only:
+- mantra
+- meditation
+- donation
+
+Combine remedies with:
+- behavior correction
+- routine control
+- emotional discipline
+- financial discipline
+- communication correction
 
 They should feel like:
 a deeply experienced consultant
@@ -638,28 +653,6 @@ person-specific
 problem-specific
 behavior-specific
 
-Advanced remedies should combine:
-- palm indication
-- planetary weakness
-- behavioral correction
-- spiritual balancing
-- discipline correction
-
-Include occasionally:
-- mantra
-- daan
-- vrat
-- energy correction
-- behavioral discipline
-- timing correction
-- decision restrictions
-- spiritual routines
-
-Remedies should feel rare,
-deep,
-specific,
-and surprisingly accurate.
-
 Write remedies in deeply personal Hindi consultation tone.
 Avoid robotic spiritual explanation.
 """
@@ -693,6 +686,14 @@ Focus on:
 - financial correction periods
 - growth windows
 - wrong-decision risk periods
+
+Avoid generic future prediction language.
+
+Focus more on:
+- what emotional cycle activates
+- what mistake may repeat
+- what mindset shift becomes necessary
+during that period.
 
 Use realistic language.
 
@@ -745,6 +746,16 @@ observant
 emotionally piercing
 grounded
 
+Avoid motivational ending tone.
+
+The final guidance should feel:
+deeply personal,
+slightly intense,
+and emotionally truthful.
+
+The reader should feel:
+"someone truly understood my inner struggle."
+
 Not motivational.
 Not generic.
 Not summary-like.
@@ -763,7 +774,7 @@ Do not repeatedly use:
 
 Use emotionally varied expressions naturally.
 
-Write like a real senior Indian consultant giving final personal guidance.
+Write like a mature Indian consultant giving final personal guidance.
 """
 
             closing_summary = ai_call(
@@ -777,13 +788,13 @@ Write like a real senior Indian consultant giving final personal guidance.
             # =================================================
 
             final_report = f"""
-Section 1 – हस्त संरचना और मुख्य संकेत
+Section 1 – हाथों के प्रमुख संकेत
 
 {observations}
 
 --------------------------------------------------
 
-Section 2 – जीवन और व्यवहार पैटर्न
+Section 2 – जीवन में बार-बार बनने वाले पैटर्न
 
 {diagnosis}
 """
@@ -794,7 +805,7 @@ Section 2 – जीवन और व्यवहार पैटर्न
 
 --------------------------------------------------
 
-Section 3 – ज्योतिषीय समर्थन संकेत
+Section 3 – ज्ज्योतिषीय समर्थन संकेत
 
 {astrology_data}
 """
@@ -803,19 +814,19 @@ Section 3 – ज्योतिषीय समर्थन संकेत
 
 --------------------------------------------------
 
-Section 4 – समय संकेत
+Section 4 – आने वाले समय के संकेत
 
 {timeline}
 
 --------------------------------------------------
 
-Section 5 – उपाय और सुधार प्रणाली
+Section 5 - सुधार और पारंपरिक उपाय
 
 {remedies}
 
 --------------------------------------------------
 
-Section 6 – अंतिम मार्गदर्शन
+Section 6 – अंतिम व्यक्तिगत मार्गदर्शन
 
 {closing_summary}
 """
