@@ -231,6 +231,21 @@ Always connect observations with:
 
 Every observation must feel connected to life experience.
 
+Do not stop at visual observation.
+
+For every major line or sign:
+explain the hidden behavioral consequence behind it.
+
+Connect:
+- palm pattern
+- emotional behavior
+- decision style
+- life consequence
+
+This should feel like:
+real hidden pattern interpretation,
+not visual description.
+
 5. Special Signs
 Check deeply for:
 - cross
@@ -296,14 +311,12 @@ Writing style should feel:
 - spiritually grounded
 - conversational but expert-level
 
-Use phrases naturally like:
+Use natural human consultation expressions occasionally.
 
+Examples:
 - "आपके हाथ में जो संकेत दिखते हैं..."
-- "असल समस्या यहीं से शुरू होती है..."
-- "बार-बार यही पैटर्न बनता है कि..."
-- "आप बाहर से मजबूत दिखते हैं लेकिन..."
 - "आपके केस में खास बात यह है कि..."
-- "यहीं पर जीवन बार-बार अटकता है..."
+- "यह पैटर्न जीवन में बार-बार प्रभाव डालता है..."
 
 Do NOT write like:
 an AI analyst or psychology article.
@@ -352,6 +365,31 @@ Instead explain:
 - how it damages progress
 
 Write like a senior consultant privately analyzing a real person.
+
+Avoid repeating the same emotional phrases multiple times.
+
+Use varied natural consultation language.
+
+Do not repeatedly use:
+- "असल समस्या यहीं से शुरू होती है"
+- "बार-बार यही पैटर्न बनता है"
+- "आपके हाथ में जो संकेत दिखते हैं"
+
+Use emotionally varied expressions naturally.
+
+Do not force emotional phrases in every paragraph.
+
+Use emotional observations naturally and only where meaningful.
+
+For every important pattern:
+
+Go 3 layers deep:
+
+1. visible behavior
+2. hidden emotional reason
+3. practical life consequence
+
+Do not stop at surface-level interpretation.
 
 Do not give remedies.
 
@@ -430,37 +468,9 @@ Write practical insights only.
 Palm reading remains primary.
 Astrology should only support the diagnosis.
 
-IMPORTANT LANGUAGE RULE:
+Write in natural human Hindi consultation style.
+Avoid robotic astrology explanation.
 
-Write entirely in natural Hindi.
-
-Tone should feel like:
-an experienced Indian palm reader and spiritual consultant personally explaining the person's life patterns.
-
-Avoid:
-- English analytical tone
-- textbook explanations
-- robotic wording
-- corporate language
-
-Writing style should feel:
-- human
-- emotionally observant
-- practical
-- spiritually grounded
-- conversational but expert-level
-
-Use phrases naturally like:
-
-- "आपके हाथ में जो संकेत दिखते हैं..."
-- "असल समस्या यहीं से शुरू होती है..."
-- "बार-बार यही पैटर्न बनता है कि..."
-- "आप बाहर से मजबूत दिखते हैं लेकिन..."
-- "आपके केस में खास बात यह है कि..."
-- "यहीं पर जीवन बार-बार अटकता है..."
-
-Do NOT write like:
-an AI analyst or psychology article.
 """
 
                 astrology_data = ai_call(
@@ -529,41 +539,33 @@ practical
 traditional
 human
 
-Use traditional Indian consultation tone.
+Avoid repeating the same emotional phrases multiple times.
 
-Use practical + spiritual balance.
+Use varied natural consultation language.
 
-IMPORTANT LANGUAGE RULE:
+Do not repeatedly use:
+- "असल समस्या यहीं से शुरू होती है"
+- "बार-बार यही पैटर्न बनता है"
+- "आपके हाथ में जो संकेत दिखते हैं"
 
-Write entirely in natural Hindi.
+Use emotionally varied expressions naturally.
 
-Tone should feel like:
-an experienced Indian palm reader and spiritual consultant personally explaining the person's life patterns.
+Remedies must feel specifically connected to:
+- palm signs
+- behavioral instability
+- emotional imbalance
+- financial patterns
+- possible planetary weaknesses
 
-Avoid:
-- English analytical tone
-- textbook explanations
-- robotic wording
-- corporate language
+Do not give general spiritual advice.
 
-Writing style should feel:
-- human
-- emotionally observant
-- practical
-- spiritually grounded
-- conversational but expert-level
+Every remedy should feel:
+person-specific
+problem-specific
+behavior-specific
 
-Use phrases naturally like:
-
-- "आपके हाथ में जो संकेत दिखते हैं..."
-- "असल समस्या यहीं से शुरू होती है..."
-- "बार-बार यही पैटर्न बनता है कि..."
-- "आप बाहर से मजबूत दिखते हैं लेकिन..."
-- "आपके केस में खास बात यह है कि..."
-- "यहीं पर जीवन बार-बार अटकता है..."
-
-Do NOT write like:
-an AI analyst or psychology article.
+Write remedies in deeply personal Hindi consultation tone.
+Avoid robotic spiritual explanation.
 """
 
             remedies = ai_call(
@@ -604,37 +606,8 @@ Structure:
 
 Avoid generic positivity.
 
-IMPORTANT LANGUAGE RULE:
-
-Write entirely in natural Hindi.
-
-Tone should feel like:
-an experienced Indian palm reader and spiritual consultant personally explaining the person's life patterns.
-
-Avoid:
-- English analytical tone
-- textbook explanations
-- robotic wording
-- corporate language
-
-Writing style should feel:
-- human
-- emotionally observant
-- practical
-- spiritually grounded
-- conversational but expert-level
-
-Use phrases naturally like:
-
-- "आपके हाथ में जो संकेत दिखते हैं..."
-- "असल समस्या यहीं से शुरू होती है..."
-- "बार-बार यही पैटर्न बनता है कि..."
-- "आप बाहर से मजबूत दिखते हैं लेकिन..."
-- "आपके केस में खास बात यह है कि..."
-- "यहीं पर जीवन बार-बार अटकता है..."
-
-Do NOT write like:
-an AI analyst or psychology article.
+Write in realistic human Hindi consultation style.
+Do not sound like prediction article.
 """
 
             timeline = ai_call(
@@ -689,37 +662,18 @@ emotionally observant
 Length:
 5–10 meaningful lines.
 
-IMPORTANT LANGUAGE RULE:
+Avoid repeating the same emotional phrases multiple times.
 
-Write entirely in natural Hindi.
+Use varied natural consultation language.
 
-Tone should feel like:
-an experienced Indian palm reader and spiritual consultant personally explaining the person's life patterns.
+Do not repeatedly use:
+- "असल समस्या यहीं से शुरू होती है"
+- "बार-बार यही पैटर्न बनता है"
+- "आपके हाथ में जो संकेत दिखते हैं"
 
-Avoid:
-- English analytical tone
-- textbook explanations
-- robotic wording
-- corporate language
+Use emotionally varied expressions naturally.
 
-Writing style should feel:
-- human
-- emotionally observant
-- practical
-- spiritually grounded
-- conversational but expert-level
-
-Use phrases naturally like:
-
-- "आपके हाथ में जो संकेत दिखते हैं..."
-- "असल समस्या यहीं से शुरू होती है..."
-- "बार-बार यही पैटर्न बनता है कि..."
-- "आप बाहर से मजबूत दिखते हैं लेकिन..."
-- "आपके केस में खास बात यह है कि..."
-- "यहीं पर जीवन बार-बार अटकता है..."
-
-Do NOT write like:
-an AI analyst or psychology article.
+Write like a real senior Indian consultant giving final personal guidance.
 """
 
             closing_summary = ai_call(
