@@ -214,11 +214,13 @@ Observe:
 - Moon
 - Mars
 
-Explain:
-- emotional impact
-- decision impact
-- financial behavior impact
-- career impact
+Decode:
+- hidden emotional mechanisms
+- repeated behavior cycles
+- pressure-response patterns
+- decision instability triggers
+- financial self-sabotage loops
+- relationship reaction patterns
 
 Do not describe palm features separately like a textbook.
 
@@ -326,6 +328,17 @@ Writing style should feel:
 - spiritually grounded
 - conversational but expert-level
 
+Use simple natural spoken Hindi.
+
+Avoid:
+- academic Hindi
+- translated English tone
+- psychological article wording
+
+Write like:
+an experienced Indian consultant
+speaking naturally to a real person.
+
 Use natural human consultation expressions occasionally.
 
 Examples:
@@ -378,6 +391,8 @@ Instead explain:
 - what exact pattern repeats
 - why it repeats
 - how it damages progress
+
+This should be the deepest and most emotionally accurate section of the report.
 
 Write like a senior consultant privately analyzing a real person.
 
@@ -440,14 +455,16 @@ Writing style should feel:
 - spiritually grounded
 - conversational but expert-level
 
-Use phrases naturally like:
+Use simple natural spoken Hindi.
 
-- "आपके हाथ में जो संकेत दिखते हैं..."
-- "असल समस्या यहीं से शुरू होती है..."
-- "बार-बार यही पैटर्न बनता है कि..."
-- "आप बाहर से मजबूत दिखते हैं लेकिन..."
-- "आपके केस में खास बात यह है कि..."
-- "यहीं पर जीवन बार-बार अटकता है..."
+Avoid:
+- academic Hindi
+- translated English tone
+- psychological article wording
+
+Write like:
+an experienced Indian consultant
+speaking naturally to a real person.
 
 Do NOT write like:
 an AI analyst or psychology article.
@@ -542,6 +559,8 @@ Astrology Support:
 
 Generate highly personalized remedies.
 
+This should feel like the most valuable and surprising part of the consultation.
+
 IMPORTANT:
 
 Avoid generic advice.
@@ -561,6 +580,13 @@ Allowed:
 - speech discipline
 - focus correction
 - behavioral correction
+
+Remedies should NOT feel commonly known.
+
+They should feel like:
+a deeply experienced consultant
+carefully selected them
+after studying the person's hidden instability patterns.
 
 Avoid:
 - magical promises
@@ -660,11 +686,13 @@ Astrology Support:
 Generate realistic year-wise insights.
 
 Focus on:
-- career direction
-- financial stability
-- emotional growth
-- pressure periods
-- transition phases
+- pressure cycles
+- instability periods
+- clarity phases
+- emotional overload phases
+- financial correction periods
+- growth windows
+- wrong-decision risk periods
 
 Use realistic language.
 
@@ -720,29 +748,6 @@ grounded
 Not motivational.
 Not generic.
 Not summary-like.
-
-IMPORTANT:
-
-This should feel like:
-a real consultant giving final personal advice after deeply studying the case.
-
-Focus on:
-- biggest hidden challenge
-- biggest strength
-- what must change
-- what should be avoided
-- what can improve life direction
-
-Avoid:
-- generic motivation
-- repeated lines
-- fake positivity
-
-Tone should feel:
-calm
-deep
-human
-emotionally observant
 
 Length:
 5–10 meaningful lines.
